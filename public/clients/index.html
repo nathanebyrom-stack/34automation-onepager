@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Client area | 34 Automation</title>
+<meta name="description" content="Open your 34 Automation forms with your personal link or access code.">
+<meta name="robots" content="noindex">
+<link rel="canonical" href="{{SITE_URL}}/clients/">
+<meta name="theme-color" content="#0E0F11">
+<meta name="color-scheme" content="dark">
+<link rel="icon" href="/favicon.ico" sizes="32x32">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="stylesheet" href="/css/site.css">
+</head>
+<body>
+<header class="hdr on">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="34 Automation, home"><img src="/img/logo.svg" alt="34 Automation" width="220" height="32"></a>
+    <nav class="nav" aria-label="Main">
+      <a class="ca" href="/clients/"><span class="long">Client area</span><span class="short">Clients</span></a>
+      <a class="btn" href="/#contact"><span class="long">Start a conversation</span><span class="short">Talk to us</span></a>
+    </nav>
+  </div>
+</header>
+<main class="page">
+  <div class="wrap">
+    <span class="lbl">Client area <b>/</b> Forms</span>
+    <h1 class="h2">Your forms<br>live here.</h1>
+    <div class="prose">
+      <p>If we've sent you a personal link, the quickest way in is to click it. If you have a code instead, paste it below.</p>
+    </div>
+    <form class="code" id="codeForm" data-clients-url="{{CLIENTS_URL}}" novalidate>
+      <div class="f">
+        <label for="code">Access code or link</label>
+        <input id="code" name="code" autocomplete="off" autocapitalize="off" spellcheck="false" required maxlength="300">
+      </div>
+      <button class="btn solid" type="submit">Open my forms <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></button>
+      <p class="enq-msg" id="codeMsg" role="status" aria-live="polite"></p>
+    </form>
+    <div class="prose" style="margin-top:28px">
+      <p>Each link opens on the first device you use it on, saves as you go and closes once you've sent it. Lost yours, or need it on another device? Email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a> and we'll issue a new one.</p>
+    </div>
+  </div>
+</main>
+<footer class="ft">
+  <div class="wrap">
+    <a class="logo" href="/" aria-label="34 Automation, home"><img src="/img/logo.svg" alt="34 Automation" width="180" height="26"></a>
+    <nav aria-label="Footer">
+      <a href="/#offer">What we offer</a><a href="/#services">Services</a><a href="/#work">Work</a><a href="/#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
+    </nav>
+    <p class="co">{{LEGAL_LINE}} Email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a>.</p>
+    <div class="legal"><span>© {{YEAR}} 34 Automation</span><span>Sheet 1 of 1 · Rev A · Drawn by 34</span></div>
+  </div>
+</footer>
+<script src="/js/clients.js" defer></script>
+</body>
+</html>
