@@ -1,0 +1,13 @@
+{
+  "_readme": "Fill legalName and address before going live. If 34 Automation is a limited company, also fill companyNumber (and registeredIn if not England and Wales). Leave companyNumber empty if it isn't a company. The production build refuses to deploy while legalName or address is empty.",
+  "siteUrl": "https://34automation.co.uk",
+  "publicEmail": "nathan@34automation.co.uk",
+  "clientsUrl": "https://clients.34automation.co.uk/client/",
+  "legalName": "",
+  "companyNumber": "",
+  "registeredIn": "England and Wales",
+  "address": "",
+  "vatNumber": "",
+  "icoRegistration": "",
+  "privacyUpdated": "6 November 2026"
+}

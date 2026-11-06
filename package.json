@@ -1,0 +1,11 @@
+{
+  "name": "34automation-site",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "check": "STRICT=1 node scripts/build.mjs",
+    "dev": "node scripts/build.mjs && wrangler pages dev"
+  },
+  "devDependencies": { "wrangler": "^4" }
+}

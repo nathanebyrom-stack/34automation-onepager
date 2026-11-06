@@ -1,0 +1,7 @@
+# Local testing only. Copy to .dev.vars (git-ignored).
+RESEND_API_KEY=test
+# Point at a local mock to see the emails without sending them, or remove to use Resend for real.
+RESEND_API_URL=http://127.0.0.1:8799/emails
+ENQUIRY_TO=nathan@34automation.co.uk
+ENQUIRY_FROM=34 Automation <enquiries@34automation.co.uk>
+ALLOW_NO_TURNSTILE=1
