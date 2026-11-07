@@ -3,11 +3,12 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>34 Automation | Websites, quote systems and follow-up for UK engineering firms</title>
-<meta name="description" content="Websites, marketing and workflow automation for owner-led UK engineering firms. Every enquiry arrives, gets answered and turns into an order.">
+<title>34 Automation | Lead magnets for UK engineering firms</title>
+<meta name="description" content="Lead magnets for owner-led UK engineering firms: websites, quote systems and follow-up that bring the right enquiries and turn drawings into orders. Every enquiry. Answered.">
 <link rel="canonical" href="{{SITE_URL}}/">
-<meta name="theme-color" content="#0E0F11">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0E0F11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ECEEF0" media="(prefers-color-scheme: light)">
+<meta name="color-scheme" content="dark light">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -16,8 +17,8 @@
 <meta property="og:locale" content="en_GB">
 <meta property="og:site_name" content="34 Automation">
 <meta property="og:url" content="{{SITE_URL}}/">
-<meta property="og:title" content="34 Automation | Every enquiry. Answered.">
-<meta property="og:description" content="Websites, quote systems and follow-up for owner-led UK engineering firms.">
+<meta property="og:title" content="34 Automation | Lead magnets for engineering firms">
+<meta property="og:description" content="Websites, quote systems and follow-up for owner-led UK engineering firms. Every enquiry. Answered.">
 <meta property="og:image" content="{{SITE_URL}}/og.jpg">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -27,16 +28,16 @@
 <link rel="preload" href="/fonts/plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/video/poster.webp" as="image" fetchpriority="high">
 <link rel="stylesheet" href="/css/site.css">
-<script>document.documentElement.classList.add('js')</script>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('34-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
 <script type="application/ld+json">
-{"@context":"https://schema.org","@type":"ProfessionalService","name":"34 Automation","url":"{{SITE_URL}}/","logo":"{{SITE_URL}}/icon-512.png","image":"{{SITE_URL}}/og.jpg","email":"{{PUBLIC_EMAIL}}","description":"Websites, marketing and workflow automation for owner-led UK engineering firms.","areaServed":{"@type":"Country","name":"United Kingdom"},"knowsAbout":["Website design","Marketing","Workflow automation","Quote-to-order systems"]}
+{"@context":"https://schema.org","@type":"ProfessionalService","name":"34 Automation","url":"{{SITE_URL}}/","logo":"{{SITE_URL}}/icon-512.png","image":"{{SITE_URL}}/og.jpg","email":"{{PUBLIC_EMAIL}}","description":"Lead magnets for owner-led UK engineering firms: websites, quote systems and follow-up automation.","areaServed":{"@type":"Country","name":"United Kingdom"},"knowsAbout":["Website design","Marketing","Workflow automation","Quote-to-order systems"]}
 </script>
 </head>
 <body>
 <a class="skip" href="#contact">Skip to the enquiry form</a>
 <header class="hdr" id="hdr">
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="34 Automation, back to top"><img src="img/logo.svg" alt="34 Automation" width="220" height="32"></a>
+    <a class="logo" href="#top" aria-label="34 Automation, back to top"><img class="ln" src="img/logo.svg" alt="34 Automation" width="220" height="32"><img class="ld" src="img/logo-day.svg" alt="34 Automation" width="220" height="32"></a>
     <nav class="nav" aria-label="Main">
       <a href="#offer">What we offer</a>
       <a href="#services">Services</a>
@@ -44,21 +45,25 @@
       <a href="#work">Work</a>
       <a class="ca" href="/clients/"><span class="long">Client area</span><span class="short">Clients</span></a>
       <a class="btn" href="#contact"><span class="long">Start a conversation</span><span class="short">Talk to us</span></a>
+      <div class="mode" role="group" aria-label="Colour theme">
+        <button type="button" id="mNight" data-mode="dark" aria-pressed="false" aria-label="Night"><svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M7.5 1a5 5 0 1 0 3.5 8.6A4.2 4.2 0 0 1 7.5 1z"/></svg><span class="t">Night</span></button>
+        <button type="button" id="mDay" data-mode="light" aria-pressed="false" aria-label="Day"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="6" cy="6" r="2.4"/><path d="M6 .6v1.6M6 9.8v1.6M.6 6h1.6M9.8 6h1.6M2.2 2.2l1.1 1.1M8.7 8.7l1.1 1.1M2.2 9.8l1.1-1.1M8.7 3.3l1.1-1.1"/></svg><span class="t">Day</span></button>
+      </div>
     </nav>
   </div>
 </header>
 
 <main id="top">
 <section class="hero" id="hero" aria-labelledby="h1">
-  <div class="stage" id="stage">
+  <div class="stage night" id="stage">
   <img class="poster" src="video/poster.webp" alt="A raw aluminium billet beside the finished machined part on a dark steel surface plate, coolant mist drifting through a single gold light" width="1440" height="618" fetchpriority="high">
   <canvas id="scrub" aria-hidden="true"></canvas>
   <div class="shade" aria-hidden="true"></div>
   <div class="wrap" id="heroCopy">
     <div class="copy">
-      <span class="lbl rv">Websites · Quote systems · Follow-up <b>·</b> for owner-led UK engineering firms</span>
-      <h1 id="h1" class="rv" style="--i:1">Every enquiry.<br><em>Answered.</em></h1>
-      <p class="lede rv" style="--i:2"><b>You keep making parts.</b> We make sure the enquiries arrive, get answered and turn into orders.</p>
+      <span class="kick hk rv"><i>34</i><span>Websites</span><span>Quote systems</span><span>Follow-up</span></span>
+      <h1 id="h1" class="rv" style="--i:1">Lead magnets for <em>engineering firms.</em></h1>
+      <p class="lede rv" style="--i:2"><b>Every enquiry. Answered.</b> Websites, quote systems and follow-up that bring owner-led UK engineering firms the right enquiries and turn drawings into orders. You keep making parts.</p>
       <div class="acts rv" style="--i:3">
         <a class="btn solid" href="#contact">Start a conversation <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
         <a class="btn" href="#work">See the work</a>
@@ -68,11 +73,19 @@
       <span>Client</span><span>Owner / MD, solo to 50 staff</span>
       <span>Sector</span><span>Subcontract machining</span>
       <span>Tolerance</span><span>±0.01 mm</span>
-      <span>Rev</span><span>A · 01 Nov 2026</span>
+      <span>Rev</span><span>B · 07 Nov 2026</span>
       <span>Frame</span><span class="fr" id="frameNo">000 / 192</span>
     </div>
   </div>
   <div class="bar" aria-hidden="true"><i id="scrubBar"></i></div>
+  </div>
+</section>
+
+<section class="band state" aria-label="The idea">
+  <div class="wrap">
+    <i class="mk rv" aria-hidden="true"></i>
+    <p class="big rv" style="--i:1">Imagine you never missed a call, <br>and <em>every caller got an answer.</em></p>
+    <p class="sub rv" style="--i:2">That is the whole job. A website that gets you found, a quote system that logs every drawing the day it lands, and follow-up that goes out while you are on the machine. Nothing waits for you to come off the shop floor.</p>
   </div>
 </section>
 
@@ -81,7 +94,7 @@
   <div class="wrap">
     <div class="head">
       <div class="row">
-        <div class="rv"><span class="lbl">01 <b>/</b> What we offer</span>
+        <div class="rv"><span class="kick"><i>01</i><span>What we offer</span></span>
           <h2 id="offer-h" class="h2" style="margin-top:14px">Three ways in.<br>One shop that builds all of it.</h2></div>
         <p class="lede rv" style="--i:1">Websites, marketing and automation for SME engineering firms that put the technical first and left design last.</p>
       </div>
@@ -99,45 +112,54 @@
   <div class="wrap">
     <div class="head">
       <div class="row">
-        <div class="rv"><span class="lbl">02 <b>/</b> Services</span>
+        <div class="rv"><span class="kick"><i>02</i><span>Services</span></span>
           <h2 id="svc-h" class="h2" style="margin-top:14px">The four things<br>we build most.</h2></div>
         <p class="lede rv" style="--i:1">Each one is scoped, priced and delivered on its own. Most firms start with one and add the next when the first has paid for itself.</p>
       </div>
       <div class="rule"></div>
     </div>
     <div class="grid">
-      <a class="card rv" href="#contact"><div class="fr"><img src="img/15-website-overhaul.webp" alt="A laptop on a workshop bench beside two machined aluminium parts, its screen out of focus" loading="lazy" width="960" height="1200"><span class="n">S·01</span></div><h3 class="h3">Website Overhaul</h3><p>A full rebuild of a site that has stopped earning its keep. New structure, new copy, new photography, and a build that loads in under two seconds on a phone in a workshop.</p></a>
-      <a class="card rv" style="--i:1" href="#contact"><div class="fr"><img src="img/16-landing-pages.webp" alt="Five panes of dark smoked glass floating in a stack, each edge lit with a thin line of gold" loading="lazy" width="960" height="1200"><span class="n">S·02</span></div><h3 class="h3">Landing Pages</h3><p>One page for one job: a single service, a single kind of buyer. Built to be found for that search and to turn the visit into an enquiry.</p></a>
-      <a class="card rv" style="--i:2" href="#contact"><div class="fr"><img src="img/17-quote-to-order.webp" alt="A folded engineering drawing, a machined steel part and a dark phone laid in a line, joined by a trace of gold light" loading="lazy" width="960" height="1200"><span class="n">S·03</span></div><h3 class="h3">Quote-to-Order</h3><p>A customer sends a drawing, quantities and finish. It's logged, assigned and answered the same day, and the quote becomes the order without being typed twice.</p></a>
-      <a class="card rv" style="--i:3" href="#contact"><div class="fr"><img src="img/18-stay-connected.webp" alt="A dark CNC control panel with one round indicator lamp glowing warm gold" loading="lazy" width="960" height="1200"><span class="n">S·04</span></div><h3 class="h3">Stay Connected</h3><p>Follow-up that runs while you're on the machine: acknowledgements, quote chasers and order updates, sent on time and in your voice.</p></a>
+      <a class="card rv" href="#contact"><div class="fr"><img src="img/15-website-overhaul.webp" alt="A laptop on a workshop bench beside two machined aluminium parts, its screen out of focus" loading="lazy" width="960" height="1200"><span class="n night">S·01</span></div><h3 class="h3">Website Overhaul</h3><p>A full rebuild of a site that has stopped earning its keep. New structure, new copy, new photography, and a build that loads in under two seconds on a phone in a workshop.</p></a>
+      <a class="card rv" style="--i:1" href="#contact"><div class="fr"><img src="img/16-landing-pages.webp" alt="Five panes of dark smoked glass floating in a stack, each edge lit with a thin line of gold" loading="lazy" width="960" height="1200"><span class="n night">S·02</span></div><h3 class="h3">Landing Pages</h3><p>One page for one job: a single service, a single kind of buyer. Built to be found for that search and to turn the visit into an enquiry.</p></a>
+      <a class="card rv" style="--i:2" href="#contact"><div class="fr"><img src="img/17-quote-to-order.webp" alt="A folded engineering drawing, a machined steel part and a dark phone laid in a line, joined by a trace of gold light" loading="lazy" width="960" height="1200"><span class="n night">S·03</span></div><h3 class="h3">Quote-to-Order</h3><p>A customer sends a drawing, quantities and finish. It's logged, assigned and answered the same day, and the quote becomes the order without being typed twice.</p></a>
+      <a class="card rv" style="--i:3" href="#contact"><div class="fr"><img src="img/18-stay-connected.webp" alt="A dark CNC control panel with one round indicator lamp glowing warm gold" loading="lazy" width="960" height="1200"><span class="n night">S·04</span></div><h3 class="h3">Stay Connected</h3><p>Follow-up that runs while you're on the machine: acknowledgements, quote chasers and order updates, sent on time and in your voice.</p></a>
     </div>
   </div>
 </section>
 
 <section class="band why" id="why" aria-labelledby="why-h">
   <div class="tex" aria-hidden="true"><img src="img/06-neural-field.webp" alt="" loading="lazy" width="1920" height="1080"></div>
-  <div class="wrap">
+  <div class="track" id="whyTrack"><div class="pin" id="whyPin">
+    <img class="poster" src="video/why/poster.webp" alt="" width="1440" height="810" loading="lazy">
+    <canvas id="whyScrub" aria-hidden="true"></canvas>
+    <div class="shade" aria-hidden="true"></div>
+    <div class="wrap">
     <div class="head">
       <div class="row">
-        <div class="rv"><span class="lbl">03 <b>/</b> Why us</span>
+        <div class="rv"><span class="kick"><i>03</i><span>Why us</span></span>
           <h2 id="why-h" class="h2" style="margin-top:14px">Engineering first.<br>Design finished.</h2></div>
       </div>
       <div class="rule"></div>
     </div>
     <div class="list">
       <div class="item">
-        <div class="img rv"><img src="img/10-mid-cut.webp" alt="A CNC milling spindle mid-cut, coolant mist and swarf caught in a single warm gold rim light" loading="lazy" width="1600" height="893"></div>
-        <div class="txt rv" style="--i:1"><span class="spec">01 · PROOF BEFORE PITCH</span><h3 class="h2">We build the work before we talk about it.</h3><p>No pitch deck. We make the thing first, then show it. This page is built the way we'd build yours: your photography, your words, your pace.</p></div>
+        <div class="imgw"><div class="img rv"><img src="img/10-mid-cut.webp" alt="A CNC milling spindle mid-cut, coolant mist and swarf caught in a single warm gold rim light" loading="lazy" width="1600" height="893"></div></div>
+        <div class="txt rv" style="--i:1"><span class="spec">OP 10 · PROOF BEFORE PITCH</span><h3 class="h2">We build the work before we talk about it.</h3><p>No pitch deck. We make the thing first, then show it. This page is built the way we'd build yours: your photography, your words, your pace.</p></div>
       </div>
       <div class="item">
-        <div class="img rv"><img src="img/13-measure.webp" alt="A pair of working hands closing a micrometer onto a small machined steel part" loading="lazy" width="1600" height="893"></div>
-        <div class="txt rv" style="--i:1"><span class="spec">02 · ±0.01 mm · 6082-T6 · Ra 0.8 µm</span><h3 class="h2">We speak drawing, tolerance and finish.</h3><p>We've sat on the other side of the enquiry. So the website says what you make and to what standard, and the quote form asks for the things you actually need to price a job.</p></div>
+        <div class="imgw"><div class="img rv"><img src="img/13-measure.webp" alt="A pair of working hands closing a micrometer onto a small machined steel part" loading="lazy" width="1600" height="893"></div></div>
+        <div class="txt rv" style="--i:1"><span class="spec">OP 20 · ±0.01 mm · 6082-T6 · Ra 0.8 µm</span><h3 class="h2">We speak drawing, tolerance and finish.</h3><p>We've sat on the other side of the enquiry. So the website says what you make and to what standard, and the quote form asks for the things you actually need to price a job.</p></div>
       </div>
       <div class="item">
-        <div class="img rv"><img src="img/12-neurons-firing.webp" alt="Gold and silver sparks of light firing along thin branching filaments in darkness" loading="lazy" width="1600" height="893"></div>
-        <div class="txt rv" style="--i:1"><span class="spec">03 · TRIGGER → FILTER → ACTION → OUTPUT</span><h3 class="h2">Automation that buys your time back.</h3><p>Not a diagram, a working flow. An enquiry lands, gets checked, gets routed, gets answered. You find out it happened when the order arrives.</p></div>
+        <div class="imgw"><div class="img rv"><img src="img/12-neurons-firing.webp" alt="Gold and silver sparks of light firing along thin branching filaments in darkness" loading="lazy" width="1600" height="893"></div></div>
+        <div class="txt rv" style="--i:1"><span class="spec">OP 30 · TRIGGER → FILTER → ACTION → OUTPUT</span><h3 class="h2">Automation that buys your time back.</h3><p>Not a diagram, a working flow. An enquiry lands, gets checked, gets routed, gets answered. You find out it happened when the order arrives.</p></div>
       </div>
     </div>
+    <div class="rail" aria-hidden="true">
+      <div class="bar"><i id="whyBar"></i></div>
+      <div class="ops"><span class="on">OP 10<b> · Proof</b></span><span>OP 20<b> · Drawing</b></span><span>OP 30<b> · Automation</b></span></div>
+    </div>
+    </div></div>
   </div>
 </section>
 
@@ -146,7 +168,7 @@
   <div class="wrap">
     <div class="head">
       <div class="row">
-        <div class="rv"><span class="lbl">04 <b>/</b> The work</span>
+        <div class="rv"><span class="kick"><i>04</i><span>The work</span></span>
           <h2 id="work-h" class="h2" style="margin-top:14px">Every badge<br>is honest.</h2></div>
         <p class="lede rv" style="--i:1">Everything here is 34's own work. Live means live, in build means in build, concept means concept.</p>
       </div>
@@ -177,7 +199,7 @@
   <div class="split">
     <div class="img rv"><img src="img/11-the-owner.webp" alt="The owner of a small engineering firm reading a drawing in a workshop office at dusk, CNC machines through the glass behind him" loading="lazy" width="1800" height="1005"></div>
     <div class="txt">
-      <span class="lbl rv">05 <b>/</b> Start a conversation</span>
+      <span class="kick rv"><i>05</i><span>Start a conversation</span></span>
       <h2 id="cta-h" class="h2 rv" style="--i:1">No pitch deck.<br>No hard sell.</h2>
       <p class="rv" style="--i:2">Tell us where your brand is now and we'll tell you, straight, what we'd do with it. If the answer is "nothing yet", we'll say that too.</p>
       <div class="rv" style="--i:3" id="enqWrap">
@@ -216,12 +238,12 @@
 <footer class="ft">
   <div class="tex" aria-hidden="true"><img src="img/05-bead-blast.webp" alt="" loading="lazy" width="1920" height="1080"></div>
   <div class="wrap">
-    <a class="logo" href="#top" aria-label="34 Automation, back to top"><img src="img/logo.svg" alt="34 Automation" width="180" height="26"></a>
+    <a class="logo" href="#top" aria-label="34 Automation, back to top"><img class="ln" src="img/logo.svg" alt="34 Automation" width="180" height="26"><img class="ld" src="img/logo-day.svg" alt="34 Automation" width="180" height="26"></a>
     <nav aria-label="Footer">
       <a href="#offer">What we offer</a><a href="#services">Services</a><a href="#why">Why us</a><a href="#work">Work</a><a href="#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
     </nav>
     <p class="co">{{LEGAL_LINE}} Email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a>.</p>
-    <div class="legal"><span>© {{YEAR}} 34 Automation</span><span>Sheet 1 of 1 · Rev A · Drawn by 34</span></div>
+    <div class="legal"><span>© {{YEAR}} 34 Automation</span><span>Sheet 1 of 1 · Rev B · Drawn by 34</span></div>
   </div>
 </footer>
 <script src="/js/site.js" defer></script>

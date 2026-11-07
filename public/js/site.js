@@ -1,5 +1,16 @@
 (function(){
   var d=document.documentElement; d.classList.add('js');
+  // day / night: follows the viewer's system until they pick one, then remembers it
+  (function(){
+    var K='34-theme',bs=[].slice.call(document.querySelectorAll('.mode button'));
+    function cur(){var t=d.getAttribute('data-theme');if(t)return t;return matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}
+    function paint(){var c=cur();bs.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===c));});}
+    try{var s=localStorage.getItem(K);if(s==='light'||s==='dark')d.setAttribute('data-theme',s);}catch(e){}
+    bs.forEach(function(b){b.addEventListener('click',function(){d.setAttribute('data-theme',b.dataset.mode);try{localStorage.setItem(K,b.dataset.mode);}catch(e){}paint();});});
+    try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',paint);}catch(e){}
+    new MutationObserver(paint).observe(d,{attributes:true,attributeFilter:['data-theme']});
+    paint();
+  })();
   var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
   // header turns solid once the hero scrolls away
   var hdr=document.getElementById('hdr');
@@ -68,6 +79,64 @@
     addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',size);onScroll();
   })();
 
+  // why us: a second film. 192 baked frames (three shots, a gold cutter pass between them) packed 16 to a sheet; scroll picks the frame.
+  (function(){
+    var sec=document.getElementById('why'),track=document.getElementById('whyTrack'),pin=document.getElementById('whyPin'),cv=document.getElementById('whyScrub');
+    if(!sec||!track||!pin||!cv||still)return;
+    var c=navigator.connection||{};
+    if(c.saveData||/(^|-)2g|3g/.test(c.effectiveType||''))return; // slow connection: keep the stacked photos
+    var N=192,PER=16,COLS=4,SHEETS=12;
+    var small=Math.min(innerWidth*Math.min(devicePixelRatio||1,2),1600)<=900;
+    var dir='video/why/'+(small?'m':'d')+'/';
+    var sheets=new Array(SHEETS),loaded=0,fw=0,fh=0,ctx=cv.getContext('2d',{alpha:false}),started=false;
+    var txts=[].slice.call(track.querySelectorAll('.item .txt')),bar=document.getElementById('whyBar'),ops=[].slice.call(track.querySelectorAll('.rail .ops span'));
+    var on=false,target=0,cur=0,raf=false,W=0,H=0,dpr=1,shown=-1;
+    function clamp(x){return Math.min(Math.max(x,0),1);}
+    function size(){dpr=Math.min(devicePixelRatio||1,1.5);W=pin.clientWidth;H=pin.clientHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);shown=-1;drawFrame();}
+    function drawFrame(){
+      if(!fw)return;
+      var f=Math.round(cur*(N-1));if(f===shown)return;
+      var s=Math.floor(f/PER),img=sheets[s];
+      if(!img){ // nearest sheet that has arrived
+        for(var d=1;d<SHEETS&&!img;d++){img=sheets[s-d]||sheets[s+d];if(img){f=(sheets[s-d]?(s-d)*PER+PER-1:(s+d)*PER);}}
+        if(!img)return;s=Math.floor(f/PER);
+      }
+      var i=f%PER,sx=(i%COLS)*fw,sy=Math.floor(i/COLS)*fh;
+      var sc=Math.max(W/fw,H/fh),dw=fw*sc,dh=fh*sc,dx=(W-dw)*.5,dy=(H-dh)*.5;
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.drawImage(img,sx,sy,fw,fh,dx,dy,dw,dh);shown=f;
+    }
+    function render(p){
+      drawFrame();
+      var t=p*(txts.length-1);
+      txts.forEach(function(el,k){var d=t-k,a=clamp(1-(Math.abs(d)-.24)/.22);el.style.opacity=a.toFixed(3);el.style.visibility=a>.01?'visible':'hidden';el.style.transform='translateY('+(-d*30).toFixed(1)+'px)';});
+      if(bar)bar.style.transform='scaleX('+p.toFixed(4)+')';
+      var idx=Math.round(t);ops.forEach(function(s,i){s.classList.toggle('on',i===idx);});
+    }
+    function reset(){txts.forEach(function(el){el.style.opacity='';el.style.visibility='';el.style.transform='';});}
+    function prog(){var span=track.offsetHeight-innerHeight;return span>0?clamp(-track.getBoundingClientRect().top/span):0;}
+    function tick(){cur+=(target-cur)*.22;if(Math.abs(target-cur)<.0005)cur=target;render(cur);if(cur!==target)requestAnimationFrame(tick);else raf=false;}
+    function load(){ // sheets start arriving when the section is a screen and a half away; first, last, then the middles
+      if(started)return;started=true;
+      var order=[0,SHEETS-1,6,3,9,1,2,4,5,7,8,10];
+      (function next(){
+        var s=order.shift();if(s===undefined)return;if(sheets[s])return next();
+        var img=new Image();img.decoding='async';
+        img.onload=function(){sheets[s]=img;if(!fw){fw=img.width/COLS;fh=img.height/COLS;size();pin.classList.add('live');}shown=-1;drawFrame();if(++loaded<SHEETS)next();};
+        img.onerror=next;img.src=dir+String(s).padStart(2,'0')+'.webp';
+      })();
+    }
+    function onScroll(){
+      if(!on)return;
+      if(!started&&track.getBoundingClientRect().top<innerHeight*1.5)load();
+      target=prog();if(!raf){raf=true;requestAnimationFrame(tick);}
+    }
+    function mode(){
+      var want=innerHeight>=520;
+      if(want===on)return;on=want;sec.classList.toggle('scrub',on);
+      if(on){cur=target=prog();size();render(cur);}else reset();
+    }
+    addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',function(){mode();if(on)size();onScroll();});mode();onScroll();
+  })();
 
   // spam check: Cloudflare Turnstile, loaded only when the form is near the screen. Site key comes from /api/config.
   var TS=(function(){
@@ -79,7 +148,7 @@
       fetch('/api/config').then(function(r){return r.ok?r.json():null}).then(function(c){
         if(!c||!c.turnstileSiteKey)return; // no key configured (local preview): skip
         api.need=true;
-        window.onTsReady=function(){id=turnstile.render(box,{sitekey:c.turnstileSiteKey,theme:'dark',size:'flexible',appearance:'interaction-only'});};
+        window.onTsReady=function(){id=turnstile.render(box,{sitekey:c.turnstileSiteKey,theme:(d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')),size:'flexible',appearance:'interaction-only'});};
         var s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTsReady';s.async=true;document.head.appendChild(s);
       }).catch(function(){});
     };
