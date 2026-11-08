@@ -17,13 +17,10 @@ site.config.json     company details and URLs, filled into the pages at build ti
 scripts/build.mjs    public/ → dist/, fills {{PLACEHOLDERS}}, blocks production if details are missing
 ```
 
-## Stopgap preview on GitHub Pages
+## Old GitHub Pages link
 
-Until Cloudflare is live, every push to `main` also deploys a static preview to
-https://nathanebyrom-stack.github.io/34automation-onepager/ (`.github/workflows/pages.yml`).
-It runs `STATIC=1 BASE_PATH=/34automation-onepager node scripts/build.mjs`: the enquiry form becomes an
-email button (no functions on GitHub Pages), pages are `noindex`, and root-relative URLs get the repo prefix.
-The Cloudflare build is unaffected. Remove the workflow once the real domain is up.
+https://nathanebyrom-stack.github.io/34automation-onepager/ now only redirects to the live site
+(`redirect/` folder, deployed by `.github/workflows/pages.yml`). The site itself is built and served by Cloudflare Pages.
 
 ## 1. Fill in the company details
 
