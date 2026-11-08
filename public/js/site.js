@@ -74,11 +74,11 @@
       var span=hero.offsetHeight-stage.clientHeight,y=Math.min(Math.max(-hero.getBoundingClientRect().top,0),span),p=span>0?y/span:0;
       target=p*(N-1);
       if(bar)bar.style.transform='scaleX('+p+')';
-      if(copy){var k=Math.min(Math.max((p-.42)/.13,0),1);copy.style.opacity=1-k;copy.style.transform='translateY('+(k*24)+'px)';}
-      if(mid){ // the statement: lines arrive at 60%, 67% and 74% of the scroll, after the headline has cleared, hold, and leave together at 93%
-        var out=1-Math.min(Math.max((p-.93)/.06,0),1),vis=Math.min(Math.max((p-.58)/.08,0),1)*out;
+      if(copy){var k=Math.min(Math.max((p-.28)/.10,0),1);copy.style.opacity=1-k;copy.style.transform='translateY('+(k*24)+'px)';}
+      if(mid){ // the statement: lines arrive at 38%, 44% and 50% of the scroll, after the headline has cleared, hold for about three screens, and leave together at 88%
+        var out=1-Math.min(Math.max((p-.88)/.06,0),1),vis=Math.min(Math.max((p-.36)/.07,0),1)*out;
         mid.style.opacity=vis.toFixed(3);
-        midLines.forEach(function(el,i){var a=Math.min(Math.max((p-(.60+i*.07))/.08,0),1);el.style.opacity=(a*out).toFixed(3);el.style.transform='translateY('+((1-a)*22).toFixed(1)+'px)';});
+        midLines.forEach(function(el,i){var a=Math.min(Math.max((p-(.38+i*.06))/.07,0),1);el.style.opacity=(a*out).toFixed(3);el.style.transform='translateY('+((1-a)*22).toFixed(1)+'px)';});
       }
       if(!raf){raf=true;requestAnimationFrame(tick);}
     }
