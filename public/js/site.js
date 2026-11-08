@@ -95,7 +95,7 @@
     if(c.saveData||/(^|-)2g$/.test(c.effectiveType||''))return; // slow connection: keep the stacked photos
     var N=192,PER=16,COLS=4,SHEETS=12;
     var small=Math.min(innerWidth*Math.min(devicePixelRatio||1,2),1600)<=900;
-    var dir='video/why/'+(small?'m':'d')+'/';
+    var dir='video/why/v2/'+(small?'m':'d')+'/'; // v2: new frames get a new path, because /video/* is edge-cached for 30 days
     var sheets=new Array(SHEETS),loaded=0,fw=0,fh=0,ctx=cv.getContext('2d',{alpha:false}),started=false;
     var txts=[].slice.call(track.querySelectorAll('.item .txt')),bar=document.getElementById('whyBar'),ops=[].slice.call(track.querySelectorAll('.rail .ops span'));
     var on=false,target=0,cur=0,raf=false,W=0,H=0,dpr=1,shown=-1;
@@ -188,14 +188,24 @@
       data.turnstile=TS.token();
       btn.disabled=true;say('Sending…');
       fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
-        .then(function(r){if(!r.ok)throw new Error(r.status);return r.json();})
+        .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok){var e=new Error(r.status);e.code=j&&j.code;throw e;}return j;});})
         .then(function(){
           var d=document.createElement('div');d.className='enq-done';d.setAttribute('role','status');
           var h=document.createElement('h3');h.className='h3';h.textContent='Got it, '+name.split(' ')[0]+'.';
           var p=document.createElement('p');p.textContent='We’ll reply to '+email+' the same working day.';
           d.appendChild(h);d.appendChild(p);wrap.replaceChildren(d);
         })
-        .catch(function(){btn.disabled=false;TS.reset();say('That didn’t send. Please try again in a minute.','err');});
+        .catch(function(err){
+          btn.disabled=false;TS.reset();
+          if(err&&err.code==='not_configured'){ // the sending service is not set up yet: hand the visitor a ready-made email instead
+            var to=(document.querySelector('.ft a[href^="mailto:"]')||{}).href||'';
+            var lines=[text,'',name+(data.company?', '+data.company:''),email].concat(data.phone?[data.phone]:[]).concat(data.interest.length?['Interested in: '+data.interest.join(', ')]:[]);
+            var a=document.createElement('a');a.href=to+(to.indexOf('?')>-1?'&':'?')+'subject='+encodeURIComponent('Enquiry from '+name)+'&body='+encodeURIComponent(lines.join('\n'));a.textContent='send it by email instead';
+            msg.textContent='The form can’t take messages right now, so ';msg.className='enq-msg err';msg.appendChild(a);msg.appendChild(document.createTextNode(': your message is already written.'));
+            return;
+          }
+          say('That didn’t send. Please try again in a minute.','err');
+        });
     });
   })();
 })();

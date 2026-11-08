@@ -27,6 +27,7 @@ const vals = {
   LEGAL_LINE: legal,
   ICO_LINE: c.icoRegistration ? ` ICO registration number: ${c.icoRegistration}.` : "",
   YEAR: String(new Date().getFullYear()),
+  BUILD: Date.now().toString(36), // cache-buster on css/js links: a new value every build, so a deploy never pairs new HTML with an hour-old stylesheet
   UPDATED: c.privacyUpdated,
 };
 

@@ -127,6 +127,8 @@ p{margin:0}
 .tblock span:nth-child(odd){color:var(--steel);text-transform:uppercase;letter-spacing:.12em;font-size:10px;border-right:1px solid rgba(var(--line),.18)}
 .tblock span:nth-last-child(-n+2){border-bottom:0}
 @media (max-width:820px){.hero{height:440vh}.stage .wrap{grid-template-columns:1fr;padding-top:120px;padding-bottom:44px}.tblock{display:none}}
+/* short laptop windows: the headline scales with height as well as width, so the copy never climbs under the header */
+@media (min-width:821px) and (max-height:860px){.hero h1{font-size:clamp(34px,min(6.6vw,9.5vh),100px)}.stage .wrap{padding-top:96px;padding-bottom:40px}.hero .copy{gap:16px}}
 
 /* bands */
 .band{position:relative;padding-block:clamp(72px,10vw,140px);isolation:isolate}
@@ -284,6 +286,7 @@ p{margin:0}
 .enq-msg{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--steel);min-height:1.4em}
 .enq-msg.ok{color:var(--gold)}
 .enq-msg.err{color:var(--err)}
+.enq-msg a{color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px}
 .enq-done{border:1px solid rgba(var(--gold-rgb),.5);padding:24px;max-width:560px;display:flex;flex-direction:column;gap:10px}
 .enq-done .h3{color:var(--gold)}
 @media (max-width:480px){.enq .g{grid-template-columns:1fr}}
