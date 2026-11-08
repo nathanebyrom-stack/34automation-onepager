@@ -36,7 +36,7 @@
     var hero=document.getElementById('hero'),stage=document.getElementById('stage'),cv=document.getElementById('scrub');
     if(!hero||!cv||still)return;
     var c=navigator.connection||{};
-    if(c.saveData||/(^|-)2g|3g/.test(c.effectiveType||''))return; // slow connection: keep the poster
+    if(c.saveData||/(^|-)2g$/.test(c.effectiveType||''))return; // slow connection: keep the poster
     var N=192,PER=16,COLS=4,SHEETS=12;
     var small=Math.min(innerWidth*Math.min(devicePixelRatio||1,2),1600)<=900;
     var dir='video/sheets/'+(small?'m':'d')+'/';
@@ -84,7 +84,7 @@
     var sec=document.getElementById('why'),track=document.getElementById('whyTrack'),pin=document.getElementById('whyPin'),cv=document.getElementById('whyScrub');
     if(!sec||!track||!pin||!cv||still)return;
     var c=navigator.connection||{};
-    if(c.saveData||/(^|-)2g|3g/.test(c.effectiveType||''))return; // slow connection: keep the stacked photos
+    if(c.saveData||/(^|-)2g$/.test(c.effectiveType||''))return; // slow connection: keep the stacked photos
     var N=192,PER=16,COLS=4,SHEETS=12;
     var small=Math.min(innerWidth*Math.min(devicePixelRatio||1,2),1600)<=900;
     var dir='video/why/'+(small?'m':'d')+'/';
