@@ -110,8 +110,10 @@
         if(!img)return;s=Math.floor(f/PER);
       }
       var i=f%PER,sx=(i%COLS)*fw,sy=Math.floor(i/COLS)*fh;
-      // camera: a slow push-in (6% to 16%) with a drift left to right and a touch downward over the whole scroll, following the drill into the cut
-      var z=1.06+.10*cur,sc=Math.max(W/fw,H/fh)*z,dw=fw*sc,dh=fh*sc,dx=(W-dw)*(.18+.64*cur),dy=(H-dh)*(.42+.16*cur);
+      // camera: start wide, push in to 1.45x with an eased curve, drift slightly left to right, and keep the drill (dead centre of the frame)
+      // locked to the middle of the screen; the focal point eases down the shaft as the tip plunges. dx/dy are clamped so no edge ever shows.
+      var e=cur*cur*(3-2*cur),z=1+.45*e,sc=Math.max(W/fw,H/fh)*z,dw=fw*sc,dh=fh*sc,fx=.47+.06*cur,fy=.52+.16*e;
+      var dx=Math.min(0,Math.max(W-dw,W/2-fx*dw)),dy=Math.min(0,Math.max(H-dh,H/2-fy*dh));
       ctx.setTransform(dpr,0,0,dpr,0,0);ctx.drawImage(img,sx,sy,fw,fh,dx,dy,dw,dh);shown=key;
     }
     function render(p){
