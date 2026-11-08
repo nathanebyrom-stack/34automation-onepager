@@ -61,6 +61,12 @@ p{margin:0}
 .kick.hk>span{padding:10px 15px}
 .kick.hk>i{padding:10px 12px}
 @media (max-width:480px){.kick,.kick.hk{font-size:10.5px;letter-spacing:.1em}.kick>span,.kick.hk>span{padding:7px 8px}.kick>i,.kick.hk>i{padding:7px 8px}}
+/* hero kicker: set in the lede's type, the categories split by gold rules */
+.kick.hk{font-family:var(--f-body);font-size:clamp(17px,1.6vw,20px);font-weight:500;letter-spacing:0;text-transform:none;line-height:1.3;border:0;background:none;backdrop-filter:none;-webkit-backdrop-filter:none;color:var(--silver);gap:0 .55em;align-items:baseline}
+.kick.hk>i{background:none;color:var(--gold);padding:0;font-weight:600;letter-spacing:0}
+.kick.hk>span{padding:0;border:0}
+.kick.hk>i+span::before,.kick.hk>span+span::before{content:"|";color:var(--gold);font-weight:400;margin-right:.55em}
+@media (max-width:480px){.kick.hk{font-size:15px;letter-spacing:0}.kick.hk>span,.kick.hk>i{padding:0}}
 .h2{font-size:clamp(30px,4.6vw,56px);font-weight:800;font-stretch:125%;text-transform:uppercase;line-height:.98;letter-spacing:-.005em}
 .h3{font-size:clamp(18px,2vw,22px);font-weight:700;font-stretch:112%;text-transform:uppercase;letter-spacing:.02em;line-height:1.15}
 .lede{font-size:clamp(17px,1.6vw,20px);line-height:1.55;color:var(--steel);max-width:58ch}
