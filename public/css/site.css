@@ -198,7 +198,7 @@ p{margin:0}
    Scroll picks the frame; the copy cross-fades at each pass. The pin stays at night in both themes, like the hero. */
 .why.scrub{padding-block:0}
 .why.scrub .tex{display:none}
-.why.scrub .track{height:360vh}
+.why.scrub .track{height:648vh}
 .why.scrub .pin{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;background:var(--graphite);color:var(--silver);isolation:isolate}
 .why.scrub .poster,.why.scrub canvas{display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%}
 .why.scrub canvas{opacity:0;transition:opacity .6s var(--ease)}

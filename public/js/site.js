@@ -87,7 +87,7 @@
     addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',size);onScroll();
   })();
 
-  // why us: a second film. 192 frames of a drill in the cut (coolant, swarf, mist lifting through the light), packed 16 to a sheet; scroll picks the frame.
+  // why us: a second film. 192 frames of a twist drill plunging into aluminium, close up: coolant on the shank, swarf curling off, mist in the light. Packed 16 to a sheet; scroll picks the frame.
   (function(){
     var sec=document.getElementById('why'),track=document.getElementById('whyTrack'),pin=document.getElementById('whyPin'),cv=document.getElementById('whyScrub');
     if(!sec||!track||!pin||!cv||still)return;
@@ -95,7 +95,7 @@
     if(c.saveData||/(^|-)2g$/.test(c.effectiveType||''))return; // slow connection: keep the stacked photos
     var N=192,PER=16,COLS=4,SHEETS=12;
     var small=Math.min(innerWidth*Math.min(devicePixelRatio||1,2),1600)<=900;
-    var dir='video/why/v2/'+(small?'m':'d')+'/'; // v2: new frames get a new path, because /video/* is edge-cached for 30 days
+    var dir='video/why/v3/'+(small?'m':'d')+'/'; // v3: the drill close-up. New frames get a new path, because /video/* is edge-cached for 30 days
     var sheets=new Array(SHEETS),loaded=0,fw=0,fh=0,ctx=cv.getContext('2d',{alpha:false}),started=false;
     var txts=[].slice.call(track.querySelectorAll('.item .txt')),bar=document.getElementById('whyBar'),ops=[].slice.call(track.querySelectorAll('.rail .ops span'));
     var on=false,target=0,cur=0,raf=false,W=0,H=0,dpr=1,shown=-1;
