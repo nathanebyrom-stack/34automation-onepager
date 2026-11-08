@@ -87,7 +87,7 @@
     addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',size);onScroll();
   })();
 
-  // why us: a second film. 192 baked frames (three shots, a gold cutter pass between them) packed 16 to a sheet; scroll picks the frame.
+  // why us: a second film. 192 frames of a drill in the cut (coolant, swarf, mist lifting through the light), packed 16 to a sheet; scroll picks the frame.
   (function(){
     var sec=document.getElementById('why'),track=document.getElementById('whyTrack'),pin=document.getElementById('whyPin'),cv=document.getElementById('whyScrub');
     if(!sec||!track||!pin||!cv||still)return;
