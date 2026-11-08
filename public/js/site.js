@@ -93,7 +93,7 @@
     addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',size);onScroll();
   })();
 
-  // why us: a second film. 192 frames of a bronze-gold titanium-nitride drill plunging into aluminium: coolant flashing to steam off the hot flutes, swarf curling away. Packed 16 to a sheet; scroll picks the frame.
+  // why us: a second film. 192 frames of a drill spinning in the spindle under the one gold work light: coolant flooding the cut into suds, mist and smoke lifting through the beam, swarf drifting. Packed 16 to a sheet; scroll picks the frame.
   (function(){
     var sec=document.getElementById('why'),track=document.getElementById('whyTrack'),pin=document.getElementById('whyPin'),cv=document.getElementById('whyScrub');
     if(!sec||!track||!pin||!cv||still)return;
@@ -101,7 +101,7 @@
     if(c.saveData||/(^|-)2g$/.test(c.effectiveType||''))return; // slow connection: keep the stacked photos
     var N=192,PER=16,COLS=4,SHEETS=12;
     var small=Math.min(innerWidth*Math.min(devicePixelRatio||1,2),1600)<=900;
-    var dir='video/why/v4/'+(small?'m':'d')+'/'; // v4: titanium-nitride drill, coolant steam. New frames get a new path, because /video/* is edge-cached for 30 days
+    var dir='video/why/v5/'+(small?'m':'d')+'/'; // v5: drill, suds and smoke under the gold lamp (8 Nov). New frames get a new path, because /video/* is edge-cached for 30 days
     var sheets=new Array(SHEETS),loaded=0,fw=0,fh=0,ctx=cv.getContext('2d',{alpha:false}),started=false;
     var txts=[].slice.call(track.querySelectorAll('.item .txt')),bar=document.getElementById('whyBar'),ops=[].slice.call(track.querySelectorAll('.rail .ops span'));
     var on=false,target=0,cur=0,raf=false,W=0,H=0,dpr=1,shown=-1;
@@ -118,7 +118,7 @@
       var i=f%PER,sx=(i%COLS)*fw,sy=Math.floor(i/COLS)*fh;
       // camera: start wide, push in to 1.45x with an eased curve, drift slightly left to right, and keep the drill (dead centre of the frame)
       // locked to the middle of the screen; the focal point eases down the shaft as the tip plunges. dx/dy are clamped so no edge ever shows.
-      var e=cur*cur*(3-2*cur),z=1+.45*e,sc=Math.max(W/fw,H/fh)*z,dw=fw*sc,dh=fh*sc,fx=.47+.06*cur,fy=.44+.12*e; // this drill's tip sits just under mid-frame
+      var e=cur*cur*(3-2*cur),z=1+.45*e,sc=Math.max(W/fw,H/fh)*z,dw=fw*sc,dh=fh*sc,fx=.50+.04*cur,fy=.50+.10*e; // this drill's tip sits at centre, a little below mid-frame; the lamp stays top-left
       var dx=Math.min(0,Math.max(W-dw,W/2-fx*dw)),dy=Math.min(0,Math.max(H-dh,H/2-fy*dh));
       ctx.setTransform(dpr,0,0,dpr,0,0);ctx.drawImage(img,sx,sy,fw,fh,dx,dy,dw,dh);shown=key;
     }
