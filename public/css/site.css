@@ -115,6 +115,10 @@ p{margin:0}
   linear-gradient(180deg,rgba(var(--shade),.55) 0,rgba(var(--shade),0) 28%,rgba(var(--shade),0) 45%,rgba(var(--shade),.92) 100%),
   linear-gradient(90deg,rgba(var(--shade),.72) 0,rgba(var(--shade),.25) 55%,rgba(var(--shade),0) 100%)}
 .stage .wrap{position:relative;width:100%;padding-top:150px;padding-bottom:56px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:32px;align-items:end;will-change:opacity,transform}
+/* the statement that plays in the middle of the hero film, after the headline has gone: three lines, one per scroll beat, the last in gold */
+.stage .mid{position:absolute;inset:0;margin:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:.1em;text-align:center;padding:0 var(--gr) 0 var(--gl);pointer-events:none;opacity:0;background:radial-gradient(ellipse 60% 55% at 50% 50%,rgba(var(--shade),.62) 0,rgba(var(--shade),0) 100%)}
+.stage .mid span{display:block;font-family:var(--f-disp);font-stretch:125%;font-weight:800;text-transform:uppercase;font-size:clamp(21px,4.6vw,64px);line-height:1.04;letter-spacing:-.01em;color:var(--silver);opacity:0;transform:translateY(22px);will-change:opacity,transform;text-shadow:0 2px 28px rgba(14,15,17,.7)}
+.stage .mid em{font-style:normal;color:var(--gold)}
 .stage .bar{position:absolute;left:0;right:0;bottom:0;height:2px;background:rgba(var(--line),.12)}
 .stage .bar i{display:block;height:100%;width:100%;background:var(--gold);transform-origin:left;transform:scaleX(0)}
 .tblock .fr{font-variant-numeric:tabular-nums;color:var(--gold)}
@@ -311,7 +315,7 @@ p{margin:0}
   .js .rv{opacity:1;transform:none;transition:none}
   .hero{height:auto}
   .stage{position:relative;height:auto;min-height:min(92vh,900px)}
-  .stage canvas,.stage .bar{display:none}
+  .stage canvas,.stage .bar,.stage .mid{display:none}
   .head .rule{transform:none;transition:none}
   *{transition-duration:.01ms!important}
 }

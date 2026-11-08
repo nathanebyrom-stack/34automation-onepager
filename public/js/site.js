@@ -50,6 +50,7 @@
     var dir='video/sheets/'+(small?'m':'d')+'/';
     var sheets=new Array(SHEETS),loaded=0,fw=0,fh=0,ctx=cv.getContext('2d',{alpha:false});
     var copy=document.getElementById('heroCopy'),bar=document.getElementById('scrubBar'),no=document.getElementById('frameNo');
+    var mid=document.getElementById('heroMid'),midLines=mid?[].slice.call(mid.children):[];
     var target=0,shown=-1,cur=0,raf=false,W=0,H=0,dpr=1;
     function size(){dpr=Math.min(devicePixelRatio||1,1.5);W=stage.clientWidth;H=stage.clientHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);shown=-1;draw();}
     function draw(){
@@ -73,7 +74,12 @@
       var span=hero.offsetHeight-stage.clientHeight,y=Math.min(Math.max(-hero.getBoundingClientRect().top,0),span),p=span>0?y/span:0;
       target=p*(N-1);
       if(bar)bar.style.transform='scaleX('+p+')';
-      if(copy){var k=Math.min(Math.max((p-.5)/.3,0),1);copy.style.opacity=1-k;copy.style.transform='translateY('+(k*24)+'px)';}
+      if(copy){var k=Math.min(Math.max((p-.42)/.13,0),1);copy.style.opacity=1-k;copy.style.transform='translateY('+(k*24)+'px)';}
+      if(mid){ // the statement: lines arrive at 60%, 67% and 74% of the scroll, after the headline has cleared, hold, and leave together at 93%
+        var out=1-Math.min(Math.max((p-.93)/.06,0),1),vis=Math.min(Math.max((p-.58)/.08,0),1)*out;
+        mid.style.opacity=vis.toFixed(3);
+        midLines.forEach(function(el,i){var a=Math.min(Math.max((p-(.60+i*.07))/.08,0),1);el.style.opacity=(a*out).toFixed(3);el.style.transform='translateY('+((1-a)*22).toFixed(1)+'px)';});
+      }
       if(!raf){raf=true;requestAnimationFrame(tick);}
     }
     // load order: first sheet, last sheet, then the middles, so the scrub gets finer as it arrives
