@@ -103,15 +103,16 @@
     function size(){dpr=Math.min(devicePixelRatio||1,1.5);W=pin.clientWidth;H=pin.clientHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);shown=-1;drawFrame();}
     function drawFrame(){
       if(!fw)return;
-      var f=Math.round(cur*(N-1));if(f===shown)return;
+      var f=Math.round(cur*(N-1)),key=f+'|'+Math.round(cur*600);if(key===shown)return; // the camera moves between frames too, so redraw on progress, not just on frame
       var s=Math.floor(f/PER),img=sheets[s];
       if(!img){ // nearest sheet that has arrived
         for(var d=1;d<SHEETS&&!img;d++){img=sheets[s-d]||sheets[s+d];if(img){f=(sheets[s-d]?(s-d)*PER+PER-1:(s+d)*PER);}}
         if(!img)return;s=Math.floor(f/PER);
       }
       var i=f%PER,sx=(i%COLS)*fw,sy=Math.floor(i/COLS)*fh;
-      var sc=Math.max(W/fw,H/fh),dw=fw*sc,dh=fh*sc,dx=(W-dw)*.5,dy=(H-dh)*.5;
-      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.drawImage(img,sx,sy,fw,fh,dx,dy,dw,dh);shown=f;
+      // camera: a slow push-in (6% to 16%) with a drift left to right and a touch downward over the whole scroll, following the drill into the cut
+      var z=1.06+.10*cur,sc=Math.max(W/fw,H/fh)*z,dw=fw*sc,dh=fh*sc,dx=(W-dw)*(.18+.64*cur),dy=(H-dh)*(.42+.16*cur);
+      ctx.setTransform(dpr,0,0,dpr,0,0);ctx.drawImage(img,sx,sy,fw,fh,dx,dy,dw,dh);shown=key;
     }
     function render(p){
       drawFrame();
