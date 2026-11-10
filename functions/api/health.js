@@ -1,6 +1,7 @@
 // GET /api/health: is the enquiry form wired up? Reports status only, never values.
 export async function onRequestGet({ env: raw }) {
   const env = Object.fromEntries(Object.entries(raw || {}).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v]));
+  if (env.RESEND_KEY) env.RESEND_API_KEY = env.RESEND_KEY; // RESEND_KEY (newer secret) wins over RESEND_API_KEY
   let resend = "missing";
   if (env.RESEND_API_KEY) {
     try {

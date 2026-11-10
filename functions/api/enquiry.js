@@ -23,6 +23,7 @@ const EMAIL = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]+$/;
 export async function onRequestPost({ request, env: rawEnv }) {
   // trim pasted settings: a stray space or newline in a dashboard secret breaks verification
   const env = Object.fromEntries(Object.entries(rawEnv || {}).map(([k, v]) => [k, typeof v === "string" ? v.trim() : v]));
+  if (env.RESEND_KEY) env.RESEND_API_KEY = env.RESEND_KEY; // RESEND_KEY (newer secret) wins over RESEND_API_KEY
   const missing = ["RESEND_API_KEY", "ENQUIRY_TO", "ENQUIRY_FROM"].filter((k) => !env[k]);
   if (!env.TURNSTILE_SECRET_KEY && env.ALLOW_NO_TURNSTILE !== "1") missing.push("TURNSTILE_SECRET_KEY");
   if (missing.length) return json({ ok: false, code: "not_configured", missing }, 500); // names only, never values
