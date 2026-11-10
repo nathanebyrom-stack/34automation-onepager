@@ -21,8 +21,9 @@ const oneLine = (s) => s.replace(/[\r\n]+/g, " ");
 const EMAIL = /^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]+$/;
 
 export async function onRequestPost({ request, env }) {
-  if (!env.RESEND_API_KEY || !env.ENQUIRY_TO || !env.ENQUIRY_FROM) return json({ ok: false, code: "not_configured" }, 500);
-  if (!env.TURNSTILE_SECRET_KEY && env.ALLOW_NO_TURNSTILE !== "1") return json({ ok: false, code: "not_configured" }, 500);
+  const missing = ["RESEND_API_KEY", "ENQUIRY_TO", "ENQUIRY_FROM"].filter((k) => !env[k]);
+  if (!env.TURNSTILE_SECRET_KEY && env.ALLOW_NO_TURNSTILE !== "1") missing.push("TURNSTILE_SECRET_KEY");
+  if (missing.length) return json({ ok: false, code: "not_configured", missing }, 500); // names only, never values
 
   const raw = await request.text();
   if (raw.length > MAX_BODY) return json({ ok: false, code: "too_large" }, 413);
