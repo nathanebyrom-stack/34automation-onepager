@@ -52,12 +52,14 @@ export async function onRequestPost({ request, env }) {
     form.append("response", token);
     const ip = request.headers.get("CF-Connecting-IP");
     if (ip) form.append("remoteip", ip);
-    let ok = false;
+    let ok = false, detail = [];
     try {
       const r = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form });
-      ok = !!(await r.json()).success;
-    } catch { ok = false; }
-    if (!ok) return json({ ok: false, code: "spam_check" }, 400);
+      const v = await r.json();
+      ok = !!v.success;
+      detail = Array.isArray(v["error-codes"]) ? v["error-codes"] : [];
+    } catch { ok = false; detail = ["siteverify_unreachable"]; }
+    if (!ok) { console.error("turnstile", detail.join(",")); return json({ ok: false, code: "spam_check", detail }, 400); }
   }
 
   const first = f.name.split(/\s+/)[0];
@@ -84,7 +86,7 @@ export async function onRequestPost({ request, env }) {
   };
 
   const sent = await send(env, notify);
-  if (!sent) return json({ ok: false, code: "send_failed" }, 502);
+  if (!sent.ok) return json({ ok: false, code: "send_failed", status: sent.status }, 502);
 
   if (env.SEND_ACK !== "0") {
     const ackText =
@@ -123,9 +125,9 @@ async function send(env, msg) {
       body: JSON.stringify(msg),
     });
     if (!r.ok) console.error("resend", r.status, await r.text());
-    return r.ok;
+    return { ok: r.ok, status: r.status };
   } catch (e) {
     console.error("resend", e && e.message);
-    return false;
+    return { ok: false, status: 0 };
   }
 }
