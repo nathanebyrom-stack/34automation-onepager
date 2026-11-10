@@ -290,7 +290,7 @@ p{margin:0}
 .enq-msg{font-family:var(--f-mono);font-size:12px;letter-spacing:.06em;color:var(--steel);min-height:1.4em}
 .enq-msg.ok{color:var(--gold)}
 .enq-msg.err{color:var(--err)}
-.enq-msg a{color:var(--gold-ink);text-decoration:underline;text-underline-offset:3px}
+.enq-msg a{color:var(--gold);text-decoration:underline;text-underline-offset:3px}
 .enq-done{border:1px solid rgba(var(--gold-rgb),.5);padding:24px;max-width:560px;display:flex;flex-direction:column;gap:10px}
 .enq-done .h3{color:var(--gold)}
 @media (max-width:480px){.enq .g{grid-template-columns:1fr}}

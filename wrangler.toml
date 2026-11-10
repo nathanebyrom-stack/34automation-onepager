@@ -1,3 +1,10 @@
 name = "34automation"
 pages_build_output_dir = "./dist"
 compatibility_date = "2026-11-01"
+
+# Plain (non-secret) settings for the enquiry form. Secrets (RESEND_API_KEY, TURNSTILE_SECRET_KEY)
+# are set in Cloudflare Pages > Settings > Variables and secrets, never here.
+[vars]
+TURNSTILE_SITE_KEY = "0x4AAAAAAF7_jl1sPwHjzzTl"
+ENQUIRY_TO = "nathan@34automation.co.uk"
+ENQUIRY_FROM = "34 Automation <enquiries@34automation.co.uk>"
