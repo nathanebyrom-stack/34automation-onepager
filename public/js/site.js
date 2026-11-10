@@ -197,7 +197,7 @@
       data.turnstile=TS.token();
       btn.disabled=true;say('Sending…');
       fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
-        .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok){var e=new Error(r.status);e.code=j&&j.code;throw e;}return j;});})
+        .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok){var e=new Error(r.status);e.code=j&&j.code;e.detail=j&&(j.detail||j.status);throw e;}return j;});})
         .then(function(){
           var d=document.createElement('div');d.className='enq-done';d.setAttribute('role','status');
           var h=document.createElement('h3');h.className='h3';h.textContent='Got it, '+name.split(' ')[0]+'.';
@@ -213,7 +213,7 @@
             msg.textContent='The form can’t take messages right now, so ';msg.className='enq-msg err';msg.appendChild(a);msg.appendChild(document.createTextNode(': your message is already written.'));
             return;
           }
-          say('That didn’t send. Please try again in a minute.','err');
+          say('That didn’t send. Please try again in a minute.'+(err&&err.code?' ['+err.code+(err.detail?': '+err.detail:'')+']':''),'err');
         });
     });
   })();
