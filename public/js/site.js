@@ -20,7 +20,7 @@
   (function(){
     if(still||typeof Lenis!=='function')return;
     var PACE=.5,HOLD=650; // PACE: share of normal scroll speed outside the films. HOLD: ms the page rests at a section top
-    var lenis,secs=[].slice.call(document.querySelectorAll('main > section')),until=0;
+    var lenis,secs=[].slice.call(document.querySelectorAll('main > section')),SWIPES=2;
     var hero=document.getElementById('hero'),why=document.getElementById('why'),whyTrack=document.getElementById('whyTrack');
     function span(el,y){var r=el.getBoundingClientRect();return [r.top+y,r.top+y+el.offsetHeight-innerHeight];}
     function inFilm(at){ // is this scroll position inside a film's scrub? (only when the film actually runs)
@@ -29,20 +29,33 @@
       if(why&&whyTrack&&why.classList.contains('scrub')){s=span(whyTrack,y);if(at>=s[0]&&at<s[1])return true;}
       return false;
     }
-    function stops(){var y=lenis.scroll,max=lenis.limit-2;return secs.map(function(s){return Math.round(s.getBoundingClientRect().top+y);}).filter(function(v){return v>2&&v<max;});}
+    // the pause: on a phone it lasts two thumb swipes (the second one carries on); with a wheel or trackpad, HOLD ms.
+    // Once released, that section edge doesn't catch again until the page has moved half a screen away from it.
+    var rest=null,passed=null;
+    function stops(){var y=lenis.scroll,max=lenis.limit-2;return secs.map(function(s){return Math.round(s.getBoundingClientRect().top+y);}).filter(function(v){return v>2&&v<max&&v!==passed;});}
+    function release(){passed=rest.b;rest=null;}
     function pause(e){
-      var ev=e.event,dy=e.deltaY;
-      if(!lenis||ev.type==='touchstart'||ev.ctrlKey)return true;
-      if(performance.now()<until){if(ev.cancelable)ev.preventDefault();return false;} // resting: swallow the input, trackpad and flick momentum included
-      if(!dy)return true;
-      if(ev.type!=='touchend'&&!inFilm(dy>0?lenis.targetScroll:lenis.targetScroll-1)){dy*=PACE;e.deltaY=dy;e.deltaX*=PACE;} // Lenis reads the deltas after this returns
-      var from=lenis.targetScroll,to=from+(ev.type==='touchend'?Math.sign(dy)*Math.pow(Math.abs(lenis.velocity),1.7):dy),hit=null;
+      var ev=e.event,t=ev.type,dy=e.deltaY,touch=t.indexOf('touch')===0;
+      if(!lenis||ev.ctrlKey)return true;
+      if(rest){
+        if(touch&&t==='touchstart'){if(++rest.n>=SWIPES)release();else return false;} // false also stops Lenis cancelling the settle on touch
+        else if(!touch&&performance.now()>=rest.until)release();
+        else if(dy&&Math.sign(dy)!==rest.dir&&t!=='touchend')release(); // heading back the way they came: let them
+        else{if(ev.cancelable)ev.preventDefault();return false;} // resting: swallow the input, flick momentum included
+      }
+      if(t==='touchstart'||!dy)return true;
+      if(t!=='touchend'&&!inFilm(dy>0?lenis.targetScroll:lenis.targetScroll-1)){dy*=PACE;e.deltaY=dy;e.deltaX*=PACE;} // Lenis reads the deltas after this returns
+      var from=lenis.targetScroll,to=from+(t==='touchend'?Math.sign(dy)*Math.pow(Math.abs(lenis.velocity),1.7):dy),hit=null;
       stops().forEach(function(b){if((dy>0&&from<b&&to>=b)||(dy<0&&from>b&&to<=b)){if(hit===null||Math.abs(b-from)<Math.abs(hit-from))hit=b;}});
       if(hit===null)return true;
-      lenis.scrollTo(hit,{lerp:.12});until=performance.now()+HOLD;
+      lenis.scrollTo(hit,{lerp:.12});rest={b:hit,dir:Math.sign(dy),n:0,until:performance.now()+HOLD};
       if(ev.cancelable)ev.preventDefault();return false;
     }
     lenis=new Lenis({syncTouch:true,lerp:.09,anchors:true,autoRaf:true,virtualScroll:pause});
+    lenis.on('scroll',function(){ // a nav link, the keyboard or the scrollbar moved the page: drop any pause
+      if(rest&&Math.abs(lenis.targetScroll-rest.b)>4)rest=null;
+      if(passed!==null&&Math.abs(lenis.scroll-passed)>innerHeight*.5)passed=null;
+    });
     window.__pace=lenis; // handle for testing
   })();
   // the contact address for the email fallbacks. Kept here, not read from the page, because Cloudflare's email obfuscation rewrites addresses in the live HTML.
