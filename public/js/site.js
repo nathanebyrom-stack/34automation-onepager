@@ -59,11 +59,25 @@
     addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(px);}},{passive:true}); px();
   }
 
-  // S·04: five keys light one by one as the card climbs the screen, then the panel's screen reads AUTOMATION (after the fifth key)
+  // S·04: five keys light one by one as the card climbs the screen, then the panel's screen types THE DEVIL'S / IN THE DETAIL (after the fifth key).
+  // Scroll back above it and the screen clears, so it types again next time. Reduced motion: the full line, no typing. Without JS the markup already holds the full line.
   (function(){
     var dash=document.getElementById('dash');if(!dash)return;
     var ks=[].slice.call(dash.querySelectorAll('.k')),fr=dash.parentElement,t=false,last=-1,S=ks.length+2;
-    function paint(){t=false;var r=fr.getBoundingClientRect(),p=Math.min(Math.max((innerHeight-r.top)/(innerHeight*.85),0),1);if(still)p=1;var n=Math.min(Math.floor(p*S),S-1);if(p>=1)n=S-1;if(n===last)return;last=n;ks.forEach(function(k,i){k.classList.toggle('on',i<n);});dash.classList.toggle('on',n>ks.length);}
+    var LINES=['THE DEVIL\u2019S','IN THE DETAIL'],texts=[].slice.call(dash.querySelectorAll('.scr text')),tmr=0,lit=false;
+    function show(li,n){texts.forEach(function(tx){var ls=tx.querySelectorAll('.s4l');[].forEach.call(ls,function(l,i){l.querySelector('.t').textContent=i<li?LINES[i]:i===li?LINES[i].slice(0,n):'';l.classList.toggle('at',i===li);});});}
+    function type(li,n){
+      if(n>LINES[li].length){if(li+1<LINES.length){tmr=setTimeout(function(){type(li+1,0)},320);return;}dash.classList.remove('typing');return;}
+      show(li,n);var ch=LINES[li].charAt(n-1);tmr=setTimeout(function(){type(li,n+1)},n===0?0:(ch===' '?130:62+Math.random()*58));
+    }
+    function screen(on){
+      if(on===lit)return;lit=on;clearTimeout(tmr);
+      if(!on){dash.classList.remove('typing');show(0,0);return;}
+      if(still){show(LINES.length-1,LINES[LINES.length-1].length);return;}
+      dash.classList.add('typing');show(0,0);tmr=setTimeout(function(){type(0,0)},380);
+    }
+    show(0,0);
+    function paint(){t=false;var r=fr.getBoundingClientRect(),p=Math.min(Math.max((innerHeight-r.top)/(innerHeight*.85),0),1);if(still)p=1;var n=Math.min(Math.floor(p*S),S-1);if(p>=1)n=S-1;if(n===last)return;last=n;ks.forEach(function(k,i){k.classList.toggle('on',i<n);});dash.classList.toggle('on',n>ks.length);screen(n>ks.length);}
     addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(paint);}},{passive:true});addEventListener('resize',paint);paint();
   })();
 
