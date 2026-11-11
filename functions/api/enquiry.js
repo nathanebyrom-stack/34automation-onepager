@@ -10,6 +10,7 @@
 //   ENQUIRY_FROM          text     sender, e.g. 34 Automation <enquiries@34automation.co.uk>
 //   SEND_ACK              text     "0" to switch off the visitor acknowledgement (default on)
 //   ALLOW_NO_TURNSTILE    text     "1" only for local testing
+//   TURNSTILE_VERIFY_URL  text     local testing only: a stand-in for Turnstile's siteverify (never set in Cloudflare)
 
 const MAX_BODY = 20_000;
 const INTERESTS = ["Website", "Marketing", "Automation", "Not sure yet"];
@@ -57,7 +58,7 @@ export async function onRequestPost({ request, env: rawEnv }) {
     if (ip) form.append("remoteip", ip);
     let ok = false, detail = [];
     try {
-      const r = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form });
+      const r = await fetch(env.TURNSTILE_VERIFY_URL || "https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form }); // TURNSTILE_VERIFY_URL: local testing only
       const v = await r.json();
       ok = !!v.success;
       detail = Array.isArray(v["error-codes"]) ? v["error-codes"] : [];
