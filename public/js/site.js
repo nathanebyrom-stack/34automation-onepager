@@ -12,6 +12,9 @@
     paint();
   })();
   var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  // the contact address for the email fallbacks. Kept here, not read from the page, because Cloudflare's email obfuscation rewrites addresses in the live HTML.
+  // Keep in step with publicEmail in site.config.json.
+  var MAILTO='nathan@34automation.co.uk';
   // header turns solid once the hero scrolls away
   var hdr=document.getElementById('hdr');
   function onHdr(){hdr.classList.toggle('on',scrollY>40);} onHdr(); addEventListener('scroll',onHdr,{passive:true});
@@ -193,7 +196,7 @@
     f.addEventListener('input',function(){if(msg.classList.contains('err'))say('');});
     var EMAIL=/^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]+$/; // the same rule the server uses
     function byEmail(lead,data){ // hand the visitor a ready-made email with their message in it
-      var to=(document.querySelector('.ft a[href^="mailto:"]')||{}).href||'';
+      var to='mailto:'+MAILTO;
       var lines=[data.message,'',data.name+(data.company?', '+data.company:''),data.email].concat(data.phone?[data.phone]:[]).concat(data.interest.length?['Interested in: '+data.interest.join(', ')]:[]);
       var a=document.createElement('a');a.href=to+(to.indexOf('?')>-1?'&':'?')+'subject='+encodeURIComponent('Enquiry from '+data.name)+'&body='+encodeURIComponent(lines.join('\n'));a.textContent='send it by email instead';
       msg.textContent=lead;msg.className='enq-msg err';msg.appendChild(a);msg.appendChild(document.createTextNode(': your message is already written.'));
@@ -235,7 +238,7 @@
     var f=document.getElementById('rev'),btn=document.getElementById('revBtn'),msg=document.getElementById('revMsg'),wrap=document.getElementById('revWrap');
     if(!f)return;
     var biz=document.getElementById('r-biz'),txt=document.getElementById('r-msg'),cnt=document.getElementById('r-cnt'),live=document.getElementById('r-live'),hp=document.getElementById('r-web');
-    var mail=f.getAttribute('data-email')||'',MAX=280,lastLive='';
+    var mail=MAILTO,MAX=280,lastLive='';
     function say(t,k,field){msg.textContent=t;msg.className='enq-msg'+(k?' '+k:'');[biz,txt].forEach(function(x){if(x===field){x.setAttribute('aria-invalid','true');x.setAttribute('aria-describedby',x.getAttribute('data-hint')+' revMsg');}else{x.removeAttribute('aria-invalid');x.setAttribute('aria-describedby',x.getAttribute('data-hint'));}});}
     [biz,txt].forEach(function(x){x.setAttribute('data-hint',x.getAttribute('aria-describedby'));});
     function count(){var n=txt.value.length;cnt.textContent=n+' / '+MAX;cnt.parentNode.classList.toggle('near',n>=260);

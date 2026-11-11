@@ -213,7 +213,7 @@
           <p>Worked with us, or just had a look round the site? Score us out of 5 and, if you want, tell us why in a line or two.</p>
           <p>We check every review before it shows. Genuine reviews go up whether they're good or bad. <span class="pol">We'd only leave one off if it's abusive, breaks the law or shares someone's personal details.</span></p>
         </div>
-        <form class="enq rvf" id="rev" action="/api/review" method="post" novalidate data-email="{{PUBLIC_EMAIL}}">
+        <form class="enq rvf" id="rev" action="/api/review" method="post" novalidate>
           <div class="g">
             <div class="f w"><label for="r-biz">Business name <i>*</i></label><input id="r-biz" name="business" autocomplete="organization" required maxlength="80" aria-describedby="r-biz-h"><span class="hint" id="r-biz-h">Shows with your review.</span></div>
             <fieldset class="w" aria-describedby="r-rate-h">
@@ -269,7 +269,7 @@
       </div>
       <div class="ask rv" style="--i:1">
         <div class="img"><img src="img/13-measure.webp" alt="A pair of working hands closing a micrometer onto a small machined steel part" loading="lazy" width="1600" height="893"></div>
-        <div class="in">
+        <div class="in"><!--email_off--><!-- keeps Cloudflare's email obfuscation off this card, so the mailto keeps its subject and the address shows without JS -->
           <h3 class="h3">How to ask</h3>
           <dl class="tb">
             <div><dt>Email</dt><dd>{{REPORT_EMAIL}}</dd></div>
@@ -279,7 +279,7 @@
           <a class="btn solid" href="mailto:{{REPORT_EMAIL}}?subject=Website%20report%20request&amp;body=Website%20address%3A%20%0D%0ABusiness%20name%3A%20%0D%0A">Email us for a report <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
           <span class="lbl mail">{{REPORT_EMAIL}}</span>
           <p class="note">We use your email to check the site's yours and to send your report. <a href="/privacy/">Privacy notice</a>.</p>
-        </div>
+        <!--/email_off--></div>
       </div>
     </div>
   </div>

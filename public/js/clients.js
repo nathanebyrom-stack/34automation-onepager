@@ -5,7 +5,8 @@
   var lf=document.getElementById('loginForm');
   if(lf){
     var u=document.getElementById('u'),pw=document.getElementById('p'),show=document.getElementById('pShow'),btn=document.getElementById('loginBtn'),lm=document.getElementById('loginMsg');
-    var API=lf.getAttribute('data-api'),BASE=lf.getAttribute('data-clients-url'),MAIL=lf.getAttribute('data-email')||'',busy=false;
+    // MAIL: kept here, not read from the page, because Cloudflare's email obfuscation rewrites addresses in the live HTML. Keep in step with publicEmail in site.config.json.
+    var API=lf.getAttribute('data-api'),BASE=lf.getAttribute('data-clients-url'),MAIL='nathan@34automation.co.uk',busy=false;
     function lsay(t,k,bad){lm.textContent=t;lm.className='enq-msg'+(k?' '+k:'');[u,pw].forEach(function(x){if(bad&&bad.indexOf(x)>-1){x.setAttribute('aria-invalid','true');x.setAttribute('aria-describedby','loginMsg');}else{x.removeAttribute('aria-invalid');x.removeAttribute('aria-describedby');}});}
     function sayMail(lead,tail){ // a message with the contact address as a link
       lm.textContent=lead;lm.className='enq-msg err';var a=document.createElement('a');a.href='mailto:'+MAIL;a.textContent=MAIL;lm.appendChild(a);lm.appendChild(document.createTextNode(tail||'.'));
