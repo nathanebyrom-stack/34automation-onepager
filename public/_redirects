@@ -1,6 +1,10 @@
 /index.html        /            301
 /contact           /#contact    301
 /contact/          /#contact    301
+/review            /#reviews    301
+/review/           /#reviews    301
+/reviews           /#reviews    301
+/reviews/          /#reviews    301
 /client            /clients/    301
 /client/           /clients/    301
 /privacy-policy    /privacy/    301

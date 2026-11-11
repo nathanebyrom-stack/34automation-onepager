@@ -46,6 +46,10 @@
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
+/* scroll pace (11 Nov): Lenis drives the scroll, so the browser's own smooth scroll must stay out of its way */
+html.lenis,html.lenis body{height:auto}
+html.lenis{scroll-behavior:auto}
+.lenis.lenis-stopped{overflow:clip}
 body{margin:0;background:var(--graphite);color:var(--silver);font-family:var(--f-body);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:clip}
 body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:40;background:var(--graphite)}
 img{max-width:100%;display:block}
