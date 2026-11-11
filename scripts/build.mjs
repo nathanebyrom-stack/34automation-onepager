@@ -30,6 +30,7 @@ const vals = {
   BUILD: Date.now().toString(36), // cache-buster on css/js links: a new value every build, so a deploy never pairs new HTML with an hour-old stylesheet
   UPDATED: c.privacyUpdated,
   REPORT_EMAIL: c.reportEmail || c.publicEmail,
+  SIGNIN_API: c.signInApi,
 };
 
 // Published reviews: public/reviews.json, rendered into the home page at build time (no layout shift, works without JS).

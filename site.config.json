@@ -12,5 +12,6 @@
   "privacyUpdated": "11 November 2026",
   "reportEmail": "jenny@34automation.co.uk",
   "reviewsSummary": true,
-  "_reviews": "reviewsSummary: true shows the review count and the average score above published reviews (only when there is at least one). false hides both. Published reviews live in public/reviews.json."
+  "_reviews": "reviewsSummary: true shows the review count and the average score above published reviews (only when there is at least one). false hides both. Published reviews live in public/reviews.json.",
+  "signInApi": "https://faaraefaigsngvuuvsyv.supabase.co/functions/v1/brand-builder"
 }

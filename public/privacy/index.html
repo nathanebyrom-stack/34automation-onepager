@@ -6,20 +6,26 @@
 <title>Privacy notice | 34 Automation</title>
 <meta name="description" content="How 34 Automation handles the details you send through this website.">
 <link rel="canonical" href="{{SITE_URL}}/privacy/">
-<meta name="theme-color" content="#0E0F11">
-<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#0E0F11" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#ECEEF0" media="(prefers-color-scheme: light)">
+<meta name="color-scheme" content="dark light">
 <link rel="icon" href="/favicon.ico" sizes="32x32">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/css/site.css?v={{BUILD}}">
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('34-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}try{var c=navigator.connection||{};if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!c.saveData&&!/(^|-)2g$/.test(c.effectiveType||''))document.documentElement.classList.add('film')}catch(e){}</script>
 </head>
 <body>
 <header class="hdr on">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="34 Automation, home"><img src="/img/logo.svg" alt="34 Automation" width="220" height="32"></a>
+    <a class="logo" href="/" aria-label="34 Automation, home"><img class="ln" src="/img/logo.svg" alt="34 Automation" width="220" height="32"><img class="ld" src="/img/logo-day.svg" alt="34 Automation" width="220" height="32"></a>
     <nav class="nav" aria-label="Main">
       <a class="ca" href="/clients/"><span class="long">Client area</span><span class="short">Clients</span></a>
       <a class="btn" href="/#contact"><span class="long">Start a conversation</span><span class="short">Talk to us</span></a>
+      <div class="mode" role="group" aria-label="Colour theme">
+        <button type="button" id="mNight" data-mode="dark" aria-pressed="false" aria-label="Night"><svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M7.5 1a5 5 0 1 0 3.5 8.6A4.2 4.2 0 0 1 7.5 1z"/></svg><span class="t">Night</span></button>
+        <button type="button" id="mDay" data-mode="light" aria-pressed="false" aria-label="Day"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="6" cy="6" r="2.4"/><path d="M6 .6v1.6M6 9.8v1.6M.6 6h1.6M9.8 6h1.6M2.2 2.2l1.1 1.1M8.7 8.7l1.1 1.1M2.2 9.8l1.1-1.1M8.7 3.3l1.1-1.1"/></svg><span class="t">Day</span></button>
+      </div>
     </nav>
   </div>
 </header>
@@ -36,9 +42,11 @@
       <h3 class="h3">What we collect</h3>
       <ul>
         <li><b>Enquiry form:</b> your name, email and message, plus your company, phone number and the services you tick if you choose to add them.</li>
-        <li><b>Spam check:</b> when you send the form, Cloudflare Turnstile checks your browser to confirm you're a person. It uses technical signals such as your IP address and does not set tracking cookies.</li>
+        <li><b>Reviews:</b> your business name, your score out of 5, your comment if you add one, and the date you sent it. If we publish your review, your business name, score and comment show on this website for anyone to read.</li>
+        <li><b>Website report requests:</b> when you email jenny@34automation.co.uk, we receive your email address, your name if your email includes it, your website address and anything else you write. We check your email address is at the same domain as the website. To write the report, we look at the public pages of your website and of five competitors' websites.</li>
+        <li><b>Spam check:</b> when you send a form on this site, Cloudflare Turnstile checks your browser to confirm you're a person. It uses technical signals such as your IP address and does not set tracking cookies.</li>
         <li><b>Brand Builder free preview:</b> if you send your answers from the free preview, we receive your name, email and the answers you chose to send.</li>
-        <li><b>Client area:</b> if we send you a personal Brand Builder link, we store the answers and images you add there, the date you open and send it, and a random identifier for the device you first open it on.</li>
+        <li><b>Client area:</b> if we set you up with a username and password, we store your username and a scrambled version of your password (a hash). We never store the password itself and can't read it back. To protect accounts from password guessing, we count failed sign-in attempts against the username and the IP address they came from, stored only in scrambled form. In the Brand Builder we store the answers and images you add, the date you open and send it, and a random identifier for the device you use it on.</li>
         <li><b>Visit statistics:</b> we count page visits with Cloudflare Web Analytics, which does not use cookies or identify you.</li>
       </ul>
 
@@ -46,41 +54,48 @@
       <ul>
         <li>To reply to your enquiry and talk about work you've asked about. Our lawful basis is our legitimate interest in answering people who contact us, and taking steps at your request before any contract.</li>
         <li>To deliver Brand Builder work you've asked us to do. Our lawful basis is the contract, or the steps before it.</li>
-        <li>To keep the site and the form free of spam and abuse. Our lawful basis is legitimate interests.</li>
+        <li>To publish reviews and check they're genuine first. Our lawful basis is legitimate interests: showing honest feedback about us, good or bad.</li>
+        <li>To check a website is yours and send the report you asked for. Our lawful basis is legitimate interests in answering requests, and taking steps at your request before any contract.</li>
+        <li>To let you sign in to the client area and keep accounts secure. Our lawful basis is the contract, or the steps before it, and our legitimate interest in keeping accounts safe.</li>
+        <li>To keep the site and its forms free of spam and abuse. Our lawful basis is legitimate interests.</li>
       </ul>
       <p>We don't sell your details, we don't add you to a mailing list, and we don't use them for automated decisions about you.</p>
 
       <h3 class="h3">Who handles it for us</h3>
       <ul>
-        <li><b>Cloudflare</b>: hosts this website, runs the spam check and the visit statistics.</li>
-        <li><b>Resend</b>: delivers the enquiry email to us and the acknowledgement to you.</li>
-        <li><b>IONOS</b>: hosts our email inbox.</li>
-        <li><b>Supabase</b>: stores Brand Builder answers on servers in London.</li>
+        <li><b>Cloudflare</b>: hosts this website, runs the spam checks and the visit statistics.</li>
+        <li><b>Resend</b>: delivers enquiries and new reviews to us, and the acknowledgement to you.</li>
+        <li><b>IONOS</b>: hosts our email inboxes, including the one that receives report requests.</li>
+        <li><b>Supabase</b>: stores Brand Builder answers and client-area sign-in details on servers in London.</li>
+        <li><b>GitHub</b>: hosts the Brand Builder pages and the files this website is built from, including published reviews.</li>
         <li><b>FormSubmit</b>: forwards answers from the free Brand Builder preview to our inbox.</li>
       </ul>
       <p>Some of these companies are based in the United States, so your data may be handled there. Where that happens, the transfer is covered by safeguards recognised under UK law, such as the UK–US data bridge or the UK International Data Transfer Addendum.</p>
 
       <h3 class="h3">How long we keep it</h3>
-      <p>Enquiries we don't take further are deleted after 24 months. If we work together, we keep project records for six years after the work ends, for tax and accounting reasons. Brand Builder answers are deleted 12 months after the project closes, unless you ask us to delete them sooner.</p>
+      <p>Enquiries and report requests we don't take further are deleted after 24 months, along with any report we sent. If we work together, we keep project records for six years after the work ends, for tax and accounting reasons. Brand Builder answers, your client-area username and your password hash are deleted 12 months after the project closes, unless you ask us to delete them sooner. Failed sign-in counts are deleted after 24 hours. Published reviews stay up while this site is live, unless you ask us to take one down. Reviews we don't publish are deleted after six months.</p>
 
       <h3 class="h3">Your rights</h3>
       <p>You can ask us for a copy of your data, ask us to correct it or delete it, object to how we use it, or ask us to restrict it or send it to you in a portable format. Email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a> and we'll reply within one month.</p>
+      <p>To have your review taken down, email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a> with the business name and roughly when you sent it. We may ask you to show it's yours first.</p>
       <p>If you're unhappy with how we've handled your data, you can complain to the Information Commissioner's Office at <a href="https://ico.org.uk/make-a-complaint/" rel="noopener">ico.org.uk</a> or on 0303 123 1113. We'd appreciate the chance to put it right first.</p>
 
       <h3 class="h3">Cookies</h3>
-      <p>This site doesn't set cookies. The Brand Builder saves your progress in your own browser so you don't lose work. That storage is needed for the tool to do its job and stays on your device.</p>
+      <p>This site doesn't set tracking or advertising cookies. When you send a form, Cloudflare's spam check may set a short-lived security cookie that's needed to confirm you're a person. It isn't used to track you. The Brand Builder saves your progress in your own browser so you don't lose work. That storage is needed for the tool to do its job and stays on your device.</p>
+      <p>If you sign in with a username and password, the Brand Builder keeps you signed in in that browser tab only, so a reload doesn't lose your place. It's cleared when you close the tab, and runs out after 12 hours. Like your saved progress, it's needed for the tool to work.</p>
     </div>
   </div>
 </main>
 <footer class="ft">
   <div class="wrap">
-    <a class="logo" href="/" aria-label="34 Automation, home"><img src="/img/logo.svg" alt="34 Automation" width="180" height="26"></a>
+    <a class="logo" href="/" aria-label="34 Automation, home"><img class="ln" src="/img/logo.svg" alt="34 Automation" width="180" height="26"><img class="ld" src="/img/logo-day.svg" alt="34 Automation" width="180" height="26"></a>
     <nav aria-label="Footer">
-      <a href="/#offer">What we offer</a><a href="/#services">Services</a><a href="/#work">Work</a><a href="/#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
+      <a href="/#offer">What we offer</a><a href="/#services">Services</a><a href="/#work">Work</a><a href="/#reviews">Reviews</a><a href="/#report">Website report</a><a href="/#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
     </nav>
     <p class="co">{{LEGAL_LINE}} Email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a>.</p>
     <div class="legal"><span>© {{YEAR}} 34 Automation</span><span>Sheet 1 of 1 · Rev A · Drawn by 34</span></div>
   </div>
 </footer>
+<script src="/js/theme.js?v={{BUILD}}" defer></script>
 </body>
 </html>
