@@ -224,7 +224,7 @@
           d.appendChild(h);d.appendChild(p);wrap.replaceChildren(d);d.focus({preventScroll:true}); // keep focus (and the screen reader) with the result
         })
         .catch(function(err){
-          btn.disabled=false;TS.reset();
+          btn.disabled=false;TS.reset();btn.focus(); // the button was disabled while sending, so focus fell to the page; put it back
           if(err&&err.code==='not_configured'){byEmail('The form can’t take messages right now, so ',data);return;} // the sending service is not set up yet
           if(err&&err.code==='invalid'){say('Please check your name, email and message, then send it again.','err');return;}
           if(err&&err.code)console.warn('enquiry',err.code,err.detail||''); // for us, not for the visitor
@@ -273,7 +273,7 @@
           d.appendChild(h);d.appendChild(p);wrap.replaceChildren(d);d.focus({preventScroll:true});
         })
         .catch(function(err){
-          btn.disabled=false;RTS.reset();var c=err&&err.code;
+          btn.disabled=false;RTS.reset();btn.focus();var c=err&&err.code; // focus back on the button (field errors move it to the field below)
           if(c==='invalid'&&err.field==='business'){say('Add your business name. It shows with your review.','err',biz);biz.focus();return;}
           if(c==='invalid'&&err.field==='rating'){say('Pick a score from 1 to 5.','err');return;}
           if(c==='invalid'&&err.field==='reviewer'){say('Tell us if you\u2019ve worked with us.','err');return;}

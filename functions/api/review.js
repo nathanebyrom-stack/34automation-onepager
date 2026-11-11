@@ -16,6 +16,7 @@ const json = (body, status = 200) =>
 const clean = (v) => (typeof v === "string" ? v.replace(/\u0000/g, "").replace(/\r\n?/g, "\n").trim() : "");
 const esc = (s) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 const oneLine = (s) => s.replace(/\s+/g, " ");
+const local = (u) => typeof u === "string" && /^http:\/\/(127\.0\.0\.1|localhost)(:\d+)?\//.test(u); // test stand-ins only ever point at this machine
 
 export async function onRequestPost({ request, env: rawEnv }) {
   // trim pasted settings: a stray space or newline in a dashboard secret breaks verification
@@ -54,7 +55,7 @@ export async function onRequestPost({ request, env: rawEnv }) {
     if (ip) form.append("remoteip", ip);
     let ok = false, detail = [];
     try {
-      const r = await fetch(env.TURNSTILE_VERIFY_URL || "https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form });
+      const r = await fetch(local(env.TURNSTILE_VERIFY_URL) ? env.TURNSTILE_VERIFY_URL : "https://challenges.cloudflare.com/turnstile/v0/siteverify", { method: "POST", body: form });
       const v = await r.json();
       ok = !!v.success && (!v.action || v.action === "review"); // a token made for another form doesn't count here
       detail = Array.isArray(v["error-codes"]) ? v["error-codes"] : [];
@@ -70,6 +71,7 @@ export async function onRequestPost({ request, env: rawEnv }) {
   const rows = [["Business", business], ["Score", `${rating} out of 5`], ["Worked with us", reviewer === "client" ? "Yes, a client" : "No, rating the website"], ["Sent", when + " (UK)"]];
   const how =
     "To publish it, add it to public/reviews.json in the 34automation-onepager repo (inside the [ ], comma between entries) and push to main. " +
+    "Only keep \"reviewer\": \"client\" if you can confirm they've worked with you; otherwise change it to \"visitor\" (the site shows it as Client or Site visitor). " +
     "Publish genuine reviews, good or bad. Don't edit the wording. If you're not publishing it, just delete this email.";
 
   const sent = await send(env, {
@@ -98,7 +100,7 @@ export async function onRequest() {
 
 async function send(env, msg) {
   try {
-    const r = await fetch(env.RESEND_API_URL || "https://api.resend.com/emails", {
+    const r = await fetch(local(env.RESEND_API_URL) ? env.RESEND_API_URL : "https://api.resend.com/emails", {
       method: "POST",
       headers: { Authorization: `Bearer ${env.RESEND_API_KEY}`, "Content-Type": "application/json" },
       body: JSON.stringify(msg),
