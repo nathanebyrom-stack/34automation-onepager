@@ -14,13 +14,13 @@
   var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   // scroll pace (Nathan, 11 Nov): the page scrolls at half the browser's speed (wheel, trackpad and touch),
-  // except inside the two scroll films (hero, why us), which keep their full speed. It pauses briefly at the top of
-  // each section before carrying on. Lenis (js/lenis.min.js) does the smoothing.
+  // except inside the two scroll films (hero, why us), which keep their full speed. On the way down it pauses briefly at the
+  // top of each section before carrying on; no pauses going up. Lenis (js/lenis.min.js) does the smoothing.
   // Off for reduced motion; nav links, keyboard and the scrollbar still go straight there.
   (function(){
     if(still||typeof Lenis!=='function')return;
     var PACE=.5,HOLD=650; // PACE: share of normal scroll speed outside the films. HOLD: ms the page rests at a section top
-    var lenis,secs=[].slice.call(document.querySelectorAll('main > section')),SWIPES=2;
+    var lenis,secs=[].slice.call(document.querySelectorAll('main > section')),SWIPES=1;
     var hero=document.getElementById('hero'),why=document.getElementById('why'),whyTrack=document.getElementById('whyTrack');
     function span(el,y){var r=el.getBoundingClientRect();return [r.top+y,r.top+y+el.offsetHeight-innerHeight];}
     function inFilm(at){ // is this scroll position inside a film's scrub? (only when the film actually runs)
@@ -29,7 +29,7 @@
       if(why&&whyTrack&&why.classList.contains('scrub')){s=span(whyTrack,y);if(at>=s[0]&&at<s[1])return true;}
       return false;
     }
-    // the pause: on a phone it lasts two thumb swipes (the second one carries on); with a wheel or trackpad, HOLD ms.
+    // the pause (scrolling down only): on a phone the next thumb swipe carries on; with a wheel or trackpad, HOLD ms.
     // Once released, that section edge doesn't catch again until the page has moved half a screen away from it.
     var rest=null,passed=null;
     function stops(){var y=lenis.scroll,max=lenis.limit-2;return secs.map(function(s){return Math.round(s.getBoundingClientRect().top+y);}).filter(function(v){return v>2&&v<max&&v!==passed;});}
@@ -46,7 +46,7 @@
       if(t==='touchstart'||!dy)return true;
       if(t!=='touchend'&&!inFilm(dy>0?lenis.targetScroll:lenis.targetScroll-1)){dy*=PACE;e.deltaY=dy;e.deltaX*=PACE;} // Lenis reads the deltas after this returns
       var from=lenis.targetScroll,to=from+(t==='touchend'?Math.sign(dy)*Math.pow(Math.abs(lenis.velocity),1.7):dy),hit=null;
-      stops().forEach(function(b){if((dy>0&&from<b&&to>=b)||(dy<0&&from>b&&to<=b)){if(hit===null||Math.abs(b-from)<Math.abs(hit-from))hit=b;}});
+      stops().forEach(function(b){if(dy>0&&from<b&&to>=b){if(hit===null||Math.abs(b-from)<Math.abs(hit-from))hit=b;}});
       if(hit===null)return true;
       lenis.scrollTo(hit,{lerp:.12});rest={b:hit,dir:Math.sign(dy),n:0,until:performance.now()+HOLD};
       if(ev.cancelable)ev.preventDefault();return false;
