@@ -196,11 +196,93 @@
   </div>
 </section>
 
+<section class="band reviews" id="reviews" aria-labelledby="reviews-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="row">
+        <div class="rv"><span class="kick"><i>05</i><span>Reviews</span></span>
+          <h2 id="reviews-h" class="h2" style="margin-top:14px">Your score,<br><em>not ours.</em></h2></div>
+        <p class="lede rv" style="--i:1">No testimonials yet, on purpose. So we're not choosing what goes here. You are.</p>
+      </div>
+      <div class="rule"></div>
+    </div>
+    <div class="lay">
+      <div class="pub rv"><!--REVIEWS--></div>
+      <div class="rv" style="--i:1" id="revWrap">
+        <div class="intro">
+          <p>Worked with us, or just had a look round the site? Score us out of 5 and, if you want, tell us why in a line or two.</p>
+          <p>We check every review is genuine before it shows. Genuine reviews go up whether they're good or bad. <span class="pol">We'd only leave one off if it's abusive, breaks the law or shares someone's personal details.</span></p>
+        </div>
+        <form class="enq rvf" id="rev" action="/api/review" method="post" novalidate data-email="{{PUBLIC_EMAIL}}">
+          <div class="g">
+            <div class="f w"><label for="r-biz">Business name <i>*</i></label><input id="r-biz" name="business" autocomplete="organization" required maxlength="80" aria-describedby="r-biz-h"><span class="hint" id="r-biz-h">Shows with your review.</span></div>
+            <fieldset class="w" aria-describedby="r-rate-h">
+              <legend>Your score, out of 5 <i>*</i></legend>
+              <div class="rate">
+                <label><input type="radio" name="rating" value="1" required><span>1<b class="vh"> out of 5</b></span></label>
+                <label><input type="radio" name="rating" value="2"><span>2<b class="vh"> out of 5</b></span></label>
+                <label><input type="radio" name="rating" value="3"><span>3<b class="vh"> out of 5</b></span></label>
+                <label><input type="radio" name="rating" value="4"><span>4<b class="vh"> out of 5</b></span></label>
+                <label><input type="radio" name="rating" value="5"><span>5<b class="vh"> out of 5</b></span></label>
+              </div>
+              <span class="hint" id="r-rate-h">1 is poor, 5 is excellent.</span>
+            </fieldset>
+            <div class="f w"><label for="r-msg">Comment <span class="opt">(optional)</span></label><textarea id="r-msg" name="comment" maxlength="280" placeholder="What worked, what didn't. A line or two is plenty." aria-describedby="r-msg-h"></textarea><span class="hint cnt" id="r-msg-h"><span>Up to 280 characters.</span><span id="r-cnt" aria-hidden="true">0 / 280</span></span><span class="vh" id="r-live" aria-live="polite"></span></div>
+          </div>
+          <div class="hp" aria-hidden="true"><label for="r-web">Leave this empty</label><input id="r-web" name="website" tabindex="-1" autocomplete="off"></div>
+          <div class="send">
+            <button class="btn solid" type="submit" id="revBtn">Send review <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></button>
+          </div>
+          <div class="ts" id="rts"></div>
+          <p class="note">Once it's checked, your business name, score and comment show on this page. <a href="/privacy/">Privacy notice</a>.</p>
+        </form>
+        <p class="enq-msg" id="revMsg" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band report" id="report" aria-labelledby="report-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="row">
+        <div class="rv"><span class="kick"><i>06</i><span>Website report</span></span>
+          <h2 id="report-h" class="h2" style="margin-top:14px">Your website,<br><em>on the bench.</em></h2></div>
+        <p class="lede rv" style="--i:1">Email us your web address and we'll send back a full report on your site, including where it ranks against your five closest competitors.</p>
+      </div>
+      <div class="rule"></div>
+    </div>
+    <div class="lay">
+      <div class="txt rv">
+        <h3 class="h3">What's in it</h3>
+        <p>We score the eight things a buyer notices: first impression, clarity of offer, technical detail, mobile, speed, enquiry path, trust signals and SEO basics. Every score comes with what we found and what to do about it. Then your five closest competitors go through the same checks, so you can see where you sit.</p>
+        <h3 class="h3">Why it has to come from your domain</h3>
+        <p>The report is about your business, so it only goes to someone who can show the site's theirs. If your website is yourfirm.co.uk, send the email from an address ending @yourfirm.co.uk. Any name before the @ is fine. We reply to the address it came from, and nowhere else.</p>
+        <p>Gmail, Outlook.com, Hotmail, Yahoo and iCloud addresses can't show us that, so we can't send a report to one. Plenty of firms run on a Gmail address and there's nothing wrong with it. If that's you, you can still <a href="#contact">start a conversation below</a>.</p>
+      </div>
+      <div class="ask rv" style="--i:1">
+        <div class="img"><img src="img/13-measure.webp" alt="A pair of working hands closing a micrometer onto a small machined steel part" loading="lazy" width="1600" height="893"></div>
+        <div class="in">
+          <h3 class="h3">How to ask</h3>
+          <dl class="tb">
+            <div><dt>Email</dt><dd>{{REPORT_EMAIL}}</dd></div>
+            <div><dt>Include</dt><dd>Your website address</dd></div>
+            <div><dt>Send from</dt><dd>An address at your website's own domain</dd></div>
+          </dl>
+          <a class="btn solid" href="mailto:{{REPORT_EMAIL}}?subject=Website%20report%20request&amp;body=Website%20address%3A%20%0D%0ABusiness%20name%3A%20%0D%0A">Email us for a report <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
+          <span class="lbl mail">{{REPORT_EMAIL}}</span>
+          <p class="note">We use your email to check the site's yours and to send your report. <a href="/privacy/">Privacy notice</a>.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="band cta" id="contact" aria-labelledby="cta-h">
   <div class="split">
     <div class="img rv"><img src="img/11-the-owner.webp" alt="The owner of a small engineering firm reading a drawing in a workshop office at dusk, CNC machines through the glass behind him" loading="lazy" width="1800" height="1005"></div>
     <div class="txt">
-      <span class="kick rv"><i>05</i><span>Start a conversation</span></span>
+      <span class="kick rv"><i>07</i><span>Start a conversation</span></span>
       <h2 id="cta-h" class="h2 rv" style="--i:1">No pitch deck.<br>No hard sell.</h2>
       <p class="rv" style="--i:2">Tell us where your brand is now and we'll tell you, straight, what we'd do with it. If the answer is "nothing yet", we'll say that too.</p>
       <div class="rv" style="--i:3" id="enqWrap">
@@ -241,7 +323,7 @@
   <div class="wrap">
     <a class="logo" href="#top" aria-label="34 Automation, back to top"><img class="ln" src="img/logo.svg" alt="34 Automation" width="180" height="26"><img class="ld" src="img/logo-day.svg" alt="34 Automation" width="180" height="26"></a>
     <nav aria-label="Footer">
-      <a href="#offer">What we offer</a><a href="#services">Services</a><a href="#why">Why us</a><a href="#work">Work</a><a href="#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
+      <a href="#offer">What we offer</a><a href="#services">Services</a><a href="#why">Why us</a><a href="#work">Work</a><a href="#reviews">Reviews</a><a href="#report">Website report</a><a href="#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
     </nav>
     <p class="co">{{LEGAL_LINE}} Email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a>.</p>
     <div class="legal"><span>© {{YEAR}} 34 Automation</span><span>Sheet 1 of 1 · Rev B · Drawn by 34</span></div>

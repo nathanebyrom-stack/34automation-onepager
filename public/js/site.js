@@ -155,26 +155,31 @@
     addEventListener('scroll',onScroll,{passive:true});addEventListener('resize',function(){mode();if(on)size();onScroll();});mode();onScroll();
   })();
 
-  // spam check: Cloudflare Turnstile, loaded only when the form is near the screen. Site key comes from /api/config.
-  var TS=(function(){
-    var box=document.getElementById('ts'),id=null,started=false,api={need:false};
-    api.token=function(){try{return id!==null&&window.turnstile?turnstile.getResponse(id)||'':'';}catch(e){return '';}};
-    api.reset=function(){try{if(id!==null&&window.turnstile)turnstile.reset(id);}catch(e){}};
-    api.load=function(){
-      if(started||!box)return;started=true;
-      fetch('/api/config').then(function(r){return r.ok?r.json():null}).then(function(c){
-        if(!c||!c.turnstileSiteKey)return; // no key configured (local preview): skip
-        api.need=true;
-        window.onTsReady=function(){id=turnstile.render(box,{sitekey:c.turnstileSiteKey,theme:(d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')),size:'flexible',appearance:'interaction-only'});};
-        var s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTsReady';s.async=true;document.head.appendChild(s);
-      }).catch(function(){});
-    };
-    var c=document.getElementById('contact');
-    if(c&&'IntersectionObserver' in window){var o=new IntersectionObserver(function(e){if(e[0].isIntersecting){api.load();o.disconnect();}},{rootMargin:'800px 0px'});o.observe(c);}
-    else api.load();
-    var f=document.getElementById('enq');if(f)f.addEventListener('focusin',api.load,{once:true});
-    return api;
-  })();
+  // spam check: Cloudflare Turnstile, one script for every form on the page, each widget loaded only when its form is near the screen. Site key comes from /api/config.
+  var TSK={key:null,state:0,ws:[]}; // state: 0 idle, 1 fetching, 2 script ready, 3 no key (local preview)
+  function tsBoot(){
+    if(TSK.state)return;TSK.state=1;
+    fetch('/api/config').then(function(r){return r.ok?r.json():null}).then(function(c){
+      if(!c||!c.turnstileSiteKey){TSK.state=3;return;} // no key configured (local preview): skip
+      TSK.key=c.turnstileSiteKey;TSK.ws.forEach(function(w){if(w.started)w.api.need=true;});
+      window.onTsReady=function(){TSK.state=2;TSK.ws.forEach(function(w){if(w.started)w.draw();});};
+      var s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTsReady';s.async=true;document.head.appendChild(s);
+    }).catch(function(){});
+  }
+  function tsWidget(boxId,secId,formId,action){
+    var box=document.getElementById(boxId),id=null,w={started:false,api:{need:false}};
+    w.draw=function(){if(id!==null||!box||!window.turnstile)return;id=turnstile.render(box,{sitekey:TSK.key,action:action,theme:(d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')),size:'flexible',appearance:'interaction-only'});};
+    w.api.token=function(){try{return id!==null&&window.turnstile?turnstile.getResponse(id)||'':'';}catch(e){return '';}};
+    w.api.reset=function(){try{if(id!==null&&window.turnstile)turnstile.reset(id);}catch(e){}};
+    w.api.load=function(){if(w.started||!box)return;w.started=true;if(TSK.key)w.api.need=true;if(TSK.state===2)w.draw();else tsBoot();};
+    TSK.ws.push(w);
+    var sec=document.getElementById(secId);
+    if(sec&&'IntersectionObserver' in window){var o=new IntersectionObserver(function(e){if(e[0].isIntersecting){w.api.load();o.disconnect();}},{rootMargin:'800px 0px'});o.observe(sec);}
+    else w.api.load();
+    var f=document.getElementById(formId);if(f)f.addEventListener('focusin',w.api.load,{once:true});
+    return w.api;
+  }
+  var TS=tsWidget('ts','contact','enq','enquiry'),RTS=tsWidget('rts','reviews','rev','review');
 
   // enquiry form: sends in the background to /api/enquiry on this same domain, then thanks the visitor in place
   (function(){
@@ -214,6 +219,51 @@
             return;
           }
           say('That didn’t send. Please try again in a minute.'+(err&&err.code?' ['+err.code+(err.detail?': '+err.detail:'')+']':''),'err');
+        });
+    });
+  })();
+
+  // reviews form: business name and a score out of 5 (both required), optional comment. Sent to /api/review, checked by hand before it's published.
+  (function(){
+    var f=document.getElementById('rev'),btn=document.getElementById('revBtn'),msg=document.getElementById('revMsg'),wrap=document.getElementById('revWrap');
+    if(!f)return;
+    var biz=document.getElementById('r-biz'),txt=document.getElementById('r-msg'),cnt=document.getElementById('r-cnt'),live=document.getElementById('r-live'),hp=document.getElementById('r-web');
+    var mail=f.getAttribute('data-email')||'',MAX=280,lastLive='';
+    function say(t,k){msg.textContent=t;msg.className='enq-msg'+(k?' '+k:'');}
+    function count(){var n=txt.value.length;cnt.textContent=n+' / '+MAX;cnt.parentNode.classList.toggle('near',n>=260);
+      var l=n>=260?(MAX-n)+' characters left':'';if(l!==lastLive){lastLive=l;live.textContent=l;}} // only announced near the limit
+    txt.addEventListener('input',count);count();
+    f.addEventListener('input',function(){if(msg.classList.contains('err'))say('');});
+    function rating(){var r=f.querySelector('input[name=rating]:checked');return r?+r.value:0;}
+    function mailFallback(lead,data){ // hand the visitor a ready-made email with their review in it
+      var a=document.createElement('a');a.href='mailto:'+mail+'?subject='+encodeURIComponent('Review: '+data.business+' · '+data.rating+'/5')+'&body='+encodeURIComponent('Business: '+data.business+'\nScore: '+data.rating+' out of 5'+(data.comment?'\n\n'+data.comment:''));a.textContent=mail;
+      msg.textContent=lead;msg.className='enq-msg err';msg.appendChild(a);msg.appendChild(document.createTextNode('.'));
+    }
+    f.addEventListener('submit',function(e){
+      e.preventDefault();
+      var data={business:biz.value.trim(),rating:rating(),comment:txt.value.trim(),website:hp.value};
+      if(!data.business){say('Add your business name. It shows with your review.','err');biz.focus();return;}
+      if(!data.rating){say('Pick a score from 1 to 5.','err');f.querySelector('input[name=rating]').focus();return;}
+      if(data.comment.length>MAX){say('That\u2019s over 280 characters. Trim it a little and send it again.','err');txt.focus();return;}
+      if(RTS.need&&!RTS.token()){say('One moment, the spam check is still loading. Try again in a second.','err');RTS.load();return;}
+      data.turnstile=RTS.token();
+      btn.disabled=true;say('Sending\u2026');
+      fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+        .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok){var e=new Error(r.status);e.code=j&&j.code;e.field=j&&j.field;throw e;}return j;});})
+        .then(function(){
+          var d=document.createElement('div');d.className='enq-done';d.setAttribute('role','status');d.tabIndex=-1;
+          var h=document.createElement('h3');h.className='h3';h.textContent='Thanks, it\u2019s in.';
+          var p=document.createElement('p');p.textContent='We\u2019ll check it\u2019s genuine, then it goes up here. If you ever want it taken down, email ';
+          var a=document.createElement('a');a.href='mailto:'+mail;a.textContent=mail;p.appendChild(a);p.appendChild(document.createTextNode('.'));
+          d.appendChild(h);d.appendChild(p);wrap.replaceChildren(d);d.focus({preventScroll:true});
+        })
+        .catch(function(err){
+          btn.disabled=false;RTS.reset();var c=err&&err.code;
+          if(c==='invalid'&&err.field==='business'){say('Add your business name. It shows with your review.','err');biz.focus();return;}
+          if(c==='invalid'&&err.field==='rating'){say('Pick a score from 1 to 5.','err');return;}
+          if(c==='too_long'){say('That\u2019s over 280 characters. Trim it a little and send it again.','err');txt.focus();return;}
+          if(c==='spam_check'){say('The spam check didn\u2019t go through. Give it another go, and if it still won\u2019t send, refresh the page.','err');return;}
+          mailFallback('That didn\u2019t send. Try again in a minute. If it still won\u2019t go, email your review to ',data);
         });
     });
   })();
