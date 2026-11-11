@@ -34,6 +34,8 @@ Edit `site.config.json`:
 | `address` | Registered office (company) or business address (sole trader). |
 | `vatNumber` | Only if VAT registered. |
 | `icoRegistration` | ICO registration number once the fee is paid. Optional. |
+| `linkedinUrl` | Company LinkedIn page, full `https://` address. Used in every footer and the home page's structured data (`sameAs`). |
+| `instagramUrl` | Instagram profile, full `https://` address. Same places as LinkedIn. |
 
 The production build (branch `main`) **stops** while `legalName` or `address` is empty, so the site can't go live without them. Preview builds show a ⚠ warning in the footer instead.
 

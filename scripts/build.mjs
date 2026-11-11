@@ -10,6 +10,12 @@ if (missing.length && prod) {
   console.error(`\n✖ site.config.json is missing: ${missing.join(", ")}. Production build stopped.\n`);
   process.exit(1);
 }
+// social profile links (every footer, JSON-LD sameAs): a handle change is a one-line edit in site.config.json
+const badSocial = ["linkedinUrl", "instagramUrl"].filter((k) => !/^https:\/\/[^\s"<>]+$/.test(String(c[k] || "")));
+if (badSocial.length) {
+  console.error(`\n${prod ? "✖" : "⚠"} site.config.json: ${badSocial.join(", ")} must be a full https:// address.${prod ? " Production build stopped." : ""}\n`);
+  if (prod) process.exit(1);
+}
 const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
 const name = c.legalName || "⚠ COMPANY NAME MISSING";
 const addr = c.address || "⚠ ADDRESS MISSING";
@@ -22,6 +28,8 @@ const vals = {
   SITE_URL: c.siteUrl.replace(/\/$/, ""),
   PUBLIC_EMAIL: c.publicEmail,
   CLIENTS_URL: c.clientsUrl,
+  LINKEDIN_URL: c.linkedinUrl || "",
+  INSTAGRAM_URL: c.instagramUrl || "",
   LEGAL_NAME: name,
   ADDRESS: addr,
   LEGAL_LINE: legal,
