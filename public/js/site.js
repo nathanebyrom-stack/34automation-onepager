@@ -13,14 +13,13 @@
   })();
   var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // scroll pace (Nathan, 11 Nov): the page scrolls at half the browser's speed (wheel, trackpad and touch),
-  // except inside the two scroll films (hero, why us), which keep their full speed. On the way down it pauses briefly at the
-  // top of each section before carrying on; no pauses going up. Lenis (js/lenis.min.js) does the smoothing.
-  // Off for reduced motion; nav links, keyboard and the scrollbar still go straight there.
+  // scroll pace (Nathan, 11 Nov): the page scrolls at 65% of the browser's speed (wheel, trackpad and touch; was 50%, sped up 30% on 11 Nov),
+  // except inside the two scroll films (hero, why us), which keep their full speed. No pauses at section tops (removed 11 Nov: it felt clunky).
+  // Lenis (js/lenis.min.js) does the smoothing. Off for reduced motion; nav links, keyboard and the scrollbar still go straight there.
   (function(){
     if(still||typeof Lenis!=='function')return;
-    var PACE=.5,HOLD=650; // PACE: share of normal scroll speed outside the films. HOLD: ms the page rests at a section top
-    var lenis,secs=[].slice.call(document.querySelectorAll('main > section')),SWIPES=1;
+    var PACE=.65; // share of normal scroll speed outside the films
+    var lenis;
     var hero=document.getElementById('hero'),why=document.getElementById('why'),whyTrack=document.getElementById('whyTrack');
     function span(el,y){var r=el.getBoundingClientRect();return [r.top+y,r.top+y+el.offsetHeight-innerHeight];}
     function inFilm(at){ // is this scroll position inside a film's scrub? (only when the film actually runs)
@@ -29,33 +28,13 @@
       if(why&&whyTrack&&why.classList.contains('scrub')){s=span(whyTrack,y);if(at>=s[0]&&at<s[1])return true;}
       return false;
     }
-    // the pause (scrolling down only): on a phone the next thumb swipe carries on; with a wheel or trackpad, HOLD ms.
-    // Once released, that section edge doesn't catch again until the page has moved half a screen away from it.
-    var rest=null,passed=null;
-    function stops(){var y=lenis.scroll,max=lenis.limit-2;return secs.map(function(s){return Math.round(s.getBoundingClientRect().top+y);}).filter(function(v){return v>2&&v<max&&v!==passed;});}
-    function release(){passed=rest.b;rest=null;}
-    function pause(e){
-      var ev=e.event,t=ev.type,dy=e.deltaY,touch=t.indexOf('touch')===0;
-      if(!lenis||ev.ctrlKey)return true;
-      if(rest){
-        if(touch&&t==='touchstart'){if(++rest.n>=SWIPES)release();else return false;} // false also stops Lenis cancelling the settle on touch
-        else if(!touch&&performance.now()>=rest.until)release();
-        else if(dy&&Math.sign(dy)!==rest.dir&&t!=='touchend')release(); // heading back the way they came: let them
-        else{if(ev.cancelable)ev.preventDefault();return false;} // resting: swallow the input, flick momentum included
-      }
-      if(t==='touchstart'||!dy)return true;
-      if(t!=='touchend'&&!inFilm(dy>0?lenis.targetScroll:lenis.targetScroll-1)){dy*=PACE;e.deltaY=dy;e.deltaX*=PACE;} // Lenis reads the deltas after this returns
-      var from=lenis.targetScroll,to=from+(t==='touchend'?Math.sign(dy)*Math.pow(Math.abs(lenis.velocity),1.7):dy),hit=null;
-      stops().forEach(function(b){if(dy>0&&from<b&&to>=b){if(hit===null||Math.abs(b-from)<Math.abs(hit-from))hit=b;}});
-      if(hit===null)return true;
-      lenis.scrollTo(hit,{lerp:.12});rest={b:hit,dir:Math.sign(dy),n:0,until:performance.now()+HOLD};
-      if(ev.cancelable)ev.preventDefault();return false;
+    function pace(e){
+      var ev=e.event,t=ev.type,dy=e.deltaY;
+      if(!lenis||ev.ctrlKey||t==='touchstart'||t==='touchend'||!dy)return true;
+      if(!inFilm(dy>0?lenis.targetScroll:lenis.targetScroll-1)){e.deltaY=dy*PACE;e.deltaX*=PACE;} // Lenis reads the deltas after this returns
+      return true;
     }
-    lenis=new Lenis({syncTouch:true,lerp:.09,anchors:true,autoRaf:true,virtualScroll:pause});
-    lenis.on('scroll',function(){ // a nav link, the keyboard or the scrollbar moved the page: drop any pause
-      if(rest&&Math.abs(lenis.targetScroll-rest.b)>4)rest=null;
-      if(passed!==null&&Math.abs(lenis.scroll-passed)>innerHeight*.5)passed=null;
-    });
+    lenis=new Lenis({syncTouch:true,lerp:.09,anchors:true,autoRaf:true,virtualScroll:pace});
     window.__pace=lenis; // handle for testing
   })();
   // the contact address for the email fallbacks. Kept here, not read from the page, because Cloudflare's email obfuscation rewrites addresses in the live HTML.
@@ -124,7 +103,7 @@
       target=p*(N-1);
       if(bar)bar.style.transform='scaleX('+p+')';
       if(copy){var k=Math.min(Math.max((p-.28)/.10,0),1);copy.style.opacity=1-k;copy.style.transform='translateY('+(k*24)+'px)';}
-      if(mid){ // the statement: lines arrive at 38%, 44% and 50% of the scroll, after the headline has cleared, hold for twice as many screens as they did before 11 Nov (the film's scroll was doubled; every beat is a share of the scroll, so they all stretch with it), and leave together at 88%
+      if(mid){ // the statement: lines arrive at 38%, 44% and 50% of the scroll, after the headline has cleared, then hold (every beat is a share of the scroll, so they all scale with it: the film's scroll was doubled, then sped up 30%, on 11 Nov), and leave together at 88%
         var out=1-Math.min(Math.max((p-.88)/.06,0),1),vis=Math.min(Math.max((p-.36)/.07,0),1)*out;
         mid.style.opacity=vis.toFixed(3);
         midLines.forEach(function(el,i){var a=Math.min(Math.max((p-(.38+i*.06))/.07,0),1);el.style.opacity=(a*out).toFixed(3);el.style.transform='translateY('+((1-a)*22).toFixed(1)+'px)';});
