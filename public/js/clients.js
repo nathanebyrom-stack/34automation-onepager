@@ -6,7 +6,7 @@
   if(lf){
     var u=document.getElementById('u'),pw=document.getElementById('p'),show=document.getElementById('pShow'),btn=document.getElementById('loginBtn'),lm=document.getElementById('loginMsg');
     var API=lf.getAttribute('data-api'),BASE=lf.getAttribute('data-clients-url'),MAIL=lf.getAttribute('data-email')||'',busy=false;
-    function lsay(t,k){lm.textContent=t;lm.className='enq-msg'+(k?' '+k:'');}
+    function lsay(t,k,bad){lm.textContent=t;lm.className='enq-msg'+(k?' '+k:'');[u,pw].forEach(function(x){if(bad&&bad.indexOf(x)>-1){x.setAttribute('aria-invalid','true');x.setAttribute('aria-describedby','loginMsg');}else{x.removeAttribute('aria-invalid');x.removeAttribute('aria-describedby');}});}
     function sayMail(lead,tail){ // a message with the contact address as a link
       lm.textContent=lead;lm.className='enq-msg err';var a=document.createElement('a');a.href='mailto:'+MAIL;a.textContent=MAIL;lm.appendChild(a);lm.appendChild(document.createTextNode(tail||'.'));
     }
@@ -14,7 +14,7 @@
     lf.addEventListener('input',function(){if(lm.classList.contains('err'))lsay('');});
     function fail(code,j){
       if(code==='missing'){lsay('Enter your username and password.','err');(u.value.trim()?pw:u).focus();return;}
-      if(code==='bad_login'){pw.value='';lsay('That username and password don’t match. Check them and try again.','err');pw.focus();return;}
+      if(code==='bad_login'){pw.value='';lsay('That username and password don’t match. Check them and try again.','err',[u,pw]);pw.focus();return;}
       if(code==='locked'){var s=j&&+j.retry_after;if(s>0){var n=Math.ceil(s/60);lsay('Too many tries, so sign-in is paused to keep your account safe. Try again in '+(n===1?'a minute.':n+' minutes.'),'err');}else lsay('Too many tries, so sign-in is paused for now to keep your account safe. Try again later.','err');return;}
       if(code==='revoked'){sayMail('Your access has been switched off. If you still need it, email ');return;}
       if(code==='expired'){sayMail('Your access has ended. Your answers are still saved. If you need back in, email ');return;}
@@ -23,9 +23,9 @@
     lf.addEventListener('submit',function(e){
       e.preventDefault();if(busy)return;
       var un=u.value.trim(),p=pw.value;
-      if(!un&&!p){lsay('Enter your username and password.','err');u.focus();return;}
-      if(!un){lsay('Enter your username.','err');u.focus();return;}
-      if(!p){lsay('Enter your password.','err');pw.focus();return;}
+      if(!un&&!p){lsay('Enter your username and password.','err',[u,pw]);u.focus();return;}
+      if(!un){lsay('Enter your username.','err',[u]);u.focus();return;}
+      if(!p){lsay('Enter your password.','err',[pw]);pw.focus();return;}
       busy=true;btn.disabled=true;lsay('Checking your details.');
       var ctl='AbortController' in window?new AbortController():null,timer=setTimeout(function(){if(ctl)ctl.abort();},15000);
       fetch(API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'sign_in',username:un,password:p}),credentials:'omit',cache:'no-store',referrerPolicy:'no-referrer',signal:ctl?ctl.signal:undefined})

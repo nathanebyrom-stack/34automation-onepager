@@ -163,15 +163,17 @@
       if(!c||!c.turnstileSiteKey){TSK.state=3;return;} // no key configured (local preview): skip
       TSK.key=c.turnstileSiteKey;TSK.ws.forEach(function(w){if(w.started)w.api.need=true;});
       window.onTsReady=function(){TSK.state=2;TSK.ws.forEach(function(w){if(w.started)w.draw();});};
-      var s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTsReady';s.async=true;document.head.appendChild(s);
+      var s=document.createElement('script');s.src='https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit&onload=onTsReady';s.async=true;s.onerror=function(){TSK.state=4;};document.head.appendChild(s); // 4: blocked (firewall, ad blocker, dropped request)
     }).catch(function(){});
   }
   function tsWidget(boxId,secId,formId,action){
-    var box=document.getElementById(boxId),id=null,w={started:false,api:{need:false}};
-    w.draw=function(){if(id!==null||!box||!window.turnstile)return;id=turnstile.render(box,{sitekey:TSK.key,action:action,theme:(d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')),size:'flexible',appearance:'interaction-only'});};
+    var box=document.getElementById(boxId),id=null,w={started:false,t0:0,err:false,api:{need:false}};
+    w.draw=function(){if(id!==null||!box||!window.turnstile)return;id=turnstile.render(box,{sitekey:TSK.key,action:action,'error-callback':function(){w.err=true;},'before-interactive-callback':function(){w.t0=Date.now();},theme:(d.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: light)').matches?'light':'dark')),size:'flexible',appearance:'interaction-only'});};
     w.api.token=function(){try{return id!==null&&window.turnstile?turnstile.getResponse(id)||'':'';}catch(e){return '';}};
     w.api.reset=function(){try{if(id!==null&&window.turnstile)turnstile.reset(id);}catch(e){}};
-    w.api.load=function(){if(w.started||!box)return;w.started=true;if(TSK.key)w.api.need=true;if(TSK.state===2)w.draw();else tsBoot();};
+    w.api.load=function(){if(w.started||!box)return;w.started=true;w.t0=Date.now();if(TSK.key)w.api.need=true;if(TSK.state===2)w.draw();else tsBoot();};
+    // the spam check can't give us a token: its script was blocked, the widget reported an error, or 12 s have passed without one
+    w.api.stuck=function(){return !w.api.token()&&(TSK.state===4||w.err||(w.t0>0&&Date.now()-w.t0>12000));};
     TSK.ws.push(w);
     var sec=document.getElementById(secId);
     if(sec&&'IntersectionObserver' in window){var o=new IntersectionObserver(function(e){if(e[0].isIntersecting){w.api.load();o.disconnect();}},{rootMargin:'800px 0px'});o.observe(sec);}
@@ -185,40 +187,45 @@
   (function(){
     var f=document.getElementById('enq'),btn=document.getElementById('enqBtn'),msg=document.getElementById('enqMsg'),wrap=document.getElementById('enqWrap');
     if(!f)return;
-    function say(t,k){msg.textContent=t;msg.className='enq-msg'+(k?' '+k:'');}
     function el(id){return document.getElementById(id);}
-    f.addEventListener('input',function(){if(msg.classList.contains('err'))say('');});
     var F={name:el('e-name'),company:el('e-co'),email:el('e-email'),phone:el('e-tel'),message:el('e-msg'),website:el('e-web')};
+    function say(t,k,field){msg.textContent=t;msg.className='enq-msg'+(k?' '+k:'');[F.name,F.email,F.message].forEach(function(x){if(x===field){x.setAttribute('aria-invalid','true');x.setAttribute('aria-describedby','enqMsg');}else{x.removeAttribute('aria-invalid');x.removeAttribute('aria-describedby');}});}
+    f.addEventListener('input',function(){if(msg.classList.contains('err'))say('');});
+    var EMAIL=/^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]+$/; // the same rule the server uses
+    function byEmail(lead,data){ // hand the visitor a ready-made email with their message in it
+      var to=(document.querySelector('.ft a[href^="mailto:"]')||{}).href||'';
+      var lines=[data.message,'',data.name+(data.company?', '+data.company:''),data.email].concat(data.phone?[data.phone]:[]).concat(data.interest.length?['Interested in: '+data.interest.join(', ')]:[]);
+      var a=document.createElement('a');a.href=to+(to.indexOf('?')>-1?'&':'?')+'subject='+encodeURIComponent('Enquiry from '+data.name)+'&body='+encodeURIComponent(lines.join('\n'));a.textContent='send it by email instead';
+      msg.textContent=lead;msg.className='enq-msg err';msg.appendChild(a);msg.appendChild(document.createTextNode(': your message is already written.'));
+    }
     f.addEventListener('submit',function(e){
       e.preventDefault();
       var name=F.name.value.trim(),email=F.email.value.trim(),text=F.message.value.trim();
-      if(!name){say('Please add your name.','err');F.name.focus();return;}
-      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){say('That email doesn’t look right.','err');F.email.focus();return;}
-      if(!text){say('Tell us a line about where things are now.','err');F.message.focus();return;}
+      if(!name){say('Please add your name.','err',F.name);F.name.focus();return;}
+      if(!EMAIL.test(email)){say('That email doesn’t look right.','err',F.email);F.email.focus();return;}
+      if(!text){say('Tell us a line about where things are now.','err',F.message);F.message.focus();return;}
       var data={name:name,company:F.company.value.trim(),email:email,phone:F.phone.value.trim(),
         interest:[].slice.call(f.querySelectorAll('input[name=interest]:checked')).map(function(i){return i.value}),
         message:text,website:F.website.value};
-      if(TS.need&&!TS.token()){say('One moment, the spam check is still loading. Try again in a second.','err');TS.load();return;}
+      if(TS.need&&!TS.token()){
+        if(TS.stuck()){byEmail('The spam check can’t load on this connection, so ',data);return;}
+        say('One moment, the spam check is still loading. Try again in a second.','err');TS.load();return;}
       data.turnstile=TS.token();
       btn.disabled=true;say('Sending…');
       fetch('/api/enquiry',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
         .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok){var e=new Error(r.status);e.code=j&&j.code;e.detail=j&&(j.detail||j.status);throw e;}return j;});})
         .then(function(){
-          var d=document.createElement('div');d.className='enq-done';d.setAttribute('role','status');
+          var d=document.createElement('div');d.className='enq-done';d.setAttribute('role','status');d.tabIndex=-1;
           var h=document.createElement('h3');h.className='h3';h.textContent='Got it, '+name.split(' ')[0]+'.';
           var p=document.createElement('p');p.textContent='We’ll reply to '+email+' the same working day.';
-          d.appendChild(h);d.appendChild(p);wrap.replaceChildren(d);
+          d.appendChild(h);d.appendChild(p);wrap.replaceChildren(d);d.focus({preventScroll:true}); // keep focus (and the screen reader) with the result
         })
         .catch(function(err){
           btn.disabled=false;TS.reset();
-          if(err&&err.code==='not_configured'){ // the sending service is not set up yet: hand the visitor a ready-made email instead
-            var to=(document.querySelector('.ft a[href^="mailto:"]')||{}).href||'';
-            var lines=[text,'',name+(data.company?', '+data.company:''),email].concat(data.phone?[data.phone]:[]).concat(data.interest.length?['Interested in: '+data.interest.join(', ')]:[]);
-            var a=document.createElement('a');a.href=to+(to.indexOf('?')>-1?'&':'?')+'subject='+encodeURIComponent('Enquiry from '+name)+'&body='+encodeURIComponent(lines.join('\n'));a.textContent='send it by email instead';
-            msg.textContent='The form can’t take messages right now, so ';msg.className='enq-msg err';msg.appendChild(a);msg.appendChild(document.createTextNode(': your message is already written.'));
-            return;
-          }
-          say('That didn’t send. Please try again in a minute.'+(err&&err.code?' ['+err.code+(err.detail?': '+err.detail:'')+']':''),'err');
+          if(err&&err.code==='not_configured'){byEmail('The form can’t take messages right now, so ',data);return;} // the sending service is not set up yet
+          if(err&&err.code==='invalid'){say('Please check your name, email and message, then send it again.','err');return;}
+          if(err&&err.code)console.warn('enquiry',err.code,err.detail||''); // for us, not for the visitor
+          byEmail('That didn’t send. Please try again in a minute, or ',data);
         });
     });
   })();
@@ -229,7 +236,8 @@
     if(!f)return;
     var biz=document.getElementById('r-biz'),txt=document.getElementById('r-msg'),cnt=document.getElementById('r-cnt'),live=document.getElementById('r-live'),hp=document.getElementById('r-web');
     var mail=f.getAttribute('data-email')||'',MAX=280,lastLive='';
-    function say(t,k){msg.textContent=t;msg.className='enq-msg'+(k?' '+k:'');}
+    function say(t,k,field){msg.textContent=t;msg.className='enq-msg'+(k?' '+k:'');[biz,txt].forEach(function(x){if(x===field){x.setAttribute('aria-invalid','true');x.setAttribute('aria-describedby',x.getAttribute('data-hint')+' revMsg');}else{x.removeAttribute('aria-invalid');x.setAttribute('aria-describedby',x.getAttribute('data-hint'));}});}
+    [biz,txt].forEach(function(x){x.setAttribute('data-hint',x.getAttribute('aria-describedby'));});
     function count(){var n=txt.value.length;cnt.textContent=n+' / '+MAX;cnt.parentNode.classList.toggle('near',n>=260);
       var l=n>=260?(MAX-n)+' characters left':'';if(l!==lastLive){lastLive=l;live.textContent=l;}} // only announced near the limit
     txt.addEventListener('input',count);count();
@@ -243,11 +251,13 @@
       e.preventDefault();
       var who=f.querySelector('input[name=reviewer]:checked');
       var data={business:biz.value.trim(),rating:rating(),reviewer:who?who.value:'',comment:txt.value.trim(),website:hp.value};
-      if(!data.business){say('Add your business name. It shows with your review.','err');biz.focus();return;}
+      if(!data.business){say('Add your business name. It shows with your review.','err',biz);biz.focus();return;}
       if(!data.rating){say('Pick a score from 1 to 5.','err');f.querySelector('input[name=rating]').focus();return;}
       if(!data.reviewer){say('Tell us if you\u2019ve worked with us.','err');f.querySelector('input[name=reviewer]').focus();return;}
-      if(data.comment.length>MAX){say('That\u2019s over 280 characters. Trim it a little and send it again.','err');txt.focus();return;}
-      if(RTS.need&&!RTS.token()){say('One moment, the spam check is still loading. Try again in a second.','err');RTS.load();return;}
+      if(data.comment.length>MAX){say('That\u2019s over 280 characters. Trim it a little and send it again.','err',txt);txt.focus();return;}
+      if(RTS.need&&!RTS.token()){
+        if(RTS.stuck()){mailFallback('The spam check can\u2019t load on this connection. Email your review to ',data);return;}
+        say('One moment, the spam check is still loading. Try again in a second.','err');RTS.load();return;}
       data.turnstile=RTS.token();
       btn.disabled=true;say('Sending\u2026');
       fetch('/api/review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
@@ -261,10 +271,10 @@
         })
         .catch(function(err){
           btn.disabled=false;RTS.reset();var c=err&&err.code;
-          if(c==='invalid'&&err.field==='business'){say('Add your business name. It shows with your review.','err');biz.focus();return;}
+          if(c==='invalid'&&err.field==='business'){say('Add your business name. It shows with your review.','err',biz);biz.focus();return;}
           if(c==='invalid'&&err.field==='rating'){say('Pick a score from 1 to 5.','err');return;}
           if(c==='invalid'&&err.field==='reviewer'){say('Tell us if you\u2019ve worked with us.','err');return;}
-          if(c==='too_long'){say('That\u2019s over 280 characters. Trim it a little and send it again.','err');txt.focus();return;}
+          if(c==='too_long'){say('That\u2019s over 280 characters. Trim it a little and send it again.','err',txt);txt.focus();return;}
           if(c==='spam_check'){say('The spam check didn\u2019t go through. Give it another go, and if it still won\u2019t send, refresh the page.','err');return;}
           mailFallback('That didn\u2019t send. Try again in a minute. If it still won\u2019t go, email your review to ',data);
         });
