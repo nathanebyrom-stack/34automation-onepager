@@ -75,7 +75,7 @@
       target=p*(N-1);
       if(bar)bar.style.transform='scaleX('+p+')';
       if(copy){var k=Math.min(Math.max((p-.28)/.10,0),1);copy.style.opacity=1-k;copy.style.transform='translateY('+(k*24)+'px)';}
-      if(mid){ // the statement: lines arrive at 38%, 44% and 50% of the scroll, after the headline has cleared, hold for about three screens, and leave together at 88%
+      if(mid){ // the statement: lines arrive at 38%, 44% and 50% of the scroll, after the headline has cleared, hold for twice as many screens as they did before 11 Nov (the film's scroll was doubled; every beat is a share of the scroll, so they all stretch with it), and leave together at 88%
         var out=1-Math.min(Math.max((p-.88)/.06,0),1),vis=Math.min(Math.max((p-.36)/.07,0),1)*out;
         mid.style.opacity=vis.toFixed(3);
         midLines.forEach(function(el,i){var a=Math.min(Math.max((p-(.38+i*.06))/.07,0),1);el.style.opacity=(a*out).toFixed(3);el.style.transform='translateY('+((1-a)*22).toFixed(1)+'px)';});
@@ -109,7 +109,7 @@
     function size(){dpr=Math.min(devicePixelRatio||1,1.5);W=pin.clientWidth;H=pin.clientHeight;cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);shown=-1;drawFrame();}
     function drawFrame(){
       if(!fw)return;
-      var f=Math.round(cur*(N-1)),key=f+'|'+Math.round(cur*600);if(key===shown)return; // the camera moves between frames too, so redraw on progress, not just on frame
+      var f=Math.round(cur*(N-1)),key=f+'|'+Math.round(cur*1200);if(key===shown)return; // the camera moves between frames too, so redraw on progress, not just on frame
       var s=Math.floor(f/PER),img=sheets[s];
       if(!img){ // nearest sheet that has arrived
         for(var d=1;d<SHEETS&&!img;d++){img=sheets[s-d]||sheets[s+d];if(img){f=(sheets[s-d]?(s-d)*PER+PER-1:(s+d)*PER);}}
