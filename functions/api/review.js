@@ -38,6 +38,8 @@ export async function onRequestPost({ request, env: rawEnv }) {
   if (!business || business.length > 80) return json({ ok: false, code: "invalid", field: "business" }, 400);
   const rating = typeof d.rating === "number" ? d.rating : typeof d.rating === "string" && /^\s*[1-5]\s*$/.test(d.rating) ? +d.rating : NaN;
   if (!Number.isInteger(rating) || rating < 1 || rating > 5) return json({ ok: false, code: "invalid", field: "rating" }, 400);
+  const reviewer = d.reviewer === "client" || d.reviewer === "visitor" ? d.reviewer : "";
+  if (!reviewer) return json({ ok: false, code: "invalid", field: "reviewer" }, 400);
   if (d.comment != null && typeof d.comment !== "string") return json({ ok: false, code: "invalid", field: "comment" }, 400);
   const comment = clean(d.comment);
   if (comment.length > 280) return json({ ok: false, code: "too_long", field: "comment" }, 400);
@@ -64,8 +66,8 @@ export async function onRequestPost({ request, env: rawEnv }) {
   const now = new Date();
   const when = now.toLocaleString("en-GB", { timeZone: "Europe/London", dateStyle: "medium", timeStyle: "short" });
   const day = now.toLocaleDateString("en-CA", { timeZone: "Europe/London" }); // YYYY-MM-DD, UK date
-  const entry = JSON.stringify(comment ? { business, rating, comment, date: day } : { business, rating, date: day }, null, 2);
-  const rows = [["Business", business], ["Score", `${rating} out of 5`], ["Sent", when + " (UK)"]];
+  const entry = JSON.stringify(comment ? { business, rating, reviewer, comment, date: day } : { business, rating, reviewer, date: day }, null, 2);
+  const rows = [["Business", business], ["Score", `${rating} out of 5`], ["Worked with us", reviewer === "client" ? "Yes, a client" : "No, rating the website"], ["Sent", when + " (UK)"]];
   const how =
     "To publish it, add it to public/reviews.json in the 34automation-onepager repo (inside the [ ], comma between entries) and push to main. " +
     "Publish genuine reviews, good or bad. Don't edit the wording. If you're not publishing it, just delete this email.";

@@ -47,6 +47,7 @@ const reviews = (() => {
       if (typeof r.business !== "string" || !r.business.trim() || r.business.trim().length > 80) why.push("business: 1 to 80 characters");
       if (!Number.isInteger(r.rating) || r.rating < 1 || r.rating > 5) why.push("rating: a whole number 1 to 5");
       if (r.comment != null && (typeof r.comment !== "string" || r.comment.length > 280)) why.push("comment: text up to 280 characters");
+      if (r.reviewer !== "client" && r.reviewer !== "visitor") why.push('reviewer: "client" or "visitor"');
       if (typeof r.date !== "string" || !/^\d{4}-(0[1-9]|1[0-2])(-\d{2})?$/.test(r.date)) why.push('date: "YYYY-MM-DD"');
     }
     if (why.length) bad.push(`  #${i + 1}: ${why.join("; ")}`);
@@ -69,7 +70,7 @@ function reviewsHtml() {
     const [y, m] = r.date.split("-");
     const comment = (r.comment || "").trim();
     return `<article class="rev"><div class="rh"><h3 class="h3">${esc(r.business.trim())}</h3><span class="score" role="img" aria-label="Rated ${r.rating} out of 5"><b>${r.rating}</b>/5${meter(r.rating)}</span></div>` +
-      (comment ? `<p>${esc(comment)}</p>` : "") + `<span class="lbl">${MONTHS[+m - 1]} ${y}</span></article>`;
+      (comment ? `<p>${esc(comment)}</p>` : "") + `<span class="lbl">${r.reviewer === "client" ? "Client" : "Site visitor"} <b>·</b> ${MONTHS[+m - 1]} ${y}</span></article>`;
   }).join("") + `</div>`;
   return out;
 }

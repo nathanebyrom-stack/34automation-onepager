@@ -202,7 +202,7 @@
       <div class="row">
         <div class="rv"><span class="kick"><i>05</i><span>Reviews</span></span>
           <h2 id="reviews-h" class="h2" style="margin-top:14px">Your score,<br><em>not ours.</em></h2></div>
-        <p class="lede rv" style="--i:1">No testimonials yet, on purpose. So we're not choosing what goes here. You are.</p>
+        <p class="lede rv" style="--i:1">We're not choosing what goes here. You are.</p>
       </div>
       <div class="rule"></div>
     </div>
@@ -211,7 +211,7 @@
       <div class="rv" style="--i:1" id="revWrap">
         <div class="intro">
           <p>Worked with us, or just had a look round the site? Score us out of 5 and, if you want, tell us why in a line or two.</p>
-          <p>We check every review is genuine before it shows. Genuine reviews go up whether they're good or bad. <span class="pol">We'd only leave one off if it's abusive, breaks the law or shares someone's personal details.</span></p>
+          <p>We check every review before it shows. Genuine reviews go up whether they're good or bad. <span class="pol">We'd only leave one off if it's abusive, breaks the law or shares someone's personal details.</span></p>
         </div>
         <form class="enq rvf" id="rev" action="/api/review" method="post" novalidate data-email="{{PUBLIC_EMAIL}}">
           <div class="g">
@@ -226,6 +226,13 @@
                 <label><input type="radio" name="rating" value="5"><span>5<b class="vh"> out of 5</b></span></label>
               </div>
               <span class="hint" id="r-rate-h">1 is poor, 5 is excellent.</span>
+            </fieldset>
+            <fieldset class="w">
+              <legend>Have you worked with us? <i>*</i></legend>
+              <div class="chips">
+                <label><input type="radio" name="reviewer" value="client" required><span>Yes, I'm a client</span></label>
+                <label><input type="radio" name="reviewer" value="visitor"><span>No, I'm rating the website</span></label>
+              </div>
             </fieldset>
             <div class="f w"><label for="r-msg">Comment <span class="opt">(optional)</span></label><textarea id="r-msg" name="comment" maxlength="280" placeholder="What worked, what didn't. A line or two is plenty." aria-describedby="r-msg-h"></textarea><span class="hint cnt" id="r-msg-h"><span>Up to 280 characters.</span><span id="r-cnt" aria-hidden="true">0 / 280</span></span><span class="vh" id="r-live" aria-live="polite"></span></div>
           </div>

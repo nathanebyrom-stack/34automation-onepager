@@ -236,14 +236,16 @@
     f.addEventListener('input',function(){if(msg.classList.contains('err'))say('');});
     function rating(){var r=f.querySelector('input[name=rating]:checked');return r?+r.value:0;}
     function mailFallback(lead,data){ // hand the visitor a ready-made email with their review in it
-      var a=document.createElement('a');a.href='mailto:'+mail+'?subject='+encodeURIComponent('Review: '+data.business+' · '+data.rating+'/5')+'&body='+encodeURIComponent('Business: '+data.business+'\nScore: '+data.rating+' out of 5'+(data.comment?'\n\n'+data.comment:''));a.textContent=mail;
+      var a=document.createElement('a');a.href='mailto:'+mail+'?subject='+encodeURIComponent('Review: '+data.business+' · '+data.rating+'/5')+'&body='+encodeURIComponent('Business: '+data.business+'\nScore: '+data.rating+' out of 5\nWorked with us: '+(data.reviewer==='client'?'Yes, a client':'No, rating the website')+(data.comment?'\n\n'+data.comment:''));a.textContent=mail;
       msg.textContent=lead;msg.className='enq-msg err';msg.appendChild(a);msg.appendChild(document.createTextNode('.'));
     }
     f.addEventListener('submit',function(e){
       e.preventDefault();
-      var data={business:biz.value.trim(),rating:rating(),comment:txt.value.trim(),website:hp.value};
+      var who=f.querySelector('input[name=reviewer]:checked');
+      var data={business:biz.value.trim(),rating:rating(),reviewer:who?who.value:'',comment:txt.value.trim(),website:hp.value};
       if(!data.business){say('Add your business name. It shows with your review.','err');biz.focus();return;}
       if(!data.rating){say('Pick a score from 1 to 5.','err');f.querySelector('input[name=rating]').focus();return;}
+      if(!data.reviewer){say('Tell us if you\u2019ve worked with us.','err');f.querySelector('input[name=reviewer]').focus();return;}
       if(data.comment.length>MAX){say('That\u2019s over 280 characters. Trim it a little and send it again.','err');txt.focus();return;}
       if(RTS.need&&!RTS.token()){say('One moment, the spam check is still loading. Try again in a second.','err');RTS.load();return;}
       data.turnstile=RTS.token();
@@ -253,7 +255,7 @@
         .then(function(){
           var d=document.createElement('div');d.className='enq-done';d.setAttribute('role','status');d.tabIndex=-1;
           var h=document.createElement('h3');h.className='h3';h.textContent='Thanks, it\u2019s in.';
-          var p=document.createElement('p');p.textContent='We\u2019ll check it\u2019s genuine, then it goes up here. If you ever want it taken down, email ';
+          var p=document.createElement('p');p.textContent='We\u2019ll check it, then it goes up here. If you ever want it taken down, email ';
           var a=document.createElement('a');a.href='mailto:'+mail;a.textContent=mail;p.appendChild(a);p.appendChild(document.createTextNode('.'));
           d.appendChild(h);d.appendChild(p);wrap.replaceChildren(d);d.focus({preventScroll:true});
         })
@@ -261,6 +263,7 @@
           btn.disabled=false;RTS.reset();var c=err&&err.code;
           if(c==='invalid'&&err.field==='business'){say('Add your business name. It shows with your review.','err');biz.focus();return;}
           if(c==='invalid'&&err.field==='rating'){say('Pick a score from 1 to 5.','err');return;}
+          if(c==='invalid'&&err.field==='reviewer'){say('Tell us if you\u2019ve worked with us.','err');return;}
           if(c==='too_long'){say('That\u2019s over 280 characters. Trim it a little and send it again.','err');txt.focus();return;}
           if(c==='spam_check'){say('The spam check didn\u2019t go through. Give it another go, and if it still won\u2019t send, refresh the page.','err');return;}
           mailFallback('That didn\u2019t send. Try again in a minute. If it still won\u2019t go, email your review to ',data);
