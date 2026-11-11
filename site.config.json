@@ -11,5 +11,9 @@
   "address": "11 Lindale, Rugby, CV21 1PH",
   "vatNumber": "",
   "icoRegistration": "",
-  "privacyUpdated": "8 November 2026"
+  "privacyUpdated": "11 November 2026",
+  "reportEmail": "jenny@34automation.co.uk",
+  "reviewsSummary": false,
+  "_reviews": "reviewsSummary: false (Edie HOLD, 11 Nov). true would show the review count and average above published reviews when there is at least one. Published reviews live in public/reviews.json.",
+  "signInApi": "https://faaraefaigsngvuuvsyv.supabase.co/functions/v1/brand-builder"
 }

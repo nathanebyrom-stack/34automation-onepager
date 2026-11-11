@@ -28,7 +28,7 @@
 <link rel="preload" href="/fonts/plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/video/poster.webp" as="image" fetchpriority="high">
 <link rel="stylesheet" href="/css/site.css?v={{BUILD}}">
-<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('34-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}</script>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('34-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}try{var c=navigator.connection||{};if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!c.saveData&&!/(^|-)2g$/.test(c.effectiveType||''))document.documentElement.classList.add('film')}catch(e){}</script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"ProfessionalService","name":"34 Automation","url":"{{SITE_URL}}/","logo":"{{SITE_URL}}/icon-512.png","image":"{{SITE_URL}}/og.jpg","email":"{{PUBLIC_EMAIL}}","description":"Lead magnets for owner-led UK engineering firms: websites, quote systems and follow-up automation.","areaServed":{"@type":"Country","name":"United Kingdom"},"knowsAbout":["Website design","Marketing","Workflow automation","Quote-to-order systems"],"sameAs":["{{LINKEDIN_URL}}","{{INSTAGRAM_URL}}"]}
 </script>
@@ -70,7 +70,7 @@
         <a class="btn" href="#work">See the work</a>
       </div>
     </div>
-    <div class="tblock rv" style="--i:4" aria-label="Sheet details">
+    <div class="tblock rv" style="--i:4" role="group" aria-label="Sheet details">
       <span>Client</span><span>Owner / MD, solo to 50 staff</span>
       <span>Sector</span><span>Subcontract machining</span>
       <span>Tolerance</span><span>±0.01 mm</span>
@@ -120,10 +120,10 @@
       <div class="rule"></div>
     </div>
     <div class="grid">
-      <a class="card rv" href="#contact"><div class="fr"><img src="img/15-website-overhaul.webp" alt="A laptop on a workshop bench beside two machined aluminium parts, its screen out of focus" loading="lazy" width="960" height="1200"><span class="n night">S·01</span></div><h3 class="h3">Website Overhaul</h3><p>A full rebuild of a site that has stopped earning its keep. New structure, new copy, new photography, and a build that loads in under two seconds on a phone in a workshop.</p></a>
-      <a class="card rv" style="--i:1" href="#contact"><div class="fr"><img src="img/16-landing-pages.webp" alt="Five panes of dark smoked glass floating in a stack, each edge lit with a thin line of gold" loading="lazy" width="960" height="1200"><span class="n night">S·02</span></div><h3 class="h3">Landing Pages</h3><p>One page for one job: a single service, a single kind of buyer. Built to be found for that search and to turn the visit into an enquiry.</p></a>
+      <a class="card rv" href="#contact"><div class="fr"><img src="img/15-website-overhaul.webp" alt="A laptop on a workshop bench beside two machined aluminium parts, its screen out of focus" loading="lazy" width="960" height="1200"><span class="n night">S·01</span></div><h3 class="h3">Website Overhaul</h3><p>A full rebuild of a site that has stopped earning its keep. New structure, new copy, new photography, and a build made for a phone in a workshop, not just a desktop in an office.</p></a>
+      <a class="card rv" style="--i:1" href="#contact"><div class="fr"><img class="ld" src="img/16-landing-pages-day.webp" srcset="img/16-landing-pages-day.webp 960w, img/16-landing-pages-day@2x.webp 1920w" sizes="(max-width:480px) calc(100vw - 32px), (max-width:1000px) calc(50vw - 25px), 300px" alt="Example landing pages for five fictional engineering firms, stacked on a pale drawing sheet. Each page has its own bold colour. The front page reads ‘Race parts, right first time.’ above a ‘Send a drawing’ button. A label says ‘Examples: fictional firms’." loading="lazy" width="960" height="1200"><img class="ln" src="img/16-landing-pages-night.webp" srcset="img/16-landing-pages-night.webp 960w, img/16-landing-pages-night@2x.webp 1920w" sizes="(max-width:480px) calc(100vw - 32px), (max-width:1000px) calc(50vw - 25px), 300px" alt="The same example landing pages in night mode: dark pages lit in their own colours against graphite, each framed by a thin gold edge. The front page reads ‘Race parts, right first time.’ above a ‘Send a drawing’ button. A gold label says ‘Examples: fictional firms’." loading="lazy" width="960" height="1200"><span class="n night">S·02</span></div><h3 class="h3">Landing Pages</h3><p>One page for one job: a single service, a single kind of buyer. Built to be found for that search and to turn the visit into an enquiry.</p></a>
       <a class="card rv" style="--i:2" href="#contact"><div class="fr"><img src="img/17-quote-to-order.webp" alt="A folded engineering drawing, a machined steel part and a dark phone laid in a line, joined by a trace of gold light" loading="lazy" width="960" height="1200"><span class="n night">S·03</span></div><h3 class="h3">Quote-to-Order</h3><p>A customer sends a drawing, quantities and finish. It's logged, assigned and answered the same day, and the quote becomes the order without being typed twice.</p></a>
-      <a class="card rv" style="--i:3" href="#contact"><div class="fr"><img src="img/18-stay-connected.webp" alt="A dark CNC control panel with one round indicator lamp glowing warm gold" loading="lazy" width="960" height="1200"><div class="dash" id="dash" aria-hidden="true"><span class="scr">Automation</span><i class="lp" style="--x:24;--y:44.6"></i><i class="lp" style="--x:34.4;--y:42.9"></i><i class="lp" style="--x:58.6;--y:53.1"></i><i class="lp" style="--x:60.7;--y:48.6"></i><i class="lp" style="--x:65.4;--y:54.3"></i><i class="lp" style="--x:67.2;--y:50.7"></i><i class="lp" style="--x:71.7;--y:55.4"></i><i class="lp" style="--x:73.5;--y:51.5"></i><i class="lp" style="--x:78.3;--y:56.5"></i><i class="lp" style="--x:79.7;--y:52.8"></i><i class="lp" style="--x:62.9;--y:57.5"></i><i class="lp" style="--x:69.5;--y:59"></i><i class="lp" style="--x:76;--y:60.2"></i></div><span class="n night">S·04</span></div><h3 class="h3">Stay Connected</h3><p>Follow-up that runs while you're on the machine: acknowledgements, quote chasers and order updates, sent on time and in your voice.</p></a>
+      <a class="card rv" style="--i:3" href="#contact"><div class="fr"><img src="img/18-stay-connected.webp" alt="A dark CNC control panel with one round indicator lamp glowing warm gold" loading="lazy" width="960" height="1200"><svg class="dash" id="dash" viewBox="0 0 960 1200" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false"><defs><filter id="s4h" x="-80%" y="-120%" width="260%" height="340%"><feGaussianBlur stdDeviation="7"/></filter><filter id="s4c" x="-20%" y="-30%" width="140%" height="160%"><feGaussianBlur stdDeviation=".9"/></filter><filter id="s4o" x="-60%" y="-90%" width="220%" height="280%"><feGaussianBlur stdDeviation="2.6"/></filter><filter id="s4t" x="-10%" y="-60%" width="120%" height="220%"><feGaussianBlur stdDeviation="4"/></filter><rect id="s4kp" x="-20" y="-8" width="40" height="16" rx="3.5"/><rect id="s4sk" x="-16" y="-8" width="32" height="16" rx="3"/></defs><g class="k k1" transform="translate(618 678) rotate(28)"><use href="#s4kp" class="h" transform="scale(1.35 1.6)"/><use href="#s4kp" class="c"/><use href="#s4kp" class="o" transform="scale(.55 .45)"/></g><g class="k k2" transform="translate(683 646) rotate(28)"><use href="#s4kp" class="h" transform="scale(1.35 1.6)"/><use href="#s4kp" class="c"/><use href="#s4kp" class="o" transform="scale(.55 .45)"/></g><g class="k k3" transform="translate(749 617) rotate(28)"><use href="#s4kp" class="h" transform="scale(1.35 1.6)"/><use href="#s4kp" class="c"/><use href="#s4kp" class="o" transform="scale(.55 .45)"/></g><g class="k k4" transform="translate(317 503.8) rotate(-7.6) skewX(30) scale(.94 .89)"><use href="#s4sk" class="h" transform="scale(1.35 1.6)"/><use href="#s4sk" class="c"/><use href="#s4sk" class="o" transform="scale(.55 .45)"/></g><g class="k k5" transform="translate(226 520.5) rotate(-8.6) skewX(33) scale(1.04 1.19)"><use href="#s4sk" class="h" transform="scale(1.35 1.6)"/><use href="#s4sk" class="c"/><use href="#s4sk" class="o" transform="scale(.55 .45)"/></g><g class="scr" transform="matrix(.9925 -.122 .62 .42 42 471)"><text class="h">AUTOMATION</text><text>AUTOMATION</text></g></svg><span class="n night">S·04</span></div><h3 class="h3">Stay Connected</h3><p>Follow-up that runs while you're on the machine: acknowledgements, quote chasers and order updates, sent on time and in your voice.</p></a>
     </div>
   </div>
 </section>
@@ -196,11 +196,100 @@
   </div>
 </section>
 
+<section class="band reviews" id="reviews" aria-labelledby="reviews-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="row">
+        <div class="rv"><span class="kick"><i>05</i><span>Reviews</span></span>
+          <h2 id="reviews-h" class="h2" style="margin-top:14px">Your score,<br><em>not ours.</em></h2></div>
+        <p class="lede rv" style="--i:1">We're not choosing what goes here. You are.</p>
+      </div>
+      <div class="rule"></div>
+    </div>
+    <div class="lay">
+      <div class="pub rv"><!--REVIEWS--></div>
+      <div class="rv" style="--i:1" id="revWrap">
+        <div class="intro">
+          <p>Worked with us, or just had a look round the site? Score us out of 5 and, if you want, tell us why in a line or two.</p>
+          <p>We check every review before it shows. Genuine reviews go up whether they're good or bad. <span class="pol">We'd only leave one off if it's abusive, breaks the law or shares someone's personal details.</span></p>
+        </div>
+        <form class="enq rvf" id="rev" action="/api/review" method="post" novalidate>
+          <div class="g">
+            <div class="f w"><label for="r-biz">Business name <i>*</i></label><input id="r-biz" name="business" autocomplete="organization" required maxlength="80" aria-describedby="r-biz-h"><span class="hint" id="r-biz-h">Shows with your review.</span></div>
+            <fieldset class="w" aria-describedby="r-rate-h">
+              <legend>Your score, out of 5 <i>*</i></legend>
+              <div class="rate">
+                <label><input type="radio" name="rating" value="1" required><span>1<b class="vh"> out of 5</b></span></label>
+                <label><input type="radio" name="rating" value="2"><span>2<b class="vh"> out of 5</b></span></label>
+                <label><input type="radio" name="rating" value="3"><span>3<b class="vh"> out of 5</b></span></label>
+                <label><input type="radio" name="rating" value="4"><span>4<b class="vh"> out of 5</b></span></label>
+                <label><input type="radio" name="rating" value="5"><span>5<b class="vh"> out of 5</b></span></label>
+              </div>
+              <span class="hint" id="r-rate-h">1 is poor, 5 is excellent.</span>
+            </fieldset>
+            <fieldset class="w">
+              <legend>Have you worked with us? <i>*</i></legend>
+              <div class="chips">
+                <label><input type="radio" name="reviewer" value="client" required><span>Yes, I'm a client</span></label>
+                <label><input type="radio" name="reviewer" value="visitor"><span>No, I'm rating the website</span></label>
+              </div>
+            </fieldset>
+            <div class="f w"><label for="r-msg">Comment <span class="opt">(optional)</span></label><textarea id="r-msg" name="comment" maxlength="280" placeholder="What worked, what didn't. A line or two is plenty." aria-describedby="r-msg-h"></textarea><span class="hint cnt" id="r-msg-h"><span>Up to 280 characters.</span><span id="r-cnt" aria-hidden="true">0 / 280</span></span><span class="vh" id="r-live" aria-live="polite"></span></div>
+          </div>
+          <div class="hp" aria-hidden="true"><label for="r-web">Leave this empty</label><input id="r-web" name="website" tabindex="-1" autocomplete="off"></div>
+          <div class="send">
+            <button class="btn solid" type="submit" id="revBtn">Send review <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></button>
+          </div>
+          <div class="ts" id="rts"></div>
+          <p class="note">Once it's checked, your business name, score and comment show on this page. <a href="/privacy/">Privacy notice</a>.</p>
+        </form>
+        <p class="enq-msg" id="revMsg" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="band report" id="report" aria-labelledby="report-h">
+  <div class="wrap">
+    <div class="head">
+      <div class="row">
+        <div class="rv"><span class="kick"><i>06</i><span>Website report</span></span>
+          <h2 id="report-h" class="h2" style="margin-top:14px">Your website,<br><em>on the bench.</em></h2></div>
+        <p class="lede rv" style="--i:1">Email us your web address and we'll send back a full report on your site, including where it ranks against your five closest competitors.</p>
+      </div>
+      <div class="rule"></div>
+    </div>
+    <div class="lay">
+      <div class="txt rv">
+        <h3 class="h3">What's in it</h3>
+        <p>We score the eight things a buyer notices: first impression, clarity of offer, technical detail, mobile, speed, enquiry path, trust signals and SEO basics. Every score comes with what we found and what to do about it. Then your five closest competitors go through the same checks, so you can see where you sit.</p>
+        <h3 class="h3">Why it has to come from your domain</h3>
+        <p>The report is about your business, so it only goes to someone who can show the site's theirs. If your website is yourfirm.co.uk, send the email from an address ending @yourfirm.co.uk. Any name before the @ is fine. We reply to the address it came from, and nowhere else.</p>
+        <p>Gmail, Outlook.com, Hotmail, Yahoo and iCloud addresses can't show us that, so we can't send a report to one. Plenty of firms run on a Gmail address and there's nothing wrong with it. If that's you, you can still <a href="#contact">start a conversation below</a>.</p>
+      </div>
+      <div class="ask rv" style="--i:1">
+        <div class="img"><img src="img/13-measure.webp" alt="A pair of working hands closing a micrometer onto a small machined steel part" loading="lazy" width="1600" height="893"></div>
+        <div class="in"><!--email_off--><!-- keeps Cloudflare's email obfuscation off this card, so the mailto keeps its subject and the address shows without JS -->
+          <h3 class="h3">How to ask</h3>
+          <dl class="tb">
+            <div><dt>Email</dt><dd>{{REPORT_EMAIL}}</dd></div>
+            <div><dt>Include</dt><dd>Your website address</dd></div>
+            <div><dt>Send from</dt><dd>An address at your website's own domain</dd></div>
+          </dl>
+          <a class="btn solid" href="mailto:{{REPORT_EMAIL}}?subject=Website%20report%20request&amp;body=Website%20address%3A%20%0D%0ABusiness%20name%3A%20%0D%0A">Email us for a report <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
+          <span class="lbl mail">{{REPORT_EMAIL}}</span>
+          <p class="note">We use your email to check the site's yours and to send your report. <a href="/privacy/">Privacy notice</a>.</p>
+        <!--/email_off--></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="band cta" id="contact" aria-labelledby="cta-h">
   <div class="split">
     <div class="img rv"><img src="img/11-the-owner.webp" alt="The owner of a small engineering firm reading a drawing in a workshop office at dusk, CNC machines through the glass behind him" loading="lazy" width="1800" height="1005"></div>
     <div class="txt">
-      <span class="kick rv"><i>05</i><span>Start a conversation</span></span>
+      <span class="kick rv"><i>07</i><span>Start a conversation</span></span>
       <h2 id="cta-h" class="h2 rv" style="--i:1">No pitch deck.<br>No hard sell.</h2>
       <p class="rv" style="--i:2">Tell us where your brand is now and we'll tell you, straight, what we'd do with it. If the answer is "nothing yet", we'll say that too.</p>
       <div class="rv" style="--i:3" id="enqWrap">
@@ -241,7 +330,7 @@
   <div class="wrap">
     <a class="logo" href="#top" aria-label="34 Automation, back to top"><img class="ln" src="img/logo.svg" alt="34 Automation" width="180" height="26"><img class="ld" src="img/logo-day.svg" alt="34 Automation" width="180" height="26"></a>
     <nav aria-label="Footer">
-      <a href="#offer">What we offer</a><a href="#services">Services</a><a href="#why">Why us</a><a href="#work">Work</a><a href="#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
+      <a href="#offer">What we offer</a><a href="#services">Services</a><a href="#why">Why us</a><a href="#work">Work</a><a href="#reviews">Reviews</a><a href="#report">Website report</a><a href="#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
     </nav>
     <ul class="soc">
       <li><a href="{{LINKEDIN_URL}}" target="_blank" rel="noopener noreferrer" aria-label="34 Automation on LinkedIn (opens in a new tab)"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span>LinkedIn</span></a></li>

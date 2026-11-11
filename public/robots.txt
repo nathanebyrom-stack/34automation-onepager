@@ -1,5 +1,4 @@
 User-agent: *
 Allow: /
-Disallow: /clients/
 
 Sitemap: {{SITE_URL}}/sitemap.xml
