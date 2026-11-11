@@ -284,3 +284,22 @@
     });
   })();
 })();
+
+// S·02: the five example landing pages take turns on the front glass pane.
+// Frames 2-5 load only once the card is near the screen; it runs only while in view, and not at all for reduced motion.
+(function(){
+  var box=document.querySelector('[data-glass]'); if(!box)return;
+  var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var gl=[].slice.call(box.querySelectorAll('.gl')),pips=[].slice.call(box.querySelectorAll('.gpips i'));
+  if(still||gl.length<2||!('IntersectionObserver' in window)){var p=box.querySelector('.gpips');if(p)p.style.display='none';return;}
+  var i=0,t=null,seen=false,hover=false,card=box.closest('.card')||box;
+  function load(){gl.forEach(function(g){if(g.dataset.src){g.srcset=g.dataset.srcset;g.src=g.dataset.src;delete g.dataset.src;}});}
+  function show(n){gl[i].classList.remove('on');pips[i]&&pips[i].classList.remove('on');i=n;gl[i].classList.add('on');pips[i]&&pips[i].classList.add('on');}
+  function next(){var n=(i+1)%gl.length;if(gl[n].complete&&gl[n].naturalWidth)show(n);}
+  function run(){if(!t&&seen&&!hover&&!document.hidden)t=setInterval(next,3400);}
+  function stop(){clearInterval(t);t=null;}
+  new IntersectionObserver(function(e){e.forEach(function(x){if(x.isIntersecting){load();seen=true;run();}else{seen=false;stop();}});},{rootMargin:'200px 0px'}).observe(box);
+  card.addEventListener('mouseenter',function(){hover=true;stop();});
+  card.addEventListener('mouseleave',function(){hover=false;run();});
+  document.addEventListener('visibilitychange',function(){document.hidden?stop():run();});
+})();
