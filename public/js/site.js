@@ -31,11 +31,11 @@
     addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(px);}},{passive:true}); px();
   }
 
-  // S·04: the control panel lights come on one by one as the card climbs the screen, then the little screen reads Automation
+  // S·04: five keys light one by one as the card climbs the screen, then the panel's screen reads AUTOMATION (after the fifth key)
   (function(){
     var dash=document.getElementById('dash');if(!dash)return;
-    var lps=[].slice.call(dash.querySelectorAll('.lp')),fr=dash.parentElement,t=false,last=-1;
-    function paint(){t=false;var r=fr.getBoundingClientRect(),p=Math.min(Math.max((innerHeight-r.top)/(innerHeight*.85),0),1);if(still)p=1;var n=Math.round(p*lps.length);if(n===last)return;last=n;lps.forEach(function(l,i){l.classList.toggle('on',i<n);});dash.classList.toggle('on',n>=2);}
+    var ks=[].slice.call(dash.querySelectorAll('.k')),fr=dash.parentElement,t=false,last=-1,S=ks.length+2;
+    function paint(){t=false;var r=fr.getBoundingClientRect(),p=Math.min(Math.max((innerHeight-r.top)/(innerHeight*.85),0),1);if(still)p=1;var n=Math.min(Math.floor(p*S),S-1);if(p>=1)n=S-1;if(n===last)return;last=n;ks.forEach(function(k,i){k.classList.toggle('on',i<n);});dash.classList.toggle('on',n>ks.length);}
     addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(paint);}},{passive:true});addEventListener('resize',paint);paint();
   })();
 
