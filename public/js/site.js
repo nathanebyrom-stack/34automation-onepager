@@ -13,26 +13,36 @@
   })();
   var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // scroll pace (Nathan, 11 Nov): the whole page scrolls at half the browser's speed (wheel, trackpad and touch),
-  // and it pauses briefly at the top of each section before carrying on. Lenis (js/lenis.min.js) does the smoothing.
+  // scroll pace (Nathan, 11 Nov): the page scrolls at half the browser's speed (wheel, trackpad and touch),
+  // except inside the two scroll films (hero, why us), which keep their full speed. It pauses briefly at the top of
+  // each section before carrying on. Lenis (js/lenis.min.js) does the smoothing.
   // Off for reduced motion; nav links, keyboard and the scrollbar still go straight there.
   (function(){
     if(still||typeof Lenis!=='function')return;
-    var PACE=.5,HOLD=650; // PACE: share of normal scroll speed. HOLD: ms the page rests at a section top
+    var PACE=.5,HOLD=650; // PACE: share of normal scroll speed outside the films. HOLD: ms the page rests at a section top
     var lenis,secs=[].slice.call(document.querySelectorAll('main > section')),until=0;
+    var hero=document.getElementById('hero'),why=document.getElementById('why'),whyTrack=document.getElementById('whyTrack');
+    function span(el,y){var r=el.getBoundingClientRect();return [r.top+y,r.top+y+el.offsetHeight-innerHeight];}
+    function inFilm(at){ // is this scroll position inside a film's scrub? (only when the film actually runs)
+      var y=lenis.scroll,s;
+      if(hero&&d.classList.contains('film')){s=span(hero,y);if(at>=s[0]&&at<s[1])return true;}
+      if(why&&whyTrack&&why.classList.contains('scrub')){s=span(whyTrack,y);if(at>=s[0]&&at<s[1])return true;}
+      return false;
+    }
     function stops(){var y=lenis.scroll,max=lenis.limit-2;return secs.map(function(s){return Math.round(s.getBoundingClientRect().top+y);}).filter(function(v){return v>2&&v<max;});}
     function pause(e){
       var ev=e.event,dy=e.deltaY;
       if(!lenis||ev.type==='touchstart'||ev.ctrlKey)return true;
       if(performance.now()<until){if(ev.cancelable)ev.preventDefault();return false;} // resting: swallow the input, trackpad and flick momentum included
       if(!dy)return true;
+      if(ev.type!=='touchend'&&!inFilm(dy>0?lenis.targetScroll:lenis.targetScroll-1)){dy*=PACE;e.deltaY=dy;e.deltaX*=PACE;} // Lenis reads the deltas after this returns
       var from=lenis.targetScroll,to=from+(ev.type==='touchend'?Math.sign(dy)*Math.pow(Math.abs(lenis.velocity),1.7):dy),hit=null;
       stops().forEach(function(b){if((dy>0&&from<b&&to>=b)||(dy<0&&from>b&&to<=b)){if(hit===null||Math.abs(b-from)<Math.abs(hit-from))hit=b;}});
       if(hit===null)return true;
       lenis.scrollTo(hit,{lerp:.12});until=performance.now()+HOLD;
       if(ev.cancelable)ev.preventDefault();return false;
     }
-    lenis=new Lenis({wheelMultiplier:PACE,touchMultiplier:PACE,syncTouch:true,lerp:.09,anchors:true,autoRaf:true,virtualScroll:pause});
+    lenis=new Lenis({syncTouch:true,lerp:.09,anchors:true,autoRaf:true,virtualScroll:pause});
     window.__pace=lenis; // handle for testing
   })();
   // the contact address for the email fallbacks. Kept here, not read from the page, because Cloudflare's email obfuscation rewrites addresses in the live HTML.
