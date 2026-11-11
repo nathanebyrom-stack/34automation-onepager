@@ -185,6 +185,8 @@ p{margin:0}
 .card:hover .fr::after{transform:scaleX(1)}
 .card .n{position:absolute;top:12px;left:12px;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;color:var(--silver);background:rgba(var(--shade),.6);padding:4px 8px;border:1px solid rgba(var(--line),.2)}
 .card p{color:var(--steel);font-size:14.5px}
+/* S·02 (11 Nov): Nova's example landing pages, one image per theme, swapped by the logo tokens (follows the switch and the OS setting). Never filtered: the Day colour is the point */
+.card .fr .ld{display:var(--logo-day)}.card .fr .ln{display:var(--logo-night)}
 @media (max-width:1000px){.svc .grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 /* S·04: the control panel wakes up as the card scrolls in: five keys light one by one, then the screen reads AUTOMATION.
    The overlay is an SVG in the photo's own pixels (960x1200, sliced and centred exactly like the img's object-fit: cover), so it stays on the keys at every size.
