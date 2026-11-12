@@ -1,28 +1,22 @@
 (function(){
   var d=document.documentElement; d.classList.add('js');
-  var SRC=(document.currentScript&&document.currentScript.src)||''; // this file's address: its ?v= is reused for the Starlight files
+  var SRC=(document.currentScript||{}).src||''; // its ?v= is reused for the Starlight files
   // day / night / starlight: follows the viewer's system until they pick one, then remembers it.
-  // Starlight is Night plus a class: stored as 'starlight', applied as data-theme="dark" + .starlight, only on pages marked data-sl.
-  // Only the stored choice or its own button sets it, so the system setting can never pick it.
+  // Starlight is Night plus a class: stored as 'starlight', applied as data-theme="dark" + .starlight, only on pages marked data-sl. The system setting can never pick it.
   (function(){
-    var K='34-theme',SL='starlight',can=d.hasAttribute('data-sl'),bs=[].slice.call(document.querySelectorAll('.mode button')),got=false;
+    var K='34-theme',SL='starlight',can=d.hasAttribute('data-sl'),bs=[].slice.call(document.querySelectorAll('.mode button')),got;
     function cur(){if(d.classList.contains(SL))return SL;var t=d.getAttribute('data-theme');if(t)return t;return matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}
     function set(m){d.classList.toggle(SL,m===SL&&can);d.setAttribute('data-theme',m===SL?'dark':m);}
-    function layers(){ // Starlight's own stylesheet and script: fetched the first time the mode is on, never for Night or Day
-      if(got||!d.classList.contains(SL))return;got=true;
-      var v=SRC.indexOf('?')>-1?SRC.slice(SRC.indexOf('?')):'',l=document.createElement('link'),s=document.createElement('script');
-      l.rel='stylesheet';l.href='/css/starlight.css'+v;s.src='/js/starlight.js'+v;s.onerror=function(){d.classList.add('sl-fail');};
-      document.head.appendChild(l);document.head.appendChild(s);
+    function layers(){ // Starlight's stylesheet and script, fetched the first time the mode is on and never for Night or Day. The sheet arrives off; its script switches it on
+      if(got||!d.classList.contains(SL))return;got=1;
+      var v=SRC.split('?')[1],l=document.createElement('link'),s=document.createElement('script');v=v?'?'+v:'';
+      l.rel='stylesheet';l.media='not all';l.href='/css/starlight.css'+v;s.src='/js/starlight.js'+v;document.head.appendChild(l);document.head.appendChild(s);
     }
     function paint(){var c=cur();bs.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===c));});layers();}
     try{var s=localStorage.getItem(K);if(s==='light'||s==='dark'||s===SL)set(s);}catch(e){}
     bs.forEach(function(b){b.addEventListener('click',function(){
-      var m=b.dataset.mode;
-      // Starlight adds blocks to the page, so hold the reader's place: note the first thing on screen, switch, put it back
-      var a=null,y0=0;[].some.call(document.querySelectorAll('.rv,.head'),function(x){var r=x.getBoundingClientRect();if(r.top>=72&&r.height>0&&!x.closest('.sl-ig')){a=x;y0=r.top;return true;}});
-      set(m);try{localStorage.setItem(K,m);}catch(e){}paint();
-      var dy=a?a.getBoundingClientRect().top-y0:0;
-      if(Math.abs(dy)>1){if(window.__pace){window.__pace.resize();window.__pace.scrollTo(scrollY+dy,{immediate:true,force:true});}else scrollTo(0,scrollY+dy);}
+      // once Starlight's script is in, it holds the reader's place across the switch (its blocks change the page's height)
+      (window.__slHold||function(f){f();})(function(){var m=b.dataset.mode;set(m);try{localStorage.setItem(K,m);}catch(e){}paint();});
     });});
     try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',paint);}catch(e){}
     new MutationObserver(paint).observe(d,{attributes:true,attributeFilter:['data-theme']});
