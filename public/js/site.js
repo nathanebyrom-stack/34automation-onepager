@@ -70,6 +70,15 @@
     addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(px);}},{passive:true}); px();
   }
 
+  // ghost drawing behind 01 What we offer (Nathan, 12 Nov): a quarter drawn as the band comes up, the rest drawn in by the scroll, all of it by the time the band is mostly read.
+  // Runs backwards on the way up, like the films. Reduced motion: nothing set here, so the CSS shows the whole drawing.
+  if(!still){(function(){
+    var band=document.getElementById('offer'),img=band&&band.querySelector('.tex img'),t=false,last=-1;if(!img)return;
+    function sk(){t=false;var r=band.getBoundingClientRect(),h=innerHeight;if(r.bottom<-h||r.top>2*h)return;
+      var k=(h*.8-r.top)/Math.max(r.height*.75,h*.6);k=k<0?0:k>1?1:k;k=k*k*(3-2*k); // eased, so the pen starts and finishes gently
+      var v=Math.round((.25+.75*k)*1000)/1000;if(v!==last){last=v;img.style.setProperty('--sk',v);}}
+    img.style.setProperty('--sk',.25);addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(sk);}},{passive:true});addEventListener('resize',sk);sk();
+  })();}
   // S·04: five keys light one by one as the card climbs the screen, then the panel's screen types THE DEVIL'S / IN THE DETAIL (after the fifth key).
   // Scroll back above it and the screen clears, so it types again next time. Reduced motion: the full line, no typing. Without JS the markup already holds the full line.
   (function(){
