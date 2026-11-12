@@ -537,3 +537,45 @@ All of it ran against a throwaway copy of the repo built in `/tmp`. The clone it
 - Push straight after step 1 and confirm Cloudflare builds a preview. If it doesn't, tell Jenny at once; no workaround.
 - New strings: nothing ships until Edie passes it. The §13 list goes to Jenny as soon as step 1 is pushed. Until then drafts are used in the preview and marked in code with a `DRAFT-COPY` comment.
 - Report to Jenny at each push (commit hash and contents), and as soon as anything threatens the report-in at 15:00 on Mon 16 Nov. The final report covers everything in §10.
+
+---
+
+## 17. Build record (12 Nov 2026)
+
+What was built against this plan, and where it differs. Figures are from the branch build served locally with the real CSP header (`scripts/qa/serve.mjs`); the sandbox cannot open the preview address.
+
+**Built as planned:** the switch (§5), the palette (§4), the three infographics (§6.1 to §6.3), lazy loading and reduced-motion states (§7), inner-page behaviour (§8), the CSP hash and build guard.
+
+**Differences from the plan**
+
+| Plan | Built | Why |
+|---|---|---|
+| Three empty mounts in `index.html` | Two (enquiry line, How we work). The dial's and the services map's mounts are created by `js/starlight.js` | An empty element between a paragraph and a heading in the report cost Night and Day 14 px of margin. Caught by the pixel comparison against `main` |
+| Fixed heights reserved for each diagram (§5.5c) | None reserved. `starlight.css` arrives switched off (`media="not all"`) and is switched on in the same step as the mounts are filled, with the reader's place held across that step | One measured correction instead of guessed heights; holds to within about 1 px in 30 switches at each size |
+| Scroll hold in `site.js` (§5.6) | In `js/starlight.js`, exposed as `window.__slHold`; the header switch runs its change through it once it exists | Keeps Night and Day's download inside the budget |
+| `--s4-*` and `--sl-spec` tokens in `site.css` | In `starlight.css` | Not needed for the first paint |
+| Hero stage untouched (§1, §15.3 option a) | The 2 px progress line takes the spectrum | Jenny's ruling 3 |
+| Glints optional, up to six per band | Three to five per band, each placed inside the band's empty top margin (position and size are shares of that margin) | So none can sit behind text at any width |
+| Glow strength one value | Capped per colour: violet, pink, blue 0.30; cyan 0.26; green, gold 0.24; work band 0.18 | Keeps secondary text at 5.00:1 or better at a glow's centre |
+| Services map not chosen (§6.4) | Built as a fourth infographic, above the four service cards | Jenny: first thing to add with time left |
+| Per-file byte split (§9.1) | `site.js` +466 B (planned +300), `starlight.css` 5.7 KB (planned 4) | Totals are inside the budget: Night and Day +1,170 B (limit 1,250); Starlight 11.7 KB (limit 13) |
+
+**Results**
+
+| Check | Result |
+|---|---|
+| Night and Day against `main` | Pixel-identical below the header: home, client area, privacy; 375 and 1440 px (`scripts/qa/regress.mjs`) |
+| Switch | 47 checks pass: OS never picks Starlight, both ways by click and keyboard, reload, lazy requests (0 for Night and Day, 2 for Starlight), inner pages, header one row at 24 widths from 320 to 1920 px in each mode (`switch.mjs`) |
+| Render matrix | Three modes x 375 and 1440 x motion and reduced: no sideways scroll, no console or CSP errors, axe no violations (`matrix.mjs`) |
+| Reduced motion | Nothing running in any mode; every diagram finished and still |
+| Hero stage | Identical to Night at 0, 20, 50, 80% of the film, both sizes, apart from the progress line |
+| Contrast | Every pairing at or above 4.5:1, text over glows included (`contrast.mjs`) |
+| Lighthouse mobile, median of 5, before then after | Night 95/100/100/100 then 96/100/100/100. Day 93/100/100/100 then 93/100/100/100. Starlight 93/100/100/100 (LCP 2.70 s, CLS 0, 29 requests). Blocking time ranged 150 to 210 ms across all runs in all modes, baseline included |
+| Capture | `scripts/qa/capture-starlight.mjs`: 28 s, phone and desktop, from the local build or the preview address |
+
+**Still open**
+
+- Nobody has opened the preview address in a real browser yet. Safari and a real phone are untested.
+- Every new string is draft until Edie passes it (`DRAFT-COPY` in `js/starlight.js`). The services map added six strings to the §13 list: the caption "One buyer, four services", and four screen-reader lines ("From search to visit", "From search to enquiry", "From enquiry to order", "From enquiry to order, and after"); its five stop names (Search, Visit, Enquiry, Quote, Order) are words from the service cards.
+- Not merged. `main` is untouched. Merge only on Nathan's sign-off of the preview.
+
