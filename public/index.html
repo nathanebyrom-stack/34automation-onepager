@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en-GB">
+<html lang="en-GB" data-sl>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
@@ -28,7 +28,7 @@
 <link rel="preload" href="/fonts/plex-sans-400.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/video/poster.webp" as="image" fetchpriority="high">
 <link rel="stylesheet" href="/css/site.css?v={{BUILD}}">
-<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('34-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}try{var c=navigator.connection||{};if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!c.saveData&&!/(^|-)2g$/.test(c.effectiveType||''))document.documentElement.classList.add('film')}catch(e){}</script>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('34-theme'),h=document.documentElement;if(t==='starlight'){t='dark';if(h.hasAttribute('data-sl'))h.classList.add('starlight')}if(t==='light'||t==='dark')h.setAttribute('data-theme',t)}catch(e){}try{var c=navigator.connection||{};if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!c.saveData&&!/(^|-)2g$/.test(c.effectiveType||''))document.documentElement.classList.add('film')}catch(e){}</script>
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"ProfessionalService","name":"34 Automation","url":"{{SITE_URL}}/","logo":"{{SITE_URL}}/icon-512.png","image":"{{SITE_URL}}/og.jpg","email":"{{PUBLIC_EMAIL}}","description":"Lead magnets for owner-led UK engineering firms: websites, quote systems and follow-up automation.","areaServed":{"@type":"Country","name":"United Kingdom"},"knowsAbout":["Website design","Marketing","Workflow automation","Quote-to-order systems"],"sameAs":["{{LINKEDIN_URL}}","{{INSTAGRAM_URL}}"]}
 </script>
@@ -46,8 +46,9 @@
       <a class="ca" href="/clients/"><span class="long">Client area</span><span class="short">Clients</span></a>
       <a class="btn" href="#contact"><span class="long">Start a conversation</span><span class="short">Talk to us</span></a>
       <div class="mode" role="group" aria-label="Colour theme">
-        <button type="button" id="mNight" data-mode="dark" aria-pressed="false" aria-label="Night"><svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M7.5 1a5 5 0 1 0 3.5 8.6A4.2 4.2 0 0 1 7.5 1z"/></svg><span class="t">Night</span></button>
-        <button type="button" id="mDay" data-mode="light" aria-pressed="false" aria-label="Day"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="6" cy="6" r="2.4"/><path d="M6 .6v1.6M6 9.8v1.6M.6 6h1.6M9.8 6h1.6M2.2 2.2l1.1 1.1M8.7 8.7l1.1 1.1M2.2 9.8l1.1-1.1M8.7 3.3l1.1-1.1"/></svg><span class="t">Day</span></button>
+        <button type="button" id="mNight" data-mode="dark" aria-pressed="false" aria-label="Night" title="Night"><svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M7.5 1a5 5 0 1 0 3.5 8.6A4.2 4.2 0 0 1 7.5 1z"/></svg><span class="t">Night</span></button>
+        <button type="button" id="mDay" data-mode="light" aria-pressed="false" aria-label="Day" title="Day"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true"><circle cx="6" cy="6" r="2.4"/><path d="M6 .6v1.6M6 9.8v1.6M.6 6h1.6M9.8 6h1.6M2.2 2.2l1.1 1.1M8.7 8.7l1.1 1.1M2.2 9.8l1.1-1.1M8.7 3.3l1.1-1.1"/></svg><span class="t">Day</span></button>
+        <button type="button" id="mStar" data-mode="starlight" aria-pressed="false" aria-label="Starlight" title="Starlight"><svg viewBox="0 0 12 12" fill="currentColor" aria-hidden="true"><path d="M6 .5l1.3 4.2L11.5 6 7.3 7.3 6 11.5 4.7 7.3.5 6l4.2-1.3z"/></svg><span class="t">Starlight</span></button>
       </div>
     </nav>
   </div>
@@ -87,6 +88,7 @@
     <i class="mk rv" aria-hidden="true"></i>
     <p class="big rv" style="--i:1">Imagine you never missed a call, <br>and <em>every caller got an answer.</em></p>
     <p class="sub rv" style="--i:2">That is the whole job. A website that gets you found, a quote system that logs every drawing the day it lands, and follow-up that goes out while you are on the machine. Nothing waits for you to come off the shop floor.</p>
+    <div class="sl-ig" data-ig="line" hidden></div>
   </div>
 </section>
 
@@ -263,6 +265,7 @@
       <div class="txt rv">
         <h3 class="h3">What's in it</h3>
         <p>We score the eight things a buyer notices: first impression, clarity of offer, technical detail, mobile, speed, enquiry path, trust signals and SEO basics. Every score comes with what we found and what to do about it. Then your five closest competitors go through the same checks, so you can see where you sit.</p>
+        <div class="sl-ig" data-ig="dial" hidden></div>
         <h3 class="h3">Why it has to come from your domain</h3>
         <p>The report is about your business, so it only goes to someone who can show the site's theirs. If your website is yourfirm.co.uk, send the email from an address ending @yourfirm.co.uk. Any name before the @ is fine. We reply to the address it came from, and nowhere else.</p>
         <p>Gmail, Outlook.com, Hotmail, Yahoo and iCloud addresses can't show us that, so we can't send a report to one. Plenty of firms run on a Gmail address and there's nothing wrong with it. If that's you, you can still <a href="#contact">start a conversation below</a>.</p>
@@ -284,6 +287,8 @@
     </div>
   </div>
 </section>
+
+<section class="band sl-ig sl-proc" data-ig="process" hidden></section>
 
 <section class="band cta" id="contact" aria-labelledby="cta-h">
   <div class="split">
