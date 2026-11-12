@@ -12,13 +12,16 @@
       var v=SRC.split('?')[1],l=document.createElement('link'),s=document.createElement('script');v=v?'?'+v:'';
       l.rel='stylesheet';l.media='not all';l.href='/css/starlight.css'+v;s.src='/js/starlight.js'+v;document.head.appendChild(l);document.head.appendChild(s);
     }
-    function paint(){var c=cur();bs.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===c));});layers();}
+    var PH=matchMedia('(max-width:700px)'); // phones: the switch is a carousel, one button that moves on to the next mode (css: max-width 700px)
+    function nx(b){var i=bs.indexOf(b);return bs[(i+1)%bs.length];}
+    function lab(){var ph=PH.matches;bs.forEach(function(b){var n=b.title||b.textContent.trim();b.setAttribute('aria-label',ph&&b.getAttribute('aria-pressed')==='true'?n+', tap for '+(nx(b).title||nx(b).textContent.trim()):n);});}
+    function paint(){var c=cur();bs.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===c));});lab();layers();}
     try{var s=localStorage.getItem(K);if(s==='light'||s==='dark'||s===SL)set(s);}catch(e){}
     bs.forEach(function(b){b.addEventListener('click',function(){
       // once Starlight's script is in, it holds the reader's place across the switch (its blocks change the page's height)
-      (window.__slHold||function(f){f();})(function(){var m=b.dataset.mode;set(m);try{localStorage.setItem(K,m);}catch(e){}paint();});
+      (window.__slHold||function(f){f();})(function(){var m=(PH.matches&&b.getAttribute('aria-pressed')==='true'?nx(b):b).dataset.mode;set(m);try{localStorage.setItem(K,m);}catch(e){}paint();});
     });});
-    try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',paint);}catch(e){}
+    try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',paint);PH.addEventListener('change',lab);}catch(e){}
     new MutationObserver(paint).observe(d,{attributes:true,attributeFilter:['data-theme']});
     paint();
   })();
@@ -70,6 +73,15 @@
     addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(px);}},{passive:true}); px();
   }
 
+  // ghost drawing behind 01 What we offer (Nathan, 12 Nov): a quarter drawn as the band comes up, the rest drawn in by the scroll, all of it by the time the band is mostly read.
+  // Runs backwards on the way up, like the films. Reduced motion: nothing set here, so the CSS shows the whole drawing.
+  if(!still){(function(){
+    var band=document.getElementById('offer'),img=band&&band.querySelector('.tex img'),t=false,last=-1;if(!img)return;
+    function sk(){t=false;var r=band.getBoundingClientRect(),h=innerHeight;if(r.bottom<-h||r.top>2*h)return;
+      var k=(h*.8-r.top)/Math.max(r.height*.75,h*.6);k=k<0?0:k>1?1:k;k=k*k*(3-2*k); // eased, so the pen starts and finishes gently
+      var v=Math.round((.25+.75*k)*1000)/1000;if(v!==last){last=v;img.style.setProperty('--sk',v);}}
+    img.style.setProperty('--sk',.25);addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(sk);}},{passive:true});addEventListener('resize',sk);sk();
+  })();}
   // S·04: five keys light one by one as the card climbs the screen, then the panel's screen types THE DEVIL'S / IN THE DETAIL (after the fifth key).
   // Scroll back above it and the screen clears, so it types again next time. Reduced motion: the full line, no typing. Without JS the markup already holds the full line.
   (function(){
