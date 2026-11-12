@@ -24,5 +24,9 @@
 /og.jpg
   Cache-Control: public, max-age=604800
 
+/feedback-request/*
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+
 https://:project.pages.dev/*
   X-Robots-Tag: noindex

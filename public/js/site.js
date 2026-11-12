@@ -306,6 +306,8 @@
     function count(){var n=txt.value.length;cnt.textContent=n+' / '+MAX;cnt.parentNode.classList.toggle('near',n>=260);
       var l=n>=260?(MAX-n)+' characters left':'';if(l!==lastLive){lastLive=l;live.textContent=l;}} // only announced near the limit
     txt.addEventListener('input',count);count();
+    // a review link from /feedback-request/ (?review=Business#reviews): fill in their business name and tick "I'm a client"
+    try{var pre=new URLSearchParams(location.search).get('review');if(pre&&!biz.value){biz.value=pre.trim().slice(0,80);var cl=f.querySelector('input[name=reviewer][value=client]');if(cl)cl.checked=true;}}catch(e){}
     f.addEventListener('input',function(){if(msg.classList.contains('err'))say('');});
     function rating(){var r=f.querySelector('input[name=rating]:checked');return r?+r.value:0;}
     function mailFallback(lead,data){ // hand the visitor a ready-made email with their review in it
