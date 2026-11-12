@@ -157,6 +157,38 @@
 @keyframes sl-sweep{from{transform:rotate(0)}to{transform:rotate(360deg)}}
 @media (max-width:600px){.sl-dial .dl{grid-template-columns:1fr}.sl-dial svg{max-width:190px}}
 
+/* 4. where each service sits (services band, above the four cards): a playhead crosses one buyer's path while each service's bar, and its card's underline, light for the stretch it covers */
+.starlight .svc .sl-ig{margin:0 0 clamp(30px,4vw,48px)}
+.sl-map{overflow:hidden;border:1px solid rgba(185,160,255,.4);background:linear-gradient(180deg,rgba(185,160,255,.1),rgba(127,176,255,.04)),var(--plate);padding:20px clamp(16px,2.4vw,26px) 24px}
+.sl-map .mp{position:relative;margin-top:18px}
+.sl-map .stops{list-style:none;margin:0 0 14px;padding:0;display:flex;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+.sl-map .stops li{flex:2;text-align:center}
+.sl-map .stops li:first-child{flex:1;text-align:left}
+.sl-map .stops li:last-child{flex:1;text-align:right}
+.sl-map .bars{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.sl-map .bars li{position:relative;height:36px}
+.sl-map .bars li>span{position:absolute;top:0;white-space:nowrap;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--silver)}
+.sl-map .bars b{color:var(--c);font-weight:500}
+.sl-map .bars i{position:absolute;bottom:0;left:calc(var(--a)*25%);width:calc((var(--b) - var(--a))*25%);height:12px;border-radius:6px;background:var(--c)}
+.sl-map .ph{position:absolute;left:0;top:22px;bottom:-8px;width:100%;opacity:0;pointer-events:none}
+.sl-map .ph::before{content:"";position:absolute;left:-1px;top:6px;bottom:0;width:3px;border-radius:2px;background:#fff}
+.sl-map .ph::after{content:"";position:absolute;left:-9px;top:-4px;width:19px;height:19px;background:#fff;clip-path:polygon(50% 0,59% 41%,100% 50%,59% 59%,50% 100%,41% 59%,0 50%,41% 41%)}
+.starlight .sl-on .sl-map .ph{animation:sl-ph 7s linear infinite}
+.starlight .sl-on .sl-map .m1 i{animation:sl-m1 7s linear infinite}.starlight .sl-on .sl-map .m2 i{animation:sl-m2 7s linear infinite}
+.starlight .sl-on .sl-map .m3 i{animation:sl-m3 7s linear infinite}.starlight .sl-on .sl-map .m4 i{animation:sl-m4 7s linear infinite}
+.starlight .svc.sl-on .card:nth-child(1) .fr::after{animation:sl-u1 7s linear infinite}.starlight .svc.sl-on .card:nth-child(2) .fr::after{animation:sl-u2 7s linear infinite}
+.starlight .svc.sl-on .card:nth-child(3) .fr::after{animation:sl-u3 7s linear infinite}.starlight .svc.sl-on .card:nth-child(4) .fr::after{animation:sl-u4 7s linear infinite}
+@keyframes sl-ph{0%{transform:translateX(0);opacity:0}3%{opacity:1}80%{transform:translateX(100%);opacity:1}93%{transform:translateX(100%);opacity:1}100%{transform:translateX(100%);opacity:0}}
+@keyframes sl-m1{0%,20%{opacity:1}24%,97%{opacity:.3}100%{opacity:1}}
+@keyframes sl-m2{0%,40%{opacity:1}44%,97%{opacity:.3}100%{opacity:1}}
+@keyframes sl-m3{0%,37%{opacity:.3}40%,80%{opacity:1}84%,100%{opacity:.3}}
+@keyframes sl-m4{0%,37%{opacity:.3}40%,95%{opacity:1}100%{opacity:.3}}
+@keyframes sl-u1{0%,20%{transform:scaleX(1)}24%,97%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@keyframes sl-u2{0%,40%{transform:scaleX(1)}44%,97%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@keyframes sl-u3{0%,37%{transform:scaleX(0)}40%,80%{transform:scaleX(1)}84%,100%{transform:scaleX(0)}}
+@keyframes sl-u4{0%,37%{transform:scaleX(0)}40%,95%{transform:scaleX(1)}100%{transform:scaleX(0)}}
+@media (max-width:480px){.sl-map .stops{font-size:9.5px;letter-spacing:.06em}.sl-map .bars li>span{font-size:10.5px;letter-spacing:.06em}}
+
 /* 3. how we work (its own section above the enquiry form) */
 .starlight .sl-proc{padding-block:clamp(60px,8vw,110px);border-top:1px solid var(--edge)}
 .sl-proc .kick>i{background:var(--sl-spec)}

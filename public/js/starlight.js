@@ -41,6 +41,22 @@
       '</figure>';
   }
 
+  // ---- 4. where each service sits: one buyer's path from search to order, and the stretch of it each of the four services covers.
+  // Pure CSS once it's in the page: the playhead and the bars run while the services band is on screen (.sl-on), and each card's underline keeps time with its bar ----
+  function map(){
+    var stops=['Search','Visit','Enquiry','Quote','Order']; // DRAFT-COPY: five stop names (all words from the service cards)
+    var rows=[ // names are the cards' own; the screen-reader line for each is DRAFT-COPY
+      ['S\u00b701','Website Overhaul',0,1,C.cyan,'From search to visit'],
+      ['S\u00b702','Landing Pages',0,2,C.blue,'From search to enquiry'],
+      ['S\u00b703','Quote-to-Order',2,4,C.violet,'From enquiry to order'],
+      ['S\u00b704','Stay Connected',2,4,C.pink,'From enquiry to order, and after']];
+    return '<figure class="sl-fig sl-map" aria-labelledby="sl-map-c">'+
+      '<figcaption class="lbl" id="sl-map-c">One buyer, four services</figcaption>'+ // DRAFT-COPY
+      '<div class="mp"><ol class="stops" aria-hidden="true">'+stops.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol><ul class="bars">'+
+      rows.map(function(r,k){return '<li class="m'+(k+1)+'" style="--a:'+r[2]+';--b:'+r[3]+';--c:'+r[4]+'"><span style="'+(r[3]===4?'right:0':'left:0')+'"><b>'+r[0]+'</b> '+r[1]+'<span class="vh">. '+r[5]+'.</span></span><i></i></li>';}).join('')+
+      '</ul><i class="ph" aria-hidden="true"></i></div></figure>';
+  }
+
   // ---- 3. how we work: audit, vision, overhaul, drawn by the scroll ----
   var PATH='M0 112C100 112 130 96 200 96S470 64 600 60S880 26 1000 22S1140 8 1200 6';
   function process(){
@@ -86,7 +102,10 @@
   }
   window.__slHold=hold; // the header switch in site.js runs its change through this
   function fill(){
-    var make={line:line,dial:dial,process:process};
+    var make={line:line,dial:dial,process:process,map:map};
+    // the services map goes between the section's heading and its four cards
+    var grid=q('.svc .grid');
+    if(grid&&!q('.sl-ig[data-ig="map"]')){var mm=document.createElement('div');mm.className='sl-ig';mm.setAttribute('data-ig','map');mm.hidden=true;grid.parentNode.insertBefore(mm,grid);}
     // the dial's mount is made here, straight after the paragraph that lists the eight checks (an empty element there in the HTML would cost Night and Day a margin)
     var para=q('#report .txt p');
     if(para&&!q('.sl-ig[data-ig="dial"]')){var dm=document.createElement('div');dm.className='sl-ig';dm.setAttribute('data-ig','dial');dm.hidden=true;para.parentNode.insertBefore(dm,para.nextSibling);}
