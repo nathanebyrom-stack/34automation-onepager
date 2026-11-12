@@ -1,12 +1,23 @@
 (function(){
   var d=document.documentElement; d.classList.add('js');
-  // day / night: follows the viewer's system until they pick one, then remembers it
+  var SRC=(document.currentScript||{}).src||''; // its ?v= is reused for the Starlight files
+  // day / night / starlight: follows the viewer's system until they pick one, then remembers it.
+  // Starlight is Night plus a class: stored as 'starlight', applied as data-theme="dark" + .starlight, only on pages marked data-sl. The system setting can never pick it.
   (function(){
-    var K='34-theme',bs=[].slice.call(document.querySelectorAll('.mode button'));
-    function cur(){var t=d.getAttribute('data-theme');if(t)return t;return matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}
-    function paint(){var c=cur();bs.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===c));});}
-    try{var s=localStorage.getItem(K);if(s==='light'||s==='dark')d.setAttribute('data-theme',s);}catch(e){}
-    bs.forEach(function(b){b.addEventListener('click',function(){d.setAttribute('data-theme',b.dataset.mode);try{localStorage.setItem(K,b.dataset.mode);}catch(e){}paint();});});
+    var K='34-theme',SL='starlight',can=d.hasAttribute('data-sl'),bs=[].slice.call(document.querySelectorAll('.mode button')),got;
+    function cur(){if(d.classList.contains(SL))return SL;var t=d.getAttribute('data-theme');if(t)return t;return matchMedia('(prefers-color-scheme: light)').matches?'light':'dark';}
+    function set(m){d.classList.toggle(SL,m===SL&&can);d.setAttribute('data-theme',m===SL?'dark':m);}
+    function layers(){ // Starlight's stylesheet and script, fetched the first time the mode is on and never for Night or Day. The sheet arrives off; its script switches it on
+      if(got||!d.classList.contains(SL))return;got=1;
+      var v=SRC.split('?')[1],l=document.createElement('link'),s=document.createElement('script');v=v?'?'+v:'';
+      l.rel='stylesheet';l.media='not all';l.href='/css/starlight.css'+v;s.src='/js/starlight.js'+v;document.head.appendChild(l);document.head.appendChild(s);
+    }
+    function paint(){var c=cur();bs.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===c));});layers();}
+    try{var s=localStorage.getItem(K);if(s==='light'||s==='dark'||s===SL)set(s);}catch(e){}
+    bs.forEach(function(b){b.addEventListener('click',function(){
+      // once Starlight's script is in, it holds the reader's place across the switch (its blocks change the page's height)
+      (window.__slHold||function(f){f();})(function(){var m=b.dataset.mode;set(m);try{localStorage.setItem(K,m);}catch(e){}paint();});
+    });});
     try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',paint);}catch(e){}
     new MutationObserver(paint).observe(d,{attributes:true,attributeFilter:['data-theme']});
     paint();

@@ -1,0 +1,238 @@
+/* Starlight layers: fetched only when the Starlight mode is on (theme block in js/site.js). Everything is scoped to .starlight, so Night and Day never see it.
+   The tokens themselves are in site.css. Here: one accent per section (by re-declaring the gold tokens on the band), colour light behind the bands,
+   the three diagrams, and the still states for reduced motion. The two films are Night islands and are not styled here, except the hero's 2px progress line. */
+
+:root.starlight{--s4-1:#38D6FF;--s4-2:#7FB0FF;--s4-3:#B9A0FF;--s4-4:#FF7EB6;--s4-5:#45E6A4;--s4-scr:#FFC857;--sl-spec:linear-gradient(90deg,#38D6FF,#7FB0FF,#B9A0FF,#FF7EB6,#FFC857)}
+/* ---- accents: every "gold" thing inside a band takes the band's colour ---- */
+.starlight .offer,.starlight .report{--gold:#38D6FF;--gold-rgb:56,214,255;--gold-fill:#38D6FF;--gold-hi:#8AE7FF}
+.starlight .svc{--gold:#B9A0FF;--gold-rgb:185,160,255;--gold-fill:#B9A0FF;--gold-hi:#D2C2FF}
+.starlight .work{--gold:#45E6A4;--gold-rgb:69,230,164;--gold-fill:#45E6A4;--gold-hi:#86F0C3}
+.starlight .offer .col:nth-child(2),.starlight .svc .card:nth-child(4),.starlight #enq .chips label:nth-child(2){--gold:#FF7EB6;--gold-rgb:255,126,182;--gold-fill:#FF7EB6;--gold-hi:#FFA6CD}
+.starlight .offer .col:nth-child(3),.starlight .svc .card:nth-child(3),.starlight .row2:nth-child(3),.starlight #enq .chips label:nth-child(3){--gold:#B9A0FF;--gold-rgb:185,160,255;--gold-fill:#B9A0FF;--gold-hi:#D2C2FF}
+.starlight .svc .card:nth-child(1),.starlight #enq .chips label:nth-child(1){--gold:#38D6FF;--gold-rgb:56,214,255;--gold-fill:#38D6FF;--gold-hi:#8AE7FF}
+.starlight .svc .card:nth-child(2){--gold:#7FB0FF;--gold-rgb:127,176,255;--gold-fill:#7FB0FF;--gold-hi:#A9CAFF}
+.starlight .row2:nth-child(2){--gold:#FFC857;--gold-rgb:255,200,87;--gold-fill:#FFC857;--gold-hi:#FFDD8A}
+
+/* ---- chrome ---- */
+.starlight .hdr.on{border-image:var(--sl-spec) 1}
+.starlight .stage .bar i{background:var(--sl-spec)} /* the one change on the hero stage: its 2px progress line (Jenny, 11 Nov) */
+.starlight .head .rule{height:2px;background:var(--sl-spec)}
+.starlight .ft{border-top:2px solid;border-image:var(--sl-spec) 1}
+.starlight .band .btn.solid{box-shadow:0 12px 40px -14px rgba(var(--gold-rgb),.7)} /* bands only: nothing on the hero stage changes */
+.starlight ::selection{background:rgba(185,160,255,.45);color:#fff}
+/* section headings run from white into the section's colour */
+.starlight .band:not(.why) .head .h2,.starlight .cta .h2{background:linear-gradient(100deg,var(--silver) 30%,var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---- colour light behind the bands: two soft sources each, drifting slowly, clipped to the band so nothing reaches a film ---- */
+.starlight .state,.starlight .offer,.starlight .svc,.starlight .work,.starlight .reviews,.starlight .report,.starlight .sl-proc{overflow:clip}
+.starlight .state::before,.starlight .state::after,.starlight .offer::after,.starlight .svc::before,.starlight .svc::after,.starlight .work::after,.starlight .reviews::before,.starlight .reviews::after,.starlight .report::before,.starlight .report::after,.starlight .sl-proc::before,.starlight .sl-proc::after{
+  content:"";position:absolute;z-index:-1;pointer-events:none;width:min(90vw,980px);aspect-ratio:1;border-radius:50%;
+  background:radial-gradient(closest-side,rgba(var(--g),var(--a,.24)),rgba(var(--g),calc(var(--a,.24)*.45)) 55%,rgba(var(--g),0)); /* --a is capped per colour so body text keeps AA at a glow's centre: scripts/qa/contrast.mjs */
+  animation:sl-drift 24s ease-in-out infinite alternate;animation-play-state:paused}
+.starlight .sl-on::before,.starlight .sl-on::after{animation-play-state:running}
+.starlight .state::before{--g:56,214,255;--a:.26;left:-22%;top:-38%}
+.starlight .state::after{--g:185,160,255;--a:.3;right:-18%;bottom:-46%;animation-duration:29s;animation-direction:alternate-reverse}
+.starlight .offer::after{--g:255,126,182;--a:.3;right:-20%;top:-10%}
+.starlight .svc::before{--g:127,176,255;--a:.3;left:-25%;top:-20%}
+.starlight .svc::after{--g:255,126,182;--a:.3;right:-22%;bottom:-30%;animation-duration:31s;animation-direction:alternate-reverse}
+.starlight .work::after{--g:69,230,164;--a:.18;right:-24%;top:-22%}
+.starlight .reviews::before{--g:255,200,87;left:-28%;bottom:-40%}
+.starlight .reviews::after{--g:255,126,182;--a:.3;right:-24%;top:-36%;animation-duration:27s;animation-direction:alternate-reverse}
+.starlight .report::before{--g:56,214,255;--a:.26;right:-20%;top:-30%}
+.starlight .report::after{--g:69,230,164;left:-30%;bottom:-44%;animation-duration:30s;animation-direction:alternate-reverse}
+.starlight .sl-proc::before{--g:185,160,255;--a:.3;left:-20%;top:-50%}
+.starlight .sl-proc::after{--g:255,200,87;right:-22%;bottom:-60%;animation-duration:28s;animation-direction:alternate-reverse}
+@keyframes sl-drift{from{transform:translate3d(0,0,0) scale(1)}to{transform:translate3d(7%,-6%,0) scale(1.18)}}
+/* glints: a few four-point stars placed by hand (positions in js/starlight.js), never a pattern. --pt is the band's top margin: each star's place and size are shares of it, so none can sit behind text */
+.sl-g{display:none}
+.starlight .band{--pt:clamp(72px,10vw,140px)}.starlight .state{--pt:clamp(64px,9vw,120px)}.starlight .sl-proc{--pt:clamp(60px,8vw,110px)}
+.starlight .sl-g{display:block;position:absolute;z-index:-1;left:var(--x);top:calc(var(--y)*var(--pt));width:calc(var(--s)*var(--pt));height:calc(var(--s)*var(--pt));background:var(--c);pointer-events:none;
+  clip-path:polygon(50% 0,59% 41%,100% 50%,59% 59%,50% 100%,41% 59%,0 50%,41% 41%);animation:sl-twinkle var(--t,4.2s) ease-in-out var(--dl,0s) infinite;animation-play-state:paused}
+.starlight .sl-on .sl-g{animation-play-state:running}
+@keyframes sl-twinkle{0%,100%{opacity:.45;transform:scale(.75) rotate(0)}50%{opacity:1;transform:scale(1.15) rotate(18deg)}}
+
+/* ---- statement band: first colour after the film ---- */
+.starlight .state{border-top:3px solid;border-image:var(--sl-spec) 1}
+.starlight .state .mk{width:132px;height:4px;background:var(--sl-spec)}
+.starlight .state .big em{background:linear-gradient(90deg,#38D6FF,#B9A0FF 50%,#FF7EB6);-webkit-background-clip:text;background-clip:text;color:transparent}
+
+/* ---- 01 offer: three colour-coded columns ---- */
+.starlight .cols{background:none;border:0;gap:14px}
+.starlight .col{background:linear-gradient(180deg,rgba(var(--gold-rgb),.16),rgba(var(--gold-rgb),.05)),var(--plate);border:1px solid rgba(var(--gold-rgb),.45);border-top:3px solid var(--gold)}
+.starlight .col:hover{background:linear-gradient(180deg,rgba(var(--gold-rgb),.18),rgba(var(--gold-rgb),.1)),var(--plate)}
+.starlight .col .lbl b{background:var(--gold);color:#0A0B1E;padding:2px 7px}
+.starlight .col .h3{color:var(--gold)}
+
+/* ---- 02 services: one colour per sheet ---- */
+.starlight .card .fr{border-color:var(--gold);box-shadow:0 22px 60px -26px rgba(var(--gold-rgb),.75)}
+.starlight .card .fr::after{height:4px}
+.starlight .card{--ac:var(--gold)} /* the S·0n tag is a Night island, so it takes the card's colour through its own variable */
+.starlight .card .n{background:var(--ac);color:#0A0B1E;border-color:transparent;font-weight:500}
+.starlight .card .h3{color:var(--gold)}
+
+/* ---- 04 work: live is green, in build is gold, concept is violet ---- */
+.starlight .row2{border-left:3px solid var(--gold);padding-left:22px;background:linear-gradient(90deg,rgba(var(--gold-rgb),.12),rgba(var(--gold-rgb),0) 60%)}
+.starlight .pill,.starlight .pill.build{color:var(--gold);border-color:rgba(var(--gold-rgb),.6)}
+.starlight .pill i,.starlight .pill.build i{background:var(--gold)}
+.starlight .pill{justify-self:start}
+.starlight .pill.live{background:var(--gold);color:#0A0B1E;border-color:var(--gold)}
+.starlight .pill.live i{background:#0A0B1E;box-shadow:none;animation:sl-live 1.8s ease-in-out infinite}
+@keyframes sl-live{50%{transform:scale(.55);opacity:.5}}
+.starlight .row2 .h3{color:var(--gold)}
+.starlight .row2 .lbl{color:var(--gold)}
+
+/* ---- 05 reviews, 06 report, 07 contact ---- */
+.starlight .empty{border-left:4px solid;border-image:linear-gradient(180deg,#FFC857,#FF7EB6) 1;background:linear-gradient(120deg,rgba(255,200,87,.14),rgba(255,126,182,.08)),var(--plate)}
+.starlight .ask{border-top:3px solid;border-image:var(--sl-spec) 1;background:linear-gradient(180deg,rgba(var(--gold-rgb),.12),rgba(var(--gold-rgb),.03)),var(--plate)}
+.starlight .report .txt .h3{color:var(--gold)}
+.starlight .enq .chips span{border-color:rgba(var(--gold-rgb),.6);color:var(--gold)}
+
+/* ---- the diagrams: mounts are empty and hidden until js/starlight.js fills them ---- */
+.starlight .sl-ig:not(:empty){display:block}
+.sl-fig{margin:0}
+.sl-fig figcaption{display:block;color:var(--silver)}
+
+/* 1. the enquiry line (statement band) */
+.starlight .state .sl-ig{margin-top:clamp(40px,5vw,64px);max-width:980px}
+.sl-line .ln{position:relative;margin-top:22px}
+.sl-line ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr))}
+.sl-line li{position:relative;display:flex;flex-direction:column;gap:4px;padding-top:44px;min-width:0}
+.sl-line .nd{position:absolute;left:0;top:0;width:28px;height:28px;border-radius:50%;background:var(--graphite);border:2px solid var(--edge);transition:background .35s var(--ease),border-color .35s var(--ease)}
+.sl-line .nd::after{content:"";position:absolute;inset:-2px;border-radius:50%;background:var(--c);opacity:0}
+.sl-line li.on .nd{background:var(--c);border-color:var(--c)}
+.sl-line .tag{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel)}
+.sl-line li b{font-family:var(--f-disp);font-stretch:112%;font-weight:700;text-transform:uppercase;font-size:clamp(18px,2.1vw,26px);line-height:1.1;letter-spacing:.01em;color:var(--steel);transition:color .35s var(--ease)}
+.sl-line li.on b{color:var(--c)}
+.sl-line .trk{position:absolute;left:14px;top:12px;width:75%;height:4px;background:var(--edge);border-radius:2px}
+.sl-line .fill{position:absolute;inset:0;border-radius:2px;background:linear-gradient(90deg,#38D6FF,#7FB0FF 33%,#B9A0FF 66%,#45E6A4);transform-origin:0 0;transform:scaleX(var(--p,0))}
+.sl-line .pk{position:absolute;inset:0;opacity:0;pointer-events:none}
+.sl-line .pk::before{content:"";position:absolute;left:-46px;top:-3px;width:46px;height:10px;border-radius:5px;background:linear-gradient(90deg,rgba(255,255,255,0),#fff)}
+.sl-line.run .pk{animation:sl-pk-x 4.8s linear infinite}
+.sl-line.run .pk+.pk{animation-delay:2.4s}
+.sl-line.run .nd::after{animation:sl-ring 2.4s ease-out var(--dl) infinite}
+@keyframes sl-pk-x{0%{transform:translateX(0);opacity:0}4%{opacity:1}96%{opacity:1}100%{transform:translateX(100%);opacity:0}}
+@keyframes sl-pk-y{0%{transform:translateY(0);opacity:0}4%{opacity:1}96%{opacity:1}100%{transform:translateY(100%);opacity:0}}
+@keyframes sl-ring{0%{transform:scale(1);opacity:.75}45%,100%{transform:scale(2.5);opacity:0}}
+.sl-line .you{display:flex;align-items:center;gap:12px;margin-top:26px;padding-top:18px;border-top:1px dashed rgba(255,200,87,.5);max-width:calc(75% + 28px);font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel)}
+.sl-line .you i{flex:none;width:12px;height:12px;border-radius:50%;background:#FFC857;box-shadow:0 0 0 5px rgba(255,200,87,.2)}
+.sl-line.run .you i{animation:sl-breathe 3.2s ease-in-out infinite}
+.sl-line .you b{color:#FFC857;font-weight:500}
+@keyframes sl-breathe{50%{box-shadow:0 0 0 9px rgba(255,200,87,.08)}}
+@media (max-width:820px){
+  .sl-line ol{grid-template-columns:1fr}
+  .sl-line li{height:68px;padding:0 0 0 46px;justify-content:flex-start}
+  .sl-line li:last-child{height:46px}
+  .sl-line .trk{left:12px;top:14px;bottom:32px;width:4px;height:auto}
+  .sl-line .fill{background:linear-gradient(180deg,#38D6FF,#7FB0FF 33%,#B9A0FF 66%,#45E6A4);transform:scaleY(var(--p,0))}
+  .sl-line .pk::before{left:-3px;top:-46px;width:10px;height:46px;background:linear-gradient(180deg,rgba(255,255,255,0),#fff)}
+  .sl-line.run .pk{animation-name:sl-pk-y}
+  .sl-line .you{max-width:none}
+}
+
+/* 2. the eight checks (website report) */
+.starlight .report .sl-ig{margin:10px 0 6px}
+.report .txt .sl-ig+.h3{margin-top:14px} /* not scoped on purpose: once the dial's mount exists it sits between a paragraph and a heading, and Night and Day must keep that heading's top margin */
+.sl-dial{border:1px solid rgba(56,214,255,.4);background:linear-gradient(180deg,rgba(56,214,255,.1),rgba(185,160,255,.05)),var(--plate);padding:20px clamp(16px,2.4vw,24px) 22px}
+.sl-dial .dl{display:grid;grid-template-columns:200px minmax(0,1fr);gap:clamp(16px,2.4vw,28px);align-items:center;margin-top:16px}
+.sl-dial svg{display:block;width:100%;height:auto;max-width:210px;margin-inline:auto;overflow:visible}
+.sl-dial .seg{fill:none;stroke:var(--edge);stroke-width:16;transition:stroke .3s linear}
+.sl-dial .rb{fill:none;stroke:var(--edge);stroke-width:1.5;opacity:.7}
+.sl-dial .ring{fill:none;stroke:var(--steel);stroke-width:2.5;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:1}
+.sl-dial .hand{transform-origin:120px 120px}
+.sl-dial .hand line{stroke:#FFC857;stroke-width:3;stroke-linecap:round}
+.sl-dial .hand path,.sl-dial .hub{fill:#FFC857}
+.sl-dial .chk{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 14px;counter-reset:c}
+.sl-dial .chk li{display:flex;align-items:center;gap:9px;min-width:0;font-size:14px;line-height:1.25;color:var(--steel);counter-increment:c;transition:color .3s linear}
+.sl-dial .chk li::before{content:counter(c);flex:none;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-family:var(--f-mono);font-size:11px;font-weight:500;border:1px solid var(--c);color:var(--c);transition:background .3s linear,color .3s linear}
+.sl-dial .lg{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:18px;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel);opacity:0;transition:opacity .5s linear}
+.sl-dial .lg span{display:inline-flex;align-items:center;gap:8px}
+.sl-dial .lg i{flex:none;width:22px;height:6px;background:var(--sl-spec)}
+.sl-dial .lg span+span i{height:2px;background:var(--steel)}
+.sl-dial.play .seg{stroke:var(--c);transition-delay:calc(var(--n)*.5s)}
+.sl-dial.play .chk li{color:var(--silver);transition-delay:calc(var(--n)*.5s)}
+.sl-dial.play .chk li::before{background:var(--c);color:#0A0B1E;transition-delay:calc(var(--n)*.5s)}
+.sl-dial.play .ring{stroke-dashoffset:0;transition:stroke-dashoffset .5s linear calc(4s + var(--n)*.5s)}
+.sl-dial.play .hand{animation:sl-sweep 4s linear 1 both}
+.sl-dial.play .lg{opacity:1;transition-delay:6.5s}
+@keyframes sl-sweep{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+@media (max-width:600px){.sl-dial .dl{grid-template-columns:1fr}.sl-dial svg{max-width:190px}}
+
+/* 4. where each service sits (services band, above the four cards): a playhead crosses one buyer's path while each service's bar, and its card's underline, light for the stretch it covers */
+.starlight .svc .sl-ig{margin:0 0 clamp(30px,4vw,48px)}
+.sl-map{overflow:hidden;border:1px solid rgba(185,160,255,.4);background:linear-gradient(180deg,rgba(185,160,255,.1),rgba(127,176,255,.04)),var(--plate);padding:20px clamp(16px,2.4vw,26px) 24px}
+.sl-map .mp{position:relative;margin-top:18px}
+.sl-map .stops{list-style:none;margin:0 0 14px;padding:0;display:flex;font-family:var(--f-mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--steel)}
+.sl-map .stops li{flex:2;text-align:center}
+.sl-map .stops li:first-child{flex:1;text-align:left}
+.sl-map .stops li:last-child{flex:1;text-align:right}
+.sl-map .bars{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:14px}
+.sl-map .bars li{position:relative;height:36px}
+.sl-map .bars li>span{position:absolute;top:0;white-space:nowrap;font-family:var(--f-mono);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--silver)}
+.sl-map .bars b{color:var(--c);font-weight:500}
+.sl-map .bars i{position:absolute;bottom:0;left:calc(var(--a)*25%);width:calc((var(--b) - var(--a))*25%);height:12px;border-radius:6px;background:var(--c)}
+/* a service that sits at one stop, not along a stretch (S·01, at Visit): a short pill centred on the stop, its label starting where the pill does */
+.sl-map .bars .pt i{left:calc(var(--a)*25% - 15px);width:30px}
+.sl-map .bars .pt>span{left:calc(var(--a)*25% - 15px)}
+.sl-map .ph{position:absolute;left:0;top:22px;bottom:-8px;width:100%;opacity:0;pointer-events:none}
+.sl-map .ph::before{content:"";position:absolute;left:-1px;top:6px;bottom:0;width:3px;border-radius:2px;background:#fff}
+.sl-map .ph::after{content:"";position:absolute;left:-9px;top:-4px;width:19px;height:19px;background:#fff;clip-path:polygon(50% 0,59% 41%,100% 50%,59% 59%,50% 100%,41% 59%,0 50%,41% 41%)}
+.starlight .sl-on .sl-map .ph{animation:sl-ph 7s linear infinite}
+.starlight .sl-on .sl-map .m1 i{animation:sl-m1 7s linear infinite}.starlight .sl-on .sl-map .m2 i{animation:sl-m2 7s linear infinite}
+.starlight .sl-on .sl-map .m3 i{animation:sl-m3 7s linear infinite}.starlight .sl-on .sl-map .m4 i{animation:sl-m4 7s linear infinite}
+.starlight .svc.sl-on .card:nth-child(1) .fr::after{animation:sl-u1 7s linear infinite}.starlight .svc.sl-on .card:nth-child(2) .fr::after{animation:sl-u2 7s linear infinite}
+.starlight .svc.sl-on .card:nth-child(3) .fr::after{animation:sl-u3 7s linear infinite}.starlight .svc.sl-on .card:nth-child(4) .fr::after{animation:sl-u4 7s linear infinite}
+@keyframes sl-ph{0%{transform:translateX(0);opacity:0}3%{opacity:1}80%{transform:translateX(100%);opacity:1}93%{transform:translateX(100%);opacity:1}100%{transform:translateX(100%);opacity:0}}
+@keyframes sl-m1{0%,13%{opacity:.3}17%,25%{opacity:1}30%,100%{opacity:.3}}
+@keyframes sl-m2{0%,40%{opacity:1}44%,97%{opacity:.3}100%{opacity:1}}
+@keyframes sl-m3{0%,37%{opacity:.3}40%,80%{opacity:1}84%,100%{opacity:.3}}
+@keyframes sl-m4{0%,37%{opacity:.3}40%,95%{opacity:1}100%{opacity:.3}}
+@keyframes sl-u1{0%,13%{transform:scaleX(0)}17%,25%{transform:scaleX(1)}30%,100%{transform:scaleX(0)}}
+@keyframes sl-u2{0%,40%{transform:scaleX(1)}44%,97%{transform:scaleX(0)}100%{transform:scaleX(1)}}
+@keyframes sl-u3{0%,37%{transform:scaleX(0)}40%,80%{transform:scaleX(1)}84%,100%{transform:scaleX(0)}}
+@keyframes sl-u4{0%,37%{transform:scaleX(0)}40%,95%{transform:scaleX(1)}100%{transform:scaleX(0)}}
+@media (max-width:480px){.sl-map .stops{font-size:9.5px;letter-spacing:.06em}.sl-map .bars li>span{font-size:10.5px;letter-spacing:.06em}}
+
+/* 3. how we work (its own section above the enquiry form) */
+.starlight .sl-proc{padding-block:clamp(60px,8vw,110px);border-top:1px solid var(--edge)}
+.sl-proc .kick>i{background:var(--sl-spec)}
+.sl-proc .kick svg{width:12px;height:12px;display:block}
+.sl-proc h2.kick{margin:0}
+.sl-proc .pr{position:relative;margin-top:clamp(28px,4vw,44px)}
+.sl-proc .strip{position:relative;height:120px}
+.sl-proc .strip svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.sl-proc .strip path{fill:none;stroke-width:4;stroke-linecap:round;vector-effect:non-scaling-stroke}
+.sl-proc .strip .base{stroke:var(--edge)}
+.sl-proc .strip .draw{stroke:url(#slpg);stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--p,0))}
+.sl-proc .star{position:absolute;left:0;top:0;width:26px;height:26px;margin:-13px 0 0 -13px;background:#fff;clip-path:polygon(50% 0,59% 41%,100% 50%,59% 59%,50% 100%,41% 59%,0 50%,41% 41%);will-change:transform;pointer-events:none}
+.sl-proc ol{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.sl-proc li{position:relative;display:flex;flex-direction:column;gap:10px;padding:22px 22px 26px;min-width:0;border:1px solid rgba(var(--cr),.45);border-top:3px solid var(--c);
+  background:linear-gradient(180deg,rgba(var(--cr),.16),rgba(var(--cr),.05)),var(--plate);opacity:.3;transform:translateY(16px);transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.sl-proc li.on{opacity:1;transform:none}
+.sl-proc li::before{content:"";position:absolute;left:50%;bottom:100%;width:2px;height:var(--stem);margin-left:-1px;background:var(--c);transform-origin:50% 100%;transform:scaleY(0);transition:transform .4s var(--ease)}
+.sl-proc li.on::before{transform:scaleY(1)}
+.sl-proc li::after{content:"";position:absolute;left:50%;bottom:calc(100% + var(--stem));width:16px;height:16px;margin:0 0 -8px -8px;box-sizing:border-box;border-radius:50%;background:var(--graphite);border:3px solid var(--edge);transition:background .3s,border-color .3s}
+.sl-proc li.on::after{background:var(--c);border-color:var(--c)}
+.sl-proc .n{font-family:var(--f-mono);font-size:13px;font-weight:500;letter-spacing:.14em;color:var(--c)}
+.sl-proc .h3{color:var(--c);font-size:clamp(20px,2.4vw,28px)}
+.sl-proc li p{color:var(--steel);font-size:15px;max-width:34ch}
+.sl-proc .rail{display:none}
+@media (max-width:820px){
+  .sl-proc .strip{display:none}
+  .sl-proc .pr{padding-left:40px}
+  .sl-proc ol{grid-template-columns:1fr;gap:16px}
+  .sl-proc li::before{display:none}
+  .sl-proc li::after{left:-28px;top:22px;bottom:auto;margin:0 0 0 -8px}
+  .sl-proc .rail{display:block;position:absolute;left:10px;top:10px;bottom:10px;width:4px;border-radius:2px;background:var(--edge)}
+  .sl-proc .rail i{position:absolute;inset:0;border-radius:2px;background:linear-gradient(180deg,#38D6FF,#B9A0FF 45%,#FF7EB6 75%,#FFC857);transform-origin:0 0;transform:scaleY(var(--p,0))}
+}
+
+/* ---- still states: reduced motion, and Windows high-contrast colours ---- */
+@media (prefers-reduced-motion:reduce){
+  .starlight *,.starlight *::before,.starlight *::after{animation:none!important;transition-delay:0s!important}
+  .sl-line .pk:first-of-type{opacity:1;transform:translateX(100%)}
+  .sl-proc .star{display:none}
+}
+@media (prefers-reduced-motion:reduce) and (max-width:820px){.sl-line .pk:first-of-type{transform:translateY(100%)}}
+@media (forced-colors:active){
+  .starlight .band .head .h2,.starlight .cta .h2,.starlight .state .big em{background:none;color:CanvasText}
+}

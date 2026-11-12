@@ -465,3 +465,20 @@ p{margin:0}
 .gpips{position:absolute;right:12px;bottom:14px;z-index:2;display:flex;gap:5px}
 .gpips i{display:block;width:14px;height:2px;background:rgba(var(--line),.3);transition:background .6s var(--ease)}
 .gpips i.on{background:var(--gold)}
+
+/* Starlight (12 Nov): a third, opt-in mode = Night plus .starlight on <html>, set only from the stored choice or its own button, on pages marked data-sl.
+   Only the first paint's needs are here: tokens and switch. The rest is css/starlight.css, fetched when the mode is on. The films stay Night (the islands above). */
+:root.starlight{
+  --graphite:#0A0B1E; --plate:#141633; --edge:#3A3F7D;
+  --silver:#F1F2FF; --steel:#A9AED6; --gold:#FFC857; --gold-ink:#0A0B1E;
+  --gold-fill:#FFC857; --gold-hi:#FFDD8A; --field-hi:#1C1F45; --ph:#8E93C2; --err:#FF8F7A;
+  --shade:10,11,30; --line:241,242,255; --plate-rgb:20,22,51; --gold-rgb:255,200,87;
+}
+.starlight .mode [data-mode="starlight"][aria-pressed="true"]{background:linear-gradient(135deg,#38D6FF,#B9A0FF 55%,#FF7EB6);color:#0A0B1E}
+/* three buttons (home page only): icons below 1240px, the active mode's name above; Clients is footer-only from 430px down. One row from 320 to 1920px. */
+@media (max-width:470px){html[data-sl] .mode button{padding:6px}}
+@media (max-width:430px){html[data-sl] .nav a.ca{display:none}}
+@media (max-width:330px){html[data-sl] .nav .btn{padding:9px 3px}html[data-sl] .hdr .wrap{gap:4px}}
+@media (max-width:1239px){html[data-sl] .mode .t{display:none}}
+@media (min-width:821px) and (max-width:1239px){html[data-sl] .mode button{padding:7px 9px}}
+@media (min-width:1240px){html[data-sl] .mode button:not([aria-pressed="true"]) .t{display:none}}

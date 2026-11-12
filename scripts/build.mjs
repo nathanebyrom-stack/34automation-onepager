@@ -1,6 +1,7 @@
 // Build: copy public/ to dist/ and fill the {{PLACEHOLDERS}} from site.config.json.
 // Production (Cloudflare branch "main", or STRICT=1) refuses to build while the company details are missing.
 import { readFileSync, writeFileSync, rmSync, cpSync, readdirSync, statSync } from "node:fs";
+import { createHash } from "node:crypto";
 import { join, extname } from "node:path";
 
 const c = JSON.parse(readFileSync("site.config.json", "utf8"));
@@ -102,4 +103,21 @@ let left = [];
   }
 })("dist");
 if (left.length) { console.error("✖ Unfilled placeholders:\n" + left.join("\n")); process.exit(1); }
+// CSP guard: every inline <script> must have its sha256 in _headers, or the browser blocks it on the live site
+// (no pre-paint theme, no film class). A change to an inline script without the matching hash stops the build.
+{
+  const csp = readFileSync("dist/_headers", "utf8"), bad = [];
+  (function scan(dir) {
+    for (const n of readdirSync(dir)) {
+      const p = join(dir, n);
+      if (statSync(p).isDirectory()) { scan(p); continue; }
+      if (extname(n) !== ".html") continue;
+      for (const m of readFileSync(p, "utf8").matchAll(/<script(?![^>]*\bsrc=)(?![^>]*application\/ld\+json)[^>]*>([\s\S]*?)<\/script>/g)) {
+        const h = "sha256-" + createHash("sha256").update(m[1], "utf8").digest("base64");
+        if (!csp.includes(`'${h}'`)) bad.push(`${p}: '${h}'`);
+      }
+    }
+  })("dist");
+  if (bad.length) { console.error("✖ Inline script not allowed by the CSP in public/_headers. Add its hash to script-src:\n" + [...new Set(bad)].join("\n")); process.exit(1); }
+}
 console.log(`✓ Built dist/ (${prod ? "production" : "preview"})${missing.length ? " — company details still missing" : ""} · ${reviews.length} published review${reviews.length === 1 ? "" : "s"}`);

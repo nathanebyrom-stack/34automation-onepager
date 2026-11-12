@@ -14,7 +14,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 <link rel="stylesheet" href="/css/site.css?v={{BUILD}}">
-<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('34-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t)}catch(e){}try{var c=navigator.connection||{};if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!c.saveData&&!/(^|-)2g$/.test(c.effectiveType||''))document.documentElement.classList.add('film')}catch(e){}</script>
+<script>document.documentElement.classList.add('js');try{var t=localStorage.getItem('34-theme'),h=document.documentElement;if(t==='starlight'){t='dark';if(h.hasAttribute('data-sl'))h.classList.add('starlight')}if(t==='light'||t==='dark')h.setAttribute('data-theme',t)}catch(e){}try{var c=navigator.connection||{};if(!matchMedia('(prefers-reduced-motion: reduce)').matches&&!c.saveData&&!/(^|-)2g$/.test(c.effectiveType||''))document.documentElement.classList.add('film')}catch(e){}</script>
 </head>
 <body>
 <header class="hdr on">
