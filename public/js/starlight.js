@@ -1,7 +1,7 @@
 // Starlight layers: fetched only when the Starlight mode is on (theme block in js/site.js). Styles are in css/starlight.css.
 // Fills the three diagram mounts in index.html (.sl-ig), wakes the colour light and glints for bands on screen, and drives the two scroll-linked diagrams.
 // Labels are real text; the drawings are aria-hidden. Reduced motion: every diagram shows its finished state and nothing loops.
-// Every new string below is marked DRAFT-COPY until Edie has passed it.
+// Copy passed by Edie 12 Nov 2026
 (function(){
   'use strict';
   var d=document.documentElement,still=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -14,15 +14,15 @@
 
   // ---- 1. the enquiry line: one enquiry through four stations, while the "You" lane is left alone ----
   function line(){
-    var st=[ // DRAFT-COPY: station names and tags (words from the OP 30 line already on the page)
+    var st=[ // station names and tags: words from the OP 30 line already on the page
       ['Trigger','Lands',C.cyan,0],['Filter','Checked',C.blue,1.6],['Action','Routed',C.violet,.8],['Output','Answered',C.green,0]];
     return '<figure class="sl-fig sl-line" aria-labelledby="sl-line-c" aria-describedby="sl-line-d">'+
-      '<figcaption class="lbl" id="sl-line-c">One enquiry, start to finish</figcaption>'+ // DRAFT-COPY
-      '<p class="vh" id="sl-line-d">An enquiry lands, is checked, routed and answered. None of it waits for you.</p>'+ // DRAFT-COPY
+      '<figcaption class="lbl" id="sl-line-c">One enquiry, start to finish</figcaption>'+
+      '<p class="vh" id="sl-line-d">An enquiry lands, is checked, routed and answered. None of it waits for you.</p>'+
       '<div class="ln" aria-hidden="true"><div class="trk"><span class="fill"></span><i class="pk"></i><i class="pk"></i></div><ol>'+
       st.map(function(s){return '<li style="--c:'+s[2]+';--dl:'+s[3]+'s"><i class="nd"></i><span class="tag">'+s[0]+'</span><b>'+s[1]+'</b></li>';}).join('')+
       '</ol></div>'+
-      '<div class="you" aria-hidden="true"><i></i><b>You</b><span>On the machine</span></div>'+ // DRAFT-COPY
+      '<div class="you" aria-hidden="true"><i></i><b>You</b><span>On the machine</span></div>'+
       '</figure>';
   }
 
@@ -34,7 +34,7 @@
     for(i=0;i<8;i++)s+='<circle class="seg" style="--n:'+i+';--c:'+cols[i]+'" cx="120" cy="120" r="98" pathLength="80" stroke-dasharray="9 71" transform="rotate('+(i*45-90+2.25)+' 120 120)"/>';
     s+='<g class="hand"><line x1="120" y1="120" x2="120" y2="22"/><path transform="translate(108 2) scale(2)" d="'+STAR+'"/></g><circle class="hub" cx="120" cy="120" r="7"/>';
     return '<figure class="sl-fig sl-dial" aria-labelledby="sl-dial-c">'+
-      '<figcaption class="lbl" id="sl-dial-c">Eight checks. Your site first, then five competitors.</figcaption>'+ // DRAFT-COPY
+      '<figcaption class="lbl" id="sl-dial-c">Eight checks. Your site first, then five competitors.</figcaption>'+
       '<div class="dl"><svg viewBox="0 0 240 240" aria-hidden="true" focusable="false">'+s+'</svg><ol class="chk">'+
       names.map(function(n,k){return '<li style="--n:'+k+';--c:'+cols[k]+'">'+n+'</li>';}).join('')+'</ol></div>'+
       '<p class="lg"><span><i></i>Your site</span><span><i></i>Five closest competitors</span></p>'+ // words from the page
@@ -44,27 +44,27 @@
   // ---- 4. where each service sits: one buyer's path from search to order, and the stretch of it each of the four services covers.
   // Pure CSS once it's in the page: the playhead and the bars run while the services band is on screen (.sl-on), and each card's underline keeps time with its bar ----
   function map(){
-    var stops=['Search','Visit','Enquiry','Quote','Order']; // DRAFT-COPY: five stop names (all words from the service cards)
-    var rows=[ // names are the cards' own; the screen-reader line for each is DRAFT-COPY
-      ['S\u00b701','Website Overhaul',0,1,C.cyan,'From search to visit'],
+    var stops=['Search','Visit','Enquiry','Quote','Order']; // all words from the service cards
+    var rows=[ // names are the cards' own. Each span is only what that card's own copy promises (Edie, 12 Nov): Website Overhaul is a point at Visit, not a stretch from Search
+      ['S\u00b701','Website Overhaul',1,1,C.cyan,'At the visit'],
       ['S\u00b702','Landing Pages',0,2,C.blue,'From search to enquiry'],
       ['S\u00b703','Quote-to-Order',2,4,C.violet,'From enquiry to order'],
-      ['S\u00b704','Stay Connected',2,4,C.pink,'From enquiry to order, and after']];
+      ['S\u00b704','Stay Connected',2,4,C.pink,'From enquiry to order updates']];
     return '<figure class="sl-fig sl-map" aria-labelledby="sl-map-c">'+
-      '<figcaption class="lbl" id="sl-map-c">One buyer, four services</figcaption>'+ // DRAFT-COPY
+      '<figcaption class="lbl" id="sl-map-c">Where each service fits</figcaption>'+
       '<div class="mp"><ol class="stops" aria-hidden="true">'+stops.map(function(x){return '<li>'+x+'</li>';}).join('')+'</ol><ul class="bars">'+
-      rows.map(function(r,k){return '<li class="m'+(k+1)+'" style="--a:'+r[2]+';--b:'+r[3]+';--c:'+r[4]+'"><span style="'+(r[3]===4?'right:0':'left:0')+'"><b>'+r[0]+'</b> '+r[1]+'<span class="vh">. '+r[5]+'.</span></span><i></i></li>';}).join('')+
+      rows.map(function(r,k){var pt=r[2]===r[3];return '<li class="m'+(k+1)+(pt?' pt':'')+'" style="--a:'+r[2]+';--b:'+r[3]+';--c:'+r[4]+'"><span'+(pt?'':' style="'+(r[3]===4?'right:0':'left:0')+'"')+'><b>'+r[0]+'</b> '+r[1]+'<span class="vh">. '+r[5]+'.</span></span><i></i></li>';}).join('')+
       '</ul><i class="ph" aria-hidden="true"></i></div></figure>';
   }
 
   // ---- 3. how we work: audit, vision, overhaul, drawn by the scroll ----
   var PATH='M0 112C100 112 130 96 200 96S470 64 600 60S880 26 1000 22S1140 8 1200 6';
   function process(){
-    var steps=[ // DRAFT-COPY: all three steps. "Four to five years" is Nathan's own figure (copy interview, Oct 2026; wording Edie confirmed 29 Oct)
+    var steps=[ // passed by Edie; Nathan decides on this section's wording, so leave it as it is. "Four to five years" is his own figure (copy interview, Oct 2026)
       ['01','Audit','Where your brand is right now.',C.cyan,'56,214,255',24],
       ['02','Vision','How you see the business changing with technology over the next four to five years.',C.violet,'185,160,255',60],
       ['03','Overhaul','A new brand, and the full design overhaul to match.',C.gold,'255,200,87',98]];
-    return '<div class="wrap"><h2 class="kick" id="sl-proc-h"><i aria-hidden="true"><svg viewBox="0 0 12 12" fill="#0A0B1E"><path d="'+STAR+'"/></svg></i><span>How we work</span></h2>'+ // DRAFT-COPY
+    return '<div class="wrap"><h2 class="kick" id="sl-proc-h"><i aria-hidden="true"><svg viewBox="0 0 12 12" fill="#0A0B1E"><path d="'+STAR+'"/></svg></i><span>How we work</span></h2>'+
       '<div class="pr"><div class="strip" aria-hidden="true"><svg viewBox="0 0 1200 120" preserveAspectRatio="none" focusable="false"><defs><linearGradient id="slpg" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="1200" y2="0">'+
       '<stop offset="0" stop-color="#38D6FF"/><stop offset=".45" stop-color="#B9A0FF"/><stop offset=".72" stop-color="#FF7EB6"/><stop offset="1" stop-color="#FFC857"/></linearGradient></defs>'+
       '<path class="base" d="'+PATH+'"/><path class="draw" pathLength="1" d="'+PATH+'"/></svg></div>'+

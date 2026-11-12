@@ -576,6 +576,6 @@ What was built against this plan, and where it differs. Figures are from the bra
 **Still open**
 
 - Nobody has opened the preview address in a real browser yet. Safari and a real phone are untested.
-- Every new string is draft until Edie passes it (`DRAFT-COPY` in `js/starlight.js`). The services map added six strings to the §13 list: the caption "One buyer, four services", and four screen-reader lines ("From search to visit", "From search to enquiry", "From enquiry to order", "From enquiry to order, and after"); its five stop names (Search, Visit, Enquiry, Quote, Order) are words from the service cards.
+- Copy: Edie passed it on 12 Nov 2026 with three fixes, all on the services map and all applied: the caption is now "Where each service fits"; S·01 Website Overhaul is a point at Visit with the line "At the visit" (its card promises nothing about search); S·04's line is "From enquiry to order updates". The `DRAFT-COPY` markers are gone. How we work is left as written: Nathan decides on that wording (Edie's advisory: step 03 may read as the only destination).
 - Not merged. `main` is untouched. Merge only on Nathan's sign-off of the preview.
 

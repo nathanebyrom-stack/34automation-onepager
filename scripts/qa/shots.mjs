@@ -10,7 +10,7 @@ await c.addInitScript((t) => { try { localStorage.setItem("34-theme", t); } catc
 const p = await c.newPage(); const log = [];
 p.on("console", (m) => { if (["error", "warning"].includes(m.type())) log.push(m.text()); }); p.on("pageerror", (e) => log.push("pageerror " + e.message));
 await p.goto(base + "/", { waitUntil: "networkidle" }); await p.evaluate(() => document.fonts.ready); await p.waitForTimeout(600);
-const POS = { top: "#hero", state: ".band.state", line: '.sl-ig[data-ig="line"]', offer: "#offer", cols: ".cols", services: "#services", grid: ".svc .grid", work: "#work", rows: ".rows", reviews: "#reviews", report: "#report", dial: '.sl-ig[data-ig="dial"]', process: ".sl-proc", contact: "#contact", form: "#enq", footer: ".ft" };
+const POS = { top: "#hero", state: ".band.state", line: '.sl-ig[data-ig="line"]', offer: "#offer", cols: ".cols", services: "#services", map: '.sl-ig[data-ig="map"]', grid: ".svc .grid", work: "#work", rows: ".rows", reviews: "#reviews", report: "#report", dial: '.sl-ig[data-ig="dial"]', process: ".sl-proc", contact: "#contact", form: "#enq", footer: ".ft" };
 for (const [name, sel] of Object.entries(POS)) {
   if (only && !only.split(",").includes(name)) continue;
   const y = await p.evaluate((s) => { const e = document.querySelector(s); if (!e || !e.getClientRects().length) return null; return Math.max(0, e.getBoundingClientRect().top + scrollY - 90); }, sel);
