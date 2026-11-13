@@ -27,12 +27,13 @@
   })();
   var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
 
-  // scroll pace (Nathan, 11 Nov): the page scrolls at 65% of the browser's speed (wheel, trackpad and touch; was 50%, sped up 30% on 11 Nov),
+  // scroll pace (Nathan, 11 Nov; 13 Nov): the page scrolls at 108% of the browser's speed (wheel, trackpad and touch; was 50%, sped up 30% to 65% on 11 Nov,
+  // then scroll length cut 40% on 13 Nov, so 0.65 / 0.6),
   // except inside the two scroll films (hero, why us), which keep their full speed. No pauses at section tops (removed 11 Nov: it felt clunky).
   // Lenis (js/lenis.min.js) does the smoothing. Off for reduced motion; nav links, keyboard and the scrollbar still go straight there.
   (function(){
     if(still||typeof Lenis!=='function')return;
-    var PACE=.65; // share of normal scroll speed outside the films
+    var PACE=1.08; // share of normal scroll speed outside the films (above 1: a little faster than the browser's own)
     var lenis;
     var hero=document.getElementById('hero'),why=document.getElementById('why'),whyTrack=document.getElementById('whyTrack');
     function span(el,y){var r=el.getBoundingClientRect();return [r.top+y,r.top+y+el.offsetHeight-innerHeight];}
@@ -152,7 +153,7 @@
       target=p*(N-1);
       if(bar)bar.style.transform='scaleX('+p+')';
       if(copy){var k=Math.min(Math.max((p-.28)/.10,0),1);copy.style.opacity=1-k;copy.style.transform='translateY('+(k*24)+'px)';}
-      if(mid){ // the statement: lines arrive at 38%, 44% and 50% of the scroll, after the headline has cleared, then hold (every beat is a share of the scroll, so they all scale with it: the film's scroll was doubled, then sped up 30%, on 11 Nov), and leave together at 88%
+      if(mid){ // the statement: lines arrive at 38%, 44% and 50% of the scroll, after the headline has cleared, then hold (every beat is a share of the scroll, so they all scale with it: the film's scroll was doubled, then sped up 30%, on 11 Nov, then cut 40% on 13 Nov), and leave together at 88%
         var out=1-Math.min(Math.max((p-.88)/.06,0),1),vis=Math.min(Math.max((p-.36)/.07,0),1)*out;
         mid.style.opacity=vis.toFixed(3);
         midLines.forEach(function(el,i){var a=Math.min(Math.max((p-(.38+i*.06))/.07,0),1);el.style.opacity=(a*out).toFixed(3);el.style.transform='translateY('+((1-a)*22).toFixed(1)+'px)';});
