@@ -176,11 +176,16 @@ p{margin:0}
 @media (max-width:600px){.state .big br{display:none}}
 
 /* offer */
-/* the ghost drawing (12 Nov): 30% stronger than before (.28 to .364), and only a quarter of it is drawn when the band arrives.
-   Scroll draws the rest in, swept round the part's centre like a pen going round the sheet. --sk is the share drawn (js/site.js sets it); without JS or with reduced motion it stays 1, the whole drawing.
-   Same in Night, Day (inverted, at Day's --tex-k) and Starlight. */
-.offer .tex img{opacity:calc(.364*var(--tex-k));--sa:calc(var(--sk,1)*360deg);-webkit-mask-image:conic-gradient(from 0deg at 50% 50%,#000 calc(var(--sa) - 2deg),transparent calc(var(--sa) + 9deg));mask-image:conic-gradient(from 0deg at 50% 50%,#000 calc(var(--sa) - 2deg),transparent calc(var(--sa) + 9deg))}
-.offer .tex::after{background:linear-gradient(180deg,var(--graphite) 0,rgba(var(--shade),.2) 30%,rgba(var(--shade),.2) 70%,var(--graphite) 100%)}
+/* the drawing sheet (13 Nov, Nathan): the 01 ghost drawing now starts where "Imagine you never missed a call" starts and runs on behind 01 What we offer.
+   One drawing behind both bands, swept round the part's centre like a pen going round the sheet. --sk is the share drawn (js/site.js):
+   it draws itself at a set pace once the words arrive, and while the reader scrolls the scroll takes over and the pen keeps step with it (back up undraws).
+   Without JS or with reduced motion --sk stays 1, the whole drawing. Same in Night, Day (inverted, at Day's --tex-k) and Starlight. */
+.sheet{position:relative;isolation:isolate;background:var(--graphite)}
+.sheet>.tex{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.sheet>.tex img{width:100%;height:100%;object-fit:cover;filter:var(--tex-filter);opacity:calc(.364*var(--tex-k));--sa:calc(var(--sk,1)*360deg);-webkit-mask-image:conic-gradient(from 0deg at 50% 50%,#000 calc(var(--sa) - 2deg),transparent calc(var(--sa) + 9deg));mask-image:conic-gradient(from 0deg at 50% 50%,#000 calc(var(--sa) - 2deg),transparent calc(var(--sa) + 9deg))}
+.sheet>.tex::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(var(--shade),.2) 0,rgba(var(--shade),.2) 80%,var(--graphite) 100%)}
+.sheet>.band{z-index:1}
+.sheet>.state{background:transparent}
 .cols{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:1px;background:var(--edge);border:1px solid var(--edge)}
 .col{background:rgba(var(--plate-rgb),.92);padding:30px 26px 34px;display:flex;flex-direction:column;gap:14px;min-width:0;transition:background .3s}
 .col:hover{background:var(--plate)}
