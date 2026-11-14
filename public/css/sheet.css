@@ -1,0 +1,57 @@
+/* The drawing sheet (Nathan, 14 Nov 2026): styles for the vector drawing behind "Imagine you never missed a call" and 01 What we offer.
+   Fetched with js/sheet.js when the sheet is near the screen (loader in js/site.js). The script builds every element these rules style.
+   Everything is scoped under #dwg (the drawing's <svg>) or the sheet, because short class names here (.fr, .sl, .on) are also used elsewhere on the site.
+   The drawing's own colours follow the site's tokens: --line for the printed lines, --gold-rgb for centre lines, --graphite for the paper.
+   Night is the default and Starlight is Night plus a class, so both take the first line; Day has the two selectors the site's own tokens use. */
+.sheet{--pencil-rgb:228,231,235;--a-fine:.2;--a-hatch:.1;--a-note:.26;--a-text:.42;--a-cl:.42}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .sheet{--pencil-rgb:30,32,36;--a-fine:.26;--a-hatch:.13;--a-note:.3;--a-text:.44;--a-cl:.5}}
+:root[data-theme="light"] .sheet{--pencil-rgb:30,32,36;--a-fine:.26;--a-hatch:.13;--a-note:.3;--a-text:.44;--a-cl:.5}
+/* fitted whole and top-anchored; never narrower than 1100px, so on a phone the middle of the sheet shows at a readable size and the sides crop */
+.sheet>.dwg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.sheet>.dwg svg{position:absolute;top:0;left:50%;width:max(100%,1100px);height:100%;transform:translateX(-50%)}
+/* the drawing: constant hairlines whatever the size (--u is drawing units per screen pixel, set in script) */
+#dwg{--u:1.09;--pk:.5;--T:30;--K:.8475;--O:0}
+#dwg .fr line,#dwg .fr rect{fill:none;stroke:rgba(var(--line),calc(var(--a-fine)*.75));stroke-width:calc(var(--u)*.6px)}
+#dwg .fr .in{stroke-width:calc(var(--u)*.85px)}
+#dwg .ob path,#dwg .ob circle{fill:none;stroke:rgba(var(--line),var(--a-fine));stroke-width:calc(var(--u)*.7px);stroke-linejoin:round}
+#dwg .ht path{fill:none;stroke:rgba(var(--line),var(--a-hatch));stroke-width:calc(var(--u)*.5px)}
+#dwg .cl line,#dwg .cl circle{fill:none;stroke:rgba(var(--gold-rgb),var(--a-cl));stroke-width:calc(var(--u)*.55px);stroke-dasharray:24 5 3 5}
+#dwg .cl .cm{stroke:rgba(var(--gold-rgb),.9);stroke-width:calc(var(--u)*.95px);stroke-dasharray:none}
+#dwg .dm line,#dwg .dm path,#dwg .dm rect,#dwg .dm circle{fill:none;stroke:rgba(var(--line),var(--a-note));stroke-width:calc(var(--u)*.55px)}
+#dwg .dm .ar{fill:rgba(var(--line),var(--a-note));stroke:none}
+#dwg text{font-family:var(--f-mono);font-size:calc(var(--u)*10.5px);letter-spacing:.04em;fill:rgba(var(--line),var(--a-text));stroke:none}
+#dwg text.sm{font-size:calc(var(--u)*8px);letter-spacing:.1em}
+/* the pencil: each stroke hidden behind its own dash gap until its turn */
+#dwg .p{fill:none;stroke-linecap:round;stroke-linejoin:round;stroke-dashoffset:var(--L)}
+#dwg .pa{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.7));stroke-width:calc(var(--u)*1.05px)}
+#dwg .pb{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.5));stroke-width:calc(var(--u)*1.35px)}
+#dwg .ph{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.46));stroke-width:calc(var(--u)*.75px)}
+#dwg .pc{stroke:rgba(var(--gold-rgb),calc(var(--pk)*1.6));stroke-width:calc(var(--u)*.9px)}
+#dwg .pf{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.62));stroke-width:calc(var(--u)*.9px)}
+#dwg .pd{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.6));stroke-width:calc(var(--u)*.8px)}
+#dwg .af{fill:rgba(var(--pencil-rgb),calc(var(--pk)*.75));fill-opacity:0;stroke:none}
+/* the flange view in 3D: faces filled with the paper colour so nearer parts hide the lines behind */
+#dwg .v2,#dwg .ld{transition:opacity .6s}
+#dwg.d3 .v2,#dwg.d3 .ld{opacity:0}
+#dwg .g3d{opacity:0;transition:opacity .6s}
+#dwg.d3 .g3d{opacity:1}
+/* it turns from the start in the light printed line, and takes the pencil line (ink3) when the pencil reaches it */
+#dwg .g3d .sf,#dwg .g3d .sl,#dwg .g3d .hf,#dwg .g3d .pc3{transition:stroke 1.4s,stroke-width 1.4s}
+#dwg .g3d .sf{fill:var(--graphite);stroke:rgba(var(--line),var(--a-fine));stroke-width:calc(var(--u)*.7px)}
+#dwg .g3d .qd{fill:var(--graphite);stroke:none}
+#dwg .g3d .sl{fill:none;stroke:rgba(var(--line),var(--a-fine));stroke-width:calc(var(--u)*.7px)}
+#dwg .g3d .hf{fill:none;stroke:rgba(var(--line),calc(var(--a-fine)*.7));stroke-width:calc(var(--u)*.55px)}
+#dwg .g3d .pc3{fill:none;stroke:rgba(var(--gold-rgb),var(--a-cl));stroke-width:calc(var(--u)*.55px);stroke-dasharray:12 3 2 3}
+#dwg.ink3 .g3d .sf,#dwg.ink3 .g3d .sl{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.95));stroke-width:calc(var(--u)*1.1px)}
+#dwg.ink3 .g3d .hf{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.55));stroke-width:calc(var(--u)*.8px)}
+#dwg.ink3 .g3d .pc3{stroke:rgba(var(--gold-rgb),calc(var(--pk)*1.4));stroke-width:calc(var(--u)*.8px)}
+.sheet>.dwg-hit{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+#grab{position:absolute;border-radius:50%;pointer-events:auto;cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+#grab.on{cursor:grabbing}
+#grab:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
+#dwg.go .p{animation:sh-draw calc(var(--d)*var(--T)*var(--K)*1s) linear calc((var(--t0)*var(--T)*var(--K) - var(--O))*1s) both}
+#dwg.go .af{animation:sh-ink calc(var(--d)*var(--T)*var(--K)*1s) linear calc((var(--t0)*var(--T)*var(--K) - var(--O))*1s) both}
+#dwg.go .p.es{animation-timing-function:cubic-bezier(.35,0,.3,1)}
+@keyframes sh-draw{to{stroke-dashoffset:0}}
+@keyframes sh-ink{to{fill-opacity:1}}
+@media (prefers-reduced-motion:reduce){#dwg .p{animation:none!important;stroke-dashoffset:0!important}#dwg .af{animation:none!important;fill-opacity:1!important}}

@@ -74,27 +74,16 @@
     addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(px);}},{passive:true}); px();
   }
 
-  // the drawing sheet (Nathan, 13 Nov): the 01 ghost drawing starts where "Imagine you never missed a call" starts and runs on behind 01 What we offer.
-  // Once those words come up the screen, the pen draws at a set pace on its own (PACE seconds for the whole drawing).
-  // While the reader scrolls, the scroll takes over: the pen moves exactly as far as the page does (SPAN = the sheet's height draws all of it),
-  // forwards going down, backwards going up. Stop scrolling and the set pace picks up again from wherever the pen is.
-  // Scroll back above the words and the sheet clears, so it draws again next time. Reduced motion: nothing set here, the CSS shows the whole drawing.
-  if(!still){(function(){
-    var sheet=document.getElementById('sheet'),img=sheet&&sheet.querySelector('.tex img'),words=sheet&&sheet.querySelector('.state .big');if(!img||!words)return;
-    var PACE=9,HOLD=140; // seconds for the whole drawing at the set pace; ms after the last scroll before the set pace resumes
-    var p=0,on=false,live=false,raf=0,lastT=0,lastY=scrollY,lastScroll=-1e9,shown=-1;
-    function put(){var v=Math.round(p*1000)/1000;if(v!==shown){shown=v;img.style.setProperty('--sk',v);}}
-    function arm(){var r=words.getBoundingClientRect();if(!on&&r.top<innerHeight*.88)on=true;
-      if(on&&sheet.getBoundingClientRect().top>innerHeight){on=false;p=0;put();}} // back above the words: clear the sheet
-    function frame(t){raf=0;var dt=lastT?Math.min((t-lastT)/1000,.1):0;lastT=t;arm();
-      if(on&&p<1&&t-lastScroll>HOLD)p=Math.min(1,p+dt/PACE);put();
-      if(live&&on&&p<1)raf=requestAnimationFrame(frame);else lastT=0;}
-    function kick(){if(!raf)raf=requestAnimationFrame(frame);}
-    addEventListener('scroll',function(){var y=scrollY,dy=y-lastY;lastY=y;if(!live)return;arm();
-      if(on){p+=dy/Math.max(sheet.offsetHeight,innerHeight);p=p<0?0:p>1?1:p;lastScroll=performance.now();}kick();},{passive:true});
-    if('IntersectionObserver' in window)new IntersectionObserver(function(e){live=e[0].isIntersecting;if(live){lastY=scrollY;kick();}}).observe(sheet);else{live=true;}
-    put();kick();
-  })();}
+  // the drawing sheet (Nathan, 14 Nov): one engineering drawing behind "Imagine you never missed a call" and 01 What we offer, as fine vector lines.
+  // A pencil goes over the whole sheet once, on the clock (30 s), from when those words come up the screen; it does not follow the scroll, loop or rewind.
+  // The flange view turns slowly in 3D from the start and can be dragged. All of that is js/sheet.js and css/sheet.css, fetched here once the sheet is near.
+  // The stylesheet goes first and the script only after it has loaded: unstyled SVG shapes are solid black, and must never flash. If it fails, no drawing.
+  (function(){
+    var sheet=document.getElementById('sheet');if(!sheet)return;
+    function load(){var v=SRC.split('?')[1],l=document.createElement('link'),s=document.createElement('script');v=v?'?'+v:'';
+      l.rel='stylesheet';l.href='/css/sheet.css'+v;s.src='/js/sheet.js'+v;l.onload=function(){document.head.appendChild(s);};document.head.appendChild(l);}
+    if('IntersectionObserver' in window){var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){io.disconnect();load();}},{rootMargin:'150% 0px'});io.observe(sheet);}else load();
+  })();
   // S·04: five keys light one by one as the card climbs the screen, then the panel's screen types THE DEVIL'S / IN THE DETAIL (after the fifth key).
   // Scroll back above it and the screen clears, so it types again next time. Reduced motion: the full line, no typing. Without JS the markup already holds the full line.
   (function(){
