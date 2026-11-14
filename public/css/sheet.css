@@ -13,6 +13,7 @@
 #dwg{--u:1.09;--pk:.5;--T:30;--K:.8475;--O:0}
 #dwg .fr line,#dwg .fr rect{fill:none;stroke:rgba(var(--line),calc(var(--a-fine)*.75));stroke-width:calc(var(--u)*.6px)}
 #dwg .fr .in{stroke-width:calc(var(--u)*.85px)}
+#dwg .fr .fp{fill:none;stroke:rgba(var(--line),calc(var(--a-fine)*.75));stroke-width:calc(var(--u)*.6px)} /* the projection symbol in the title block: without this its circles are solid black */
 #dwg .ob path,#dwg .ob circle{fill:none;stroke:rgba(var(--line),var(--a-fine));stroke-width:calc(var(--u)*.7px);stroke-linejoin:round}
 #dwg .ht path{fill:none;stroke:rgba(var(--line),var(--a-hatch));stroke-width:calc(var(--u)*.5px)}
 #dwg .cl line,#dwg .cl circle{fill:none;stroke:rgba(var(--gold-rgb),var(--a-cl));stroke-width:calc(var(--u)*.55px);stroke-dasharray:24 5 3 5}
@@ -36,7 +37,7 @@
 #dwg .g3d{opacity:0;transition:opacity .6s}
 #dwg.d3 .g3d{opacity:1}
 /* it turns from the start in the light printed line, and takes the pencil line (ink3) when the pencil reaches it */
-#dwg .g3d .sf,#dwg .g3d .sl,#dwg .g3d .hf,#dwg .g3d .pc3{transition:stroke 1.4s,stroke-width 1.4s}
+#dwg.inking .g3d .sf,#dwg.inking .g3d .sl,#dwg.inking .g3d .hf,#dwg.inking .g3d .pc3{transition:stroke 1.4s,stroke-width 1.4s}
 #dwg .g3d .sf{fill:var(--graphite);stroke:rgba(var(--line),var(--a-fine));stroke-width:calc(var(--u)*.7px)}
 #dwg .g3d .qd{fill:var(--graphite);stroke:none}
 #dwg .g3d .sl{fill:none;stroke:rgba(var(--line),var(--a-fine));stroke-width:calc(var(--u)*.7px)}
@@ -45,7 +46,7 @@
 #dwg.ink3 .g3d .sf,#dwg.ink3 .g3d .sl{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.95));stroke-width:calc(var(--u)*1.1px)}
 #dwg.ink3 .g3d .hf{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.55));stroke-width:calc(var(--u)*.8px)}
 #dwg.ink3 .g3d .pc3{stroke:rgba(var(--gold-rgb),calc(var(--pk)*1.4));stroke-width:calc(var(--u)*.8px)}
-.sheet>.dwg-hit{position:absolute;inset:0;z-index:2;overflow:hidden;pointer-events:none}
+.sheet>.dwg-hit{position:absolute;inset:0;z-index:2;overflow:hidden;overflow:clip;pointer-events:none}
 #grab{position:absolute;border-radius:50%;pointer-events:auto;cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 #grab.on{cursor:grabbing}
 #grab:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}

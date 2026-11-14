@@ -2,7 +2,7 @@
 // Fetched by js/site.js once #sheet is near the screen, and only after css/sheet.css has loaded (unstyled SVG shapes are solid black).
 // Three things happen here, in this order down the file:
 //   1. The sheet is drawn as fine vector lines: a four-way valve body in section, a flange view, dimensions, notes, border and title block.
-//   2. A pencil goes over every line once, on the clock (30 s), starting when those words come up the screen. It does not follow the scroll, loop or rewind.
+//   2. A pencil goes over every line once, on the clock (30 s), starting once the sheet is well on screen. It does not follow the scroll, loop or rewind.
 //      Only lettering is never pencilled: figures, notes, title block and border text.
 //   3. The flange view is a solid 3D flange that turns slowly from the start and can be dragged or turned with the arrow keys.
 // Reduced motion: the finished drawing, nothing moving, the flange still but turnable by hand. Without JS none of this runs and the page shows the old bitmap (index.html, <noscript>).
@@ -12,7 +12,7 @@ var sheet=document.getElementById('sheet');if(!sheet||sheet.querySelector('.dwg'
 var NS='http://www.w3.org/2000/svg',CX=800,CY=700,box=document.createElement('div'),hit=document.createElement('div'),grab=document.createElement('div'),svg=document.createElementNS(NS,'svg');
 box.className='dwg';box.setAttribute('aria-hidden','true');svg.setAttribute('id','dwg');svg.setAttribute('viewBox','0 0 1600 1408');svg.setAttribute('preserveAspectRatio','xMidYMin meet');box.appendChild(svg);
 // the grab handle: a transparent circle over the flange, in a layer above the page's bands (the drawing itself sits behind them and cannot take a click)
-hit.className='dwg-hit';grab.id='grab';grab.tabIndex=0;grab.setAttribute('role','slider');grab.setAttribute('aria-label','Turn the 3D flange drawing');grab.setAttribute('aria-valuemin','0');grab.setAttribute('aria-valuemax','360');grab.setAttribute('aria-valuenow','0');hit.appendChild(grab);
+hit.className='dwg-hit';grab.id='grab';grab.tabIndex=0;grab.setAttribute('role','slider');grab.setAttribute('aria-label','Turn the 3D flange drawing');grab.setAttribute('aria-valuemin','0');grab.setAttribute('aria-valuemax','360');grab.setAttribute('aria-valuenow','0');grab.setAttribute('data-lenis-prevent-touch','');hit.appendChild(grab);
 sheet.insertBefore(hit,sheet.firstChild);sheet.insertBefore(box,sheet.firstChild);
 function el(n,a,p){var e=document.createElementNS(NS,n),k;for(k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e;}
 function f(n){return Math.round(n*100)/100;}
@@ -201,7 +201,8 @@ var RO=96,RF=67.2,RB=40,RN=64,RP=80,RH=7.2,ZF=3.2,Z0=0,ZB=-22.4,ZN=-80.4,ZP=-30;
 var g3=el('g',{'class':'g3d'},svg),defs=el('defs',{},svg);
 function cyl(r,za,zb){var g=el('g',{},g3);return {g:g,r:r,za:za,zb:zb,far:el('ellipse',{'class':'sf'},g),qd:el('path',{'class':'qd'},g),s1:el('line',{'class':'sl'},g),s2:el('line',{'class':'sl'},g),near:el('ellipse',{'class':'sf'},g)};}
 var cN=cyl(RN,ZN,ZB),cF=cyl(RO,ZB,Z0),cR=cyl(RF,Z0,ZF),pcd=el('ellipse',{'class':'pc3'},cF.g);
-function thru(parent,id){var ce=el('ellipse',{},el('clipPath',{id:id},defs));return {near:el('ellipse',{'class':'sf'},parent),far:el('ellipse',{'class':'hf','clip-path':'url(#'+id+')'},parent),ce:ce};}
+function thru(parent,id){var ce=el('ellipse',{},el('clipPath',{id:id},defs)),near=el('ellipse',{'class':'sf'},parent); // a hole: its near rim, and its far rim seen through it
+  return {near:near,far:el('ellipse',{'class':'hf'},el('g',{'clip-path':'url(#'+id+')'},parent)),ce:ce};} // the clip is on a plain group: on the ellipse itself it would be turned twice, by the ellipse's own rotate()
 var holes=[45,135,225,315].map(function(a,n){var h=thru(cF.g,'hc'+n),t=a*Math.PI/180;h.x=RP*Math.cos(t);h.y=RP*Math.sin(t);return h;});
 var gB=el('g',{},g3),bore=thru(gB,'hcb'),lastSide=0;
 function setE(e,cx,cy,rx,ry,th){e.setAttribute('cx',f(cx));e.setAttribute('cy',f(cy));e.setAttribute('rx',f(Math.max(rx,.02)));e.setAttribute('ry',f(ry));e.setAttribute('transform','rotate('+f(th)+' '+f(cx)+' '+f(cy)+')');}
@@ -221,7 +222,8 @@ render(0,0);
 // turning: a slow steady turn, or the reader's hand. Runs only while the sheet is on screen
 var d3=false,psi=0,phi=0,vps=0,auto=true,touched=false,drag=null,vis=true,raf=0,lt=0,W0=6.2832/24,PH0=-.24,
     reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function frame(t){raf=0;var dt=Math.min(Math.max((t-lt)/1000,0),.05);lt=t;
+function frame(t){raf=0;if(!drag&&t-lt<30){raf=requestAnimationFrame(frame);return;} // about 30 redraws a second is plenty for a slow turn
+  var dt=Math.min(Math.max((t-lt)/1000,0),.05);lt=t;
   if(!drag){vps+=((auto&&!reduce?W0:0)-vps)*(1-Math.exp(-dt/.9));psi+=vps*dt;if(!touched)phi+=(PH0-phi)*(1-Math.exp(-dt/1.1));}
   render(psi,phi);spin();}
 function spin(){if(raf||!d3||!vis)return;
@@ -230,29 +232,35 @@ function spin(){if(raf||!d3||!vis)return;
 function begin3D(){if(d3)return;d3=true;psi=phi=vps=0;touched=false;
   if(reduce){psi=-.6;phi=PH0;touched=true;}
   render(psi,phi);svg.classList.add('d3');lab3.textContent='TYP 4 POSNS · DRAG TO TURN';spin();}
-grab.addEventListener('pointerdown',function(e){if(e.button)return;if(!d3)begin3D();drag={x:e.clientX,y:e.clientY,ps:psi,ph:phi,lx:e.clientX,lt:e.timeStamp};touched=true;vps=0;grab.classList.add('on');
+grab.addEventListener('pointerdown',function(e){if(e.button||drag)return;if(!d3)begin3D();drag={id:e.pointerId,x:e.clientX,y:e.clientY,ps:psi,ph:phi,lx:e.clientX,lt:e.timeStamp};touched=true;vps=0;grab.classList.add('on');
   try{grab.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();spin();});
-grab.addEventListener('pointermove',function(e){if(!drag)return;psi=drag.ps+(e.clientX-drag.x)*.012;phi=Math.max(-1.1,Math.min(1.1,drag.ph-(e.clientY-drag.y)*.009));
+grab.addEventListener('pointermove',function(e){if(!drag||e.pointerId!==drag.id)return;psi=drag.ps+(e.clientX-drag.x)*.012;phi=Math.max(-1.1,Math.min(1.1,drag.ph-(e.clientY-drag.y)*.009));
   var dt=(e.timeStamp-drag.lt)/1000;if(dt>0)vps=.6*vps+.4*(e.clientX-drag.lx)*.012/dt;drag.lx=e.clientX;drag.lt=e.timeStamp;render(psi,phi);spin();});
-function drop(){if(!drag)return;drag=null;grab.classList.remove('on');vps=Math.max(-5,Math.min(5,vps));spin();}
-grab.addEventListener('pointerup',drop);grab.addEventListener('pointercancel',drop);
+function aria(){grab.setAttribute('aria-valuenow',Math.round(((psi*180/Math.PI)%360+360)%360));}
+function drop(e){if(!drag||(e&&e.pointerId!==drag.id))return;
+  if(reduce||!e||e.timeStamp-drag.lt>80)vps=0; // held still before letting go, or reduced motion: it stays where it was put, no fling
+  drag=null;grab.classList.remove('on');vps=Math.max(-5,Math.min(5,vps));aria();spin();}
+grab.addEventListener('pointerup',drop);grab.addEventListener('pointercancel',drop);grab.addEventListener('lostpointercapture',drop);
 grab.addEventListener('keydown',function(e){var k=e.key;if(k.indexOf('Arrow')!==0)return;e.preventDefault();if(!d3)begin3D();touched=true;
   if(k==='ArrowLeft')psi-=.26;else if(k==='ArrowRight')psi+=.26;else if(k==='ArrowUp')phi=Math.min(1.1,phi+.17);else phi=Math.max(-1.1,phi-.17);
-  grab.setAttribute('aria-valuenow',Math.round(((psi*180/Math.PI)%360+360)%360));render(psi,phi);spin();});
-if('IntersectionObserver' in window)new IntersectionObserver(function(e){vis=e[0].isIntersecting;spin();}).observe(svg);
+  aria();render(psi,phi);spin();});
+if('IntersectionObserver' in window){vis=false;new IntersectionObserver(function(e){vis=e[e.length-1].isIntersecting;spin();}).observe(grab);} // the handle sits on the flange: off screen, or hidden on a phone, means nothing to redraw
 
 /* ---------- constant hairlines: drawing units per screen pixel. The grab handle sits over the flange, above the page's bands ---------- */
-function fit(){var m=svg.getScreenCTM();if(!m||!(m.a>0))return;svg.style.setProperty('--u',(1/m.a).toFixed(4));
-  var r=sheet.getBoundingClientRect(),R=112*m.a;grab.style.left=(m.a*VX+m.e-r.left-R).toFixed(1)+'px';grab.style.top=(m.d*VY+m.f-r.top-R).toFixed(1)+'px';grab.style.width=grab.style.height=(2*R).toFixed(1)+'px';
-  var gx=m.a*VX+m.e-r.left;grab.hidden=gx<0||gx>r.width;} // on a phone the flange view is cropped off the side: then there is no handle to tab to or touch
+function fit(){var b=svg.getBoundingClientRect();if(!(b.width>0&&b.height>0))return;
+  var k=Math.min(b.width/1600,b.height/1408),r=sheet.getBoundingClientRect(),R=112*k,gx=b.left+(b.width-1600*k)/2+k*VX-r.left,gy=b.top+k*VY-r.top; // xMidYMin meet: centred across, anchored to the top
+  svg.style.setProperty('--u',(1/k).toFixed(4));grab.style.left=(gx-R).toFixed(1)+'px';grab.style.top=(gy-R).toFixed(1)+'px';grab.style.width=grab.style.height=(2*R).toFixed(1)+'px';
+  grab.hidden=gx<0||gx>r.width;} // on a phone the flange view is cropped off the side: then there is no handle to tab to or touch
 fit();if('ResizeObserver' in window)new ResizeObserver(fit).observe(svg);else addEventListener('resize',fit);
 
-/* ---------- the timeline: starts once those words come up the screen, then runs on the clock for T seconds. It never follows the scroll, loops or rewinds.
-   K fits the whole job (outline, bores, ball, flange view, centre lines, hatching, sheet border, then dimension lines) into T ---------- */
-var T=30,K=.8475,INK=.45,words=sheet.querySelector('.state .big');
+/* ---------- the timeline: starts once the sheet reaches the middle half of the screen (about when "Imagine you never missed a call" has come up from below,
+   and also true for a reader who lands lower down, on #offer, where those words are never on screen). Then it runs on the clock for T seconds.
+   It never follows the scroll, loops or rewinds. K fits the whole job (outline, bores, ball, flange view, centre lines, hatching, sheet border, then dimension lines) into T ---------- */
+var T=30,K=.8475,INK=.45;
 svg.style.setProperty('--T',T);svg.style.setProperty('--K',K);
-function go(){svg.classList.add('go');if(reduce)svg.classList.add('ink3');else setTimeout(function(){svg.classList.add('ink3');},INK*K*T*1000);} // ink3: the pencil has reached the flange view
-if(reduce||!words||!('IntersectionObserver' in window))go();
-else{var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){io.disconnect();setTimeout(go,500);}},{threshold:.3});io.observe(words);}
+function ink(){svg.classList.add('ink3','inking');setTimeout(function(){svg.classList.remove('inking');},1600);} // ink3: the pencil has reached the flange view; inking: its lines fade to the pencil line just this once
+function go(){svg.classList.add('go');if(reduce)svg.classList.add('ink3');else setTimeout(ink,INK*K*T*1000);}
+if(reduce||!('IntersectionObserver' in window))go();
+else{var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){io.disconnect();setTimeout(go,500);}},{rootMargin:'-25% 0px'});io.observe(sheet);}
 begin3D(); // the flange is in 3D and turning from the moment the drawing arrives, before the pencil starts
 })();

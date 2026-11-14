@@ -46,7 +46,7 @@
 |---|---|
 | `public/js/sheet.js` | New. Builds the SVG drawing, the pencil strokes and timeline, the 3D flange and its drag handling. |
 | `public/css/sheet.css` | New. Drawing, pencil, flange and grab-handle styles, and the drawing's own colour tokens per theme. |
-| `public/index.html` | Sheet markup: empty `<svg id="dwg">` in `.dwg`, the grab handle in `.dwg-hit`, the old `<img>` moved into `<noscript>`. |
+| `public/index.html` | The old `<img>` moved into `<noscript>`. Nothing else: `sheet.js` builds `.dwg > svg#dwg` and `.dwg-hit > #grab` itself, so a visitor without the script gets no empty tab stop. |
 | `public/js/site.js` | The old scroll-linked sweep (the block starting "the drawing sheet (Nathan, 13 Nov)") replaced by a loader. |
 | `public/css/site.css` | `--on-sheet` and `--on-sheet-soft` in the three token blocks; text rules; the old mask rule reduced to the no-JS case. |
 
@@ -56,9 +56,9 @@
 
 **Files:** modify `public/index.html`, `public/css/site.css`, `public/js/site.js`.
 
-**Produces:** `#sheet > .dwg > svg#dwg[viewBox="0 0 1600 1408"][preserveAspectRatio="xMidYMin meet"]`; `#sheet > .dwg-hit > #grab`; CSS tokens `--on-sheet`, `--on-sheet-soft`; a loader that appends `/css/sheet.css?v=` and, on its `load` event, `/js/sheet.js?v=`, once `#sheet` is within 150% of the viewport height.
+**Produces:** CSS tokens `--on-sheet`, `--on-sheet-soft`; a loader that appends `/css/sheet.css?v=` and, on its `load` event, `/js/sheet.js?v=`, once `#sheet` is within 150% of the viewport height.
 
-- [ ] Change the markup. The old `<div class="tex">` goes inside `<noscript>`.
+- [ ] Change the markup: the old `<div class="tex">` goes inside `<noscript>`. (`sheet.js` creates `#sheet > .dwg > svg#dwg[viewBox="0 0 1600 1408"][preserveAspectRatio="xMidYMin meet"]` and `#sheet > .dwg-hit > #grab`.)
 - [ ] Add the two tokens to `:root`, the light media query block and `:root[data-theme="light"]`. Point `.state .big`, `.state .sub`, `.sheet .head .h2` and `.sheet .head .lede` at them.
 - [ ] Replace the sweep block in `site.js` with the loader. Remove the conic mask from `.sheet>.tex img`.
 - [ ] Verify: `node scripts/build.mjs` prints `✓ Built dist/`.
@@ -72,7 +72,7 @@
 **Produces:** on `#dwg`, the classes `go` (pencil running or done), `ink3` (flange in pencil line), `d3` (flange in 3D); CSS custom properties `--u`, `--T: 30`, `--K: .8475`, `--pk: .5`.
 
 - [ ] Port the geometry, pencil and flange code from the approved example unchanged. Drop its control panel, link-hash hooks and theme switch.
-- [ ] Timeline: start 500 ms after `.state .big` is 30% on screen; add `ink3` at `0.45 * K * T` seconds; under reduced motion add both classes at once.
+- [ ] Timeline: start 500 ms after `#sheet` reaches the middle half of the screen (so a reader who lands on `#offer` still gets the pencil); add `ink3` at `0.45 * K * T` seconds; under reduced motion add both classes at once.
 - [ ] Port the styles with every selector scoped under `#dwg`, keyframes renamed `sh-draw` and `sh-ink`, and the drawing's tokens (`--pencil-rgb`, `--a-fine`, `--a-hatch`, `--a-note`, `--a-text`, `--a-cl`) set on `.sheet` for Night, Day (both selectors) and Starlight.
 - [ ] Verify: `node --check public/js/sheet.js`; build passes.
 
