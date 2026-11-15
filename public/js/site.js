@@ -35,12 +35,13 @@
     if(still||typeof Lenis!=='function')return;
     var PACE=1.08; // share of normal scroll speed outside the films (above 1: a little faster than the browser's own)
     var lenis;
-    var hero=document.getElementById('hero'),why=document.getElementById('why'),whyTrack=document.getElementById('whyTrack');
+    var hero=document.getElementById('hero'),why=document.getElementById('why'),whyTrack=document.getElementById('whyTrack'),mo=document.getElementById('motion'),moTrack=document.getElementById('vTrack');
     function span(el,y){var r=el.getBoundingClientRect();return [r.top+y,r.top+y+el.offsetHeight-innerHeight];}
-    function inFilm(at){ // is this scroll position inside a film's scrub? (only when the film actually runs)
+    function inFilm(at){ // is this scroll position inside a film's scrub, or the valve's? (only when it actually runs)
       var y=lenis.scroll,s;
       if(hero&&d.classList.contains('film')){s=span(hero,y);if(at>=s[0]&&at<s[1])return true;}
       if(why&&whyTrack&&why.classList.contains('scrub')){s=span(whyTrack,y);if(at>=s[0]&&at<s[1])return true;}
+      if(mo&&moTrack&&mo.classList.contains('scrub')){s=span(moTrack,y);if(at>=s[0]&&at<s[1])return true;}
       return false;
     }
     function pace(e){
@@ -83,6 +84,62 @@
     function load(){var v=SRC.split('?')[1],l=document.createElement('link'),s=document.createElement('script');v=v?'?'+v:'';
       l.rel='stylesheet';l.href='/css/sheet.css'+v;s.src='/js/sheet.js'+v;l.onload=function(){document.head.appendChild(s);};document.head.appendChild(l);}
     if('IntersectionObserver' in window){var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){io.disconnect();load();}},{rootMargin:'150% 0px'});io.observe(sheet);}else load();
+  })();
+  // 05 In motion (Nathan, 15 Nov): the valve from the drawing sheet, built in 3D and taken apart as the reader scrolls (js/motion.js, css/motion.css, docs/valve-motion-plan.md).
+  // As it stands in the page the section is a plain band: the words, a still of the exploded valve, the whole parts list, the button. Here it is pinned (.scrub) and the 3D
+  // is fetched, but only where it will run: motion allowed, not Save-Data or 2G, WebGL 2 present, and a window tall enough (as for the why-us film; that one is looked at
+  // again on every resize, so a phone turned on its side goes back to the plain band). Three.js and the script arrive once the section is near.
+  (function(){
+    var sec=document.getElementById('motion'),pin=document.getElementById('vPin');if(!sec||!pin)return;
+    // the section's button ticks Product animation on the enquiry form on its way there (the link itself works without this); the box flashes once it is on screen
+    var go=document.getElementById('vGo'),box=document.querySelector('#enq input[name="interest"][value="Product animation"]');
+    if(go&&box)go.addEventListener('click',function(){
+      box.checked=true;var chip=box.nextElementSibling;if(!chip)return;
+      function flash(){chip.classList.remove('flash');void chip.offsetWidth;chip.classList.add('flash');}
+      if('IntersectionObserver' in window){var fo=new IntersectionObserver(function(e){if(e[0].isIntersecting){fo.disconnect();setTimeout(flash,250);}},{threshold:1});fo.observe(chip);}else flash();
+    });
+    var c=navigator.connection||{};
+    if(still||c.saveData||/(^|-)2g$/.test(c.effectiveType||''))return;
+    var gl=null;try{gl=document.createElement('canvas').getContext('webgl2');}catch(e){gl=null;} // this Three.js needs WebGL 2
+    if(!gl)return;
+    try{var lose=gl.getExtension('WEBGL_lose_context');if(lose)lose.loseContext();}catch(e){} // that context was only a test: hand it back
+    var img=sec.querySelector('.v-still'),src=img&&img.getAttribute('src'),able=true,started=false,timer=0;
+    // pin or un-pin, keeping the reader's place: the section is four screens long pinned and one as a plain band, so everything below it moves
+    function repin(on){
+      if(on===sec.classList.contains('scrub'))return;
+      var r=sec.getBoundingClientRect(),y0=window.scrollY||0,to=null;
+      sec.classList.toggle('scrub',on);
+      if(img&&src){if(on)img.removeAttribute('src');else img.setAttribute('src',src);} // the still is not fetched while the section is pinned
+      if(r.bottom<=innerHeight*.5)to=y0+sec.offsetHeight-r.height; // the reader is past it: what they were reading stays where it was
+      else if(r.top<0)to=y0+r.top;                                  // the reader is in it: it stays on screen, from its top
+      if(to!==null)jump(to);
+    }
+    function jump(y){if(window.__pace&&window.__pace.scrollTo)window.__pace.scrollTo(y,{immediate:true,force:true});else window.scrollTo(0,y);}
+    function want(){return able&&innerHeight>=(innerWidth<700?600:520);} // a phone needs more: the words go above the valve and the closing line below it
+    // the 3D could not start, stalled, or lost its context for good: back to the plain band, for the rest of the visit
+    function lost(){if(!able)return;able=false;clearTimeout(timer);repin(false);}
+    sec.addEventListener('valve-lost',lost);
+    function load(){
+      if(started||!able||!sec.classList.contains('scrub'))return;
+      var r=sec.getBoundingClientRect();if(r.top>innerHeight*2.5||r.bottom<innerHeight*.1)return; // a screen and a half before it arrives; not for a reader who lands just below it
+      started=true;removeEventListener('scroll',load);
+      var v=SRC.split('?')[1],s=document.createElement('script');s.type='module';s.src='/js/motion.js'+(v?'?'+v:'');
+      function check(){if(able&&!sec.classList.contains('v3d'))lost();} // motion.js marks the section .v3d once its scene is built
+      s.onerror=lost;s.onload=check;timer=setTimeout(check,10000);document.head.appendChild(s);
+    }
+    addEventListener('scroll',load,{passive:true});
+    // a resize (a phone turned on its side) re-lays the whole page, and can change this section and the why-us film above it in the same moment; neither the browser
+    // nor that film is sure to keep the reader's place. So whether the reader is in this section is noted on every scroll (a resize is dealt with before the scroll
+    // it causes), and a reader who was in it when it changed is put back at its top once every block has had its turn
+    var inIt=false;
+    function mark(){var r=sec.getBoundingClientRect();inIt=r.top<innerHeight*.5&&r.bottom>innerHeight*.5;}
+    addEventListener('scroll',mark,{passive:true});mark();
+    addEventListener('resize',function(){
+      var here=inIt,was=sec.classList.contains('scrub');
+      repin(want());load();
+      if(here&&was!==sec.classList.contains('scrub'))setTimeout(function(){jump((window.scrollY||0)+sec.getBoundingClientRect().top);mark();},0);
+    });
+    repin(want());load();
   })();
   // S·04: five keys light one by one as the card climbs the screen, then the panel's screen types THE DEVIL'S / IN THE DETAIL (after the fifth key).
   // Scroll back above it and the screen clears, so it types again next time. Reduced motion: the full line, no typing. Without JS the markup already holds the full line.

@@ -200,11 +200,57 @@
   </div>
 </section>
 
+<link rel="stylesheet" href="/css/motion.css?v={{BUILD}}">
+<section class="motion night" id="motion" aria-labelledby="motion-h">
+  <div class="track" id="vTrack"><div class="pin" id="vPin">
+    <canvas class="v-can" id="vCan" aria-hidden="true"></canvas>
+    <div class="v-shade" aria-hidden="true"></div>
+    <svg class="v-lead" id="vLead" aria-hidden="true" focusable="false"></svg>
+    <div class="v-bal" id="vBal" aria-hidden="true"></div>
+    <div class="v-copy">
+      <div class="v-tags"><span class="kick"><i>05</i><span>In motion</span></span><span class="pill" title="An invented part, drawn and built by 34 to show the work"><i></i><span><span class="lg">Demo · 34 </span>concept part</span></span></div>
+      <h2 id="motion-h" class="h2">Your product,<br><em>in motion.</em></h2>
+      <p class="lede"><b>What if this were your product?</b>Imagine your customers exploring your design from every angle, watching it come together and discovering the engineering behind it.</p>
+    </div>
+    <img class="v-still" src="img/19-valve-exploded.webp" alt="Exploded view of the 34A-0100 four-way valve: the lever, gland nut, packing, bonnet bolts, bonnet, stem, ball and seat rings lifted above the valve body, each numbered to match the parts list" loading="lazy" width="814" height="1560">
+    <div class="v-cta">
+      <p>Tell us about your product. <em>We'll make it move.</em></p>
+      <a class="btn solid" id="vGo" href="#contact">Start a conversation <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg></a>
+      <span class="v-hint">Drag the valve to turn it</span>
+    </div>
+    <div class="v-bom" id="vBom">
+      <p class="v-bom-h"><span>Parts list</span><b>34A-0100 · Valve assy</b></p>
+      <table>
+        <caption class="vh">Parts list for the 34A-0100 four-way valve assembly</caption>
+        <thead><tr><th scope="col">Item</th><th scope="col">Part</th><th scope="col">Material</th><th scope="col">Qty</th></tr></thead>
+        <tbody id="vRows">
+          <tr data-i="1"><td>01</td><td>Valve body, 4-way DN50</td><td>316L</td><td>1</td></tr>
+          <tr data-i="2"><td>02</td><td>Ball, SØ76, L-port</td><td>316L</td><td>1</td></tr>
+          <tr data-i="3"><td>03</td><td>Seat ring</td><td>PTFE</td><td>4</td></tr>
+          <tr data-i="4"><td>04</td><td>Stem</td><td>17-4PH</td><td>1</td></tr>
+          <tr data-i="5"><td>05</td><td>Gland packing</td><td>PTFE</td><td>1 set</td></tr>
+          <tr data-i="6"><td>06</td><td>Gland nut</td><td>316</td><td>1</td></tr>
+          <tr data-i="7"><td>07</td><td>Lever handle</td><td>316</td><td>1</td></tr>
+          <tr data-i="8"><td>08</td><td>Flange bolt M8</td><td>A4-70</td><td>16</td></tr>
+          <tr data-i="9"><td>09</td><td>Bonnet</td><td>316L</td><td>1</td></tr>
+          <tr data-i="10"><td>10</td><td>Bonnet bolt M8</td><td>A4-70</td><td>4</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="v-cap" id="vCap" aria-hidden="true"></p>
+    <div class="v-grab" id="vGrab" tabindex="0" role="slider" aria-label="Turn the 3D valve" aria-valuemin="0" aria-valuemax="360" aria-valuenow="0" aria-valuetext="0 degrees" data-lenis-prevent-touch></div>
+    <div class="v-rail" aria-hidden="true">
+      <div class="bar"><i id="vBar"></i></div>
+      <div class="ops" id="vOps"><span class="on">Section A–A</span><span>Assembly</span><span>Exploded view</span></div>
+    </div>
+  </div></div>
+</section>
+
 <section class="band reviews" id="reviews" aria-labelledby="reviews-h">
   <div class="wrap">
     <div class="head">
       <div class="row">
-        <div class="rv"><span class="kick"><i>05</i><span>Reviews</span></span>
+        <div class="rv"><span class="kick"><i>06</i><span>Reviews</span></span>
           <h2 id="reviews-h" class="h2" style="margin-top:14px">Your score,<br><em>not ours.</em></h2></div>
         <p class="lede rv" style="--i:1">We're not choosing what goes here. You are.</p>
       </div>
@@ -257,7 +303,7 @@
   <div class="wrap">
     <div class="head">
       <div class="row">
-        <div class="rv"><span class="kick"><i>06</i><span>Website report</span></span>
+        <div class="rv"><span class="kick"><i>07</i><span>Website report</span></span>
           <h2 id="report-h" class="h2" style="margin-top:14px">Your website,<br><em>on the bench.</em></h2></div>
         <p class="lede rv" style="--i:1">Email us your web address and we'll send back a full report on your site, including where it ranks against your five closest competitors.</p>
       </div>
@@ -295,7 +341,7 @@
   <div class="split">
     <div class="img rv"><img src="img/11-the-owner.webp" alt="The owner of a small engineering firm reading a drawing in a workshop office at dusk, CNC machines through the glass behind him" loading="lazy" width="1800" height="1005"></div>
     <div class="txt">
-      <span class="kick rv"><i>07</i><span>Start a conversation</span></span>
+      <span class="kick rv"><i>08</i><span>Start a conversation</span></span>
       <h2 id="cta-h" class="h2 rv" style="--i:1">No pitch deck.<br>No hard sell.</h2>
       <p class="rv" style="--i:2">Tell us where your brand is now and we'll tell you, straight, what we'd do with it. If the answer is "nothing yet", we'll say that too.</p>
       <div class="rv" style="--i:3" id="enqWrap">
@@ -311,6 +357,7 @@
               <label><input type="checkbox" name="interest" value="Website"><span>Website</span></label>
               <label><input type="checkbox" name="interest" value="Marketing"><span>Marketing</span></label>
               <label><input type="checkbox" name="interest" value="Automation"><span>Automation</span></label>
+              <label><input type="checkbox" name="interest" value="Product animation"><span>Product animation</span></label>
               <label><input type="checkbox" name="interest" value="Not sure yet"><span>Not sure yet</span></label>
             </div>
           </fieldset>

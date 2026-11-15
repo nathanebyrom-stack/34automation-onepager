@@ -1,0 +1,106 @@
+/* 05 In motion (Nathan, 15 Nov 2026): the 34A-0107 valve from the drawing sheet, built in 3D and taken apart as the reader scrolls. Plan of record: docs/valve-motion-plan.md.
+   Linked from index.html just before the section, not from js, so the version without scripts is styled too. The section carries .night: it is at night in every theme, like the films.
+   Two looks:
+     .motion        a plain band: the words, a still of the exploded valve, the whole parts list, the button. No script, reduced motion, Save-Data, a short window,
+                    no WebGL 2, or the 3D failed.
+     .motion.scrub  pinned for four screens; js/motion.js draws the valve and the pin's classes (.live .go .ex .end) follow the scroll. Set and unset by js/site.js. */
+.motion{position:relative;background:var(--graphite);color:var(--silver);border-top:1px solid var(--edge)}
+
+/* ---- the plain band ---- */
+.motion .pin{position:relative;max-width:var(--max);margin-inline:auto;padding:clamp(72px,10vw,140px) var(--gr) clamp(72px,10vw,140px) var(--gl);
+  display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.8fr) minmax(0,1fr);grid-template-areas:"copy still bom" "cta still bom";gap:28px clamp(24px,4vw,56px);align-items:center}
+.v-copy{grid-area:copy;display:grid;gap:16px;align-self:end;min-width:0}
+.v-copy .h2{font-size:clamp(26px,3.3vw,46px)}
+.v-copy .lede{font-size:clamp(15px,1.25vw,18px);transition:opacity .4s}
+.v-copy .lede b{display:block;color:var(--silver);font-weight:600;margin-bottom:.45em}
+.v-tags{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.v-cta{grid-area:cta;display:grid;gap:16px;justify-items:start;align-self:start;min-width:0}
+.v-cta p{margin:0;font-family:var(--f-disp);font-stretch:112%;font-weight:700;text-transform:uppercase;font-size:clamp(18px,1.7vw,24px);line-height:1.15;letter-spacing:.01em;color:var(--silver)}
+.v-cta p em{font-style:normal;color:var(--gold);display:block}
+.v-hint{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel)}
+.v-still{grid-area:still;justify-self:center;width:auto;max-width:100%;height:auto;max-height:78vh;object-fit:contain}
+.v-bom{grid-area:bom;min-width:0;font-family:var(--f-mono);font-size:11px;letter-spacing:.04em;color:var(--steel);background:rgba(var(--shade),.74);border:1px solid rgba(var(--line),.16)}
+.v-bom-h{margin:0;display:flex;justify-content:space-between;gap:12px;padding:8px 10px;border-bottom:1px solid rgba(var(--line),.16);text-transform:uppercase;letter-spacing:.14em;color:var(--silver)}
+.v-bom-h b{color:var(--gold);font-weight:500}
+.v-bom table{border-collapse:collapse;width:100%}
+.v-bom th{font-weight:400;text-align:left;padding:5px 10px;color:var(--steel);text-transform:uppercase;letter-spacing:.12em;font-size:10px;border-bottom:1px solid rgba(var(--line),.12)}
+.v-bom td{padding:3px 10px;border-bottom:1px solid rgba(var(--line),.07);color:var(--silver);white-space:nowrap}
+.v-bom td:first-child,.v-bom th:first-child{width:3.4em}
+.v-bom td:first-child{color:var(--gold);font-variant-numeric:tabular-nums}
+.v-bom td:last-child,.v-bom th:last-child{text-align:right;font-variant-numeric:tabular-nums}
+.v-can,.v-shade,.v-lead,.v-bal,.v-cap,.v-grab,.v-rail,.v-hint{display:none}
+@media (max-width:1099px){.motion .pin{grid-template-columns:minmax(0,1fr) minmax(0,1fr);grid-template-areas:"copy still" "cta still" "bom bom"}}
+@media (max-width:699px){
+  .motion .pin{grid-template-columns:minmax(0,1fr);grid-template-areas:"copy" "still" "bom" "cta";gap:28px}
+  .v-still{max-height:70vh}
+  .v-copy .h2{font-size:clamp(24px,7.4vw,32px)}
+  .v-tags{flex-wrap:nowrap}
+  .v-tags .lg{display:none}
+  .v-bom td{white-space:normal}
+}
+
+/* ---- pinned: the 3D ---- */
+.motion.scrub .track{height:400vh} /* about four screens; the films are 606vh, and Nathan cut those by 40% on 13 Nov */
+.motion.scrub .pin{position:sticky;top:0;display:block;max-width:none;margin:0;padding:0;height:100vh;height:100svh;min-height:520px;overflow:hidden;isolation:isolate;
+  background:radial-gradient(120% 90% at 62% 48%,#17191d 0,#0E0F11 62%)}
+.motion.scrub .v-can{display:block;position:absolute;inset:0;width:100%;height:100%;opacity:0;transition:opacity .8s var(--ease)}
+.motion.scrub .pin.live .v-can{opacity:1}
+.motion.scrub .v-shade{display:block;position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(var(--shade),.82) 0,rgba(var(--shade),.35) 30%,rgba(var(--shade),0) 46%),linear-gradient(180deg,rgba(var(--shade),.55) 0,rgba(var(--shade),0) 22%,rgba(var(--shade),0) 80%,rgba(var(--shade),.7) 100%)}
+.motion.scrub .v-lead,.motion.scrub .v-bal{display:block;position:absolute;inset:0;pointer-events:none;overflow:visible}
+.motion.scrub .v-lead{width:100%;height:100%}
+.v-lead line{stroke:rgba(var(--gold-rgb),.62);stroke-width:1}
+.v-lead circle{fill:var(--gold)}
+.v-lead g{opacity:0;transition:opacity .3s}
+.v-lead g.on{opacity:1}
+.v-b{position:absolute;left:0;top:0;width:26px;height:26px;margin:-13px 0 0 -13px;border-radius:50%;border:1px solid var(--gold);background:rgba(var(--shade),.9);color:var(--gold);font:500 11px/24px var(--f-mono);text-align:center;font-variant-numeric:tabular-nums;opacity:0;transition:opacity .3s}
+.v-b.on{opacity:1}
+.motion.scrub .v-still{display:none}
+.motion.scrub .v-copy{position:absolute;top:96px;left:max(var(--gl),calc((100% - var(--max))/2 + 16px));width:min(400px,27vw);z-index:2}
+.motion.scrub .v-cta{position:absolute;left:max(var(--gl),calc((100% - var(--max))/2 + 16px));bottom:76px;width:min(430px,31vw);z-index:3;opacity:0;visibility:hidden;transform:translateY(10px);transition:opacity .45s var(--ease),transform .45s var(--ease),visibility 0s .45s}
+.motion.scrub .pin.end .v-cta{opacity:1;visibility:visible;transform:none;transition:opacity .45s var(--ease),transform .45s var(--ease)}
+.motion.scrub .v-hint{display:block}
+.motion.scrub .v-bom{position:absolute;right:max(var(--gr),calc((100% - var(--max))/2 + 16px));bottom:76px;width:min(372px,27vw);z-index:2;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px);opacity:0;transform:translateY(8px);transition:opacity .5s var(--ease),transform .5s var(--ease)}
+.motion.scrub .pin.ex .v-bom{opacity:1;transform:none}
+.motion.scrub .v-bom tbody tr{opacity:.24;transition:opacity .35s var(--ease)} /* every line is there, faint, and lights as its part comes off */
+.motion.scrub .v-bom tbody tr.on{opacity:1}
+.motion.scrub .v-bom td:nth-child(2){white-space:normal} /* the panel is 27vw wide: under about 1330px a long part name takes two lines */
+.motion.scrub .v-cap{position:absolute;left:var(--gl);right:var(--gr);bottom:62px;margin:0;text-align:center;font-family:var(--f-mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--silver);min-height:1.5em;z-index:2}
+.motion.scrub .v-rail{position:absolute;left:max(var(--gl),calc((100% - var(--max))/2 + 16px));right:max(var(--gr),calc((100% - var(--max))/2 + 16px));bottom:22px;display:grid;gap:10px;z-index:2}
+.v-rail .bar{position:relative;height:2px;background:rgba(var(--line),.14)}
+.v-rail .bar i{position:absolute;inset:0;background:var(--gold-fill);transform-origin:left;transform:scaleX(0)}
+.v-rail .ops{display:flex;justify-content:space-between;gap:12px;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel)}
+.v-rail .ops span{transition:color .3s}
+.v-rail .ops span.on{color:var(--gold)}
+/* the handle for turning it: over the valve, only once it is apart. Up-and-down swipes on it still scroll the page */
+.v-grab{position:absolute;left:34%;right:28%;top:12%;bottom:16%;z-index:1;cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none}
+.motion.scrub .pin.end .v-grab{display:block}
+.v-grab.on{cursor:grabbing}
+.v-grab:focus-visible{outline:1px dashed rgba(var(--gold-rgb),.7);outline-offset:-8px}
+@media (max-height:760px){.motion.scrub .pin.end .v-copy .lede{opacity:0}} /* a short window: the sub makes room for the closing line */
+@media (max-width:1099px){
+  .motion.scrub .v-bom{width:1px;height:1px;right:0;bottom:0;overflow:hidden;clip-path:inset(50%);border:0} /* no room for the panel: kept for screen readers, the caption stands in */
+  .motion.scrub .v-cap{display:block}
+  .motion.scrub .v-copy{width:min(400px,36vw)}
+  .motion.scrub .v-cta{width:min(400px,36vw)}
+}
+@media (max-width:699px){
+  .motion.scrub .v-shade{background:linear-gradient(180deg,rgba(var(--shade),.9) 0,rgba(var(--shade),.5) 26%,rgba(var(--shade),0) 40%,rgba(var(--shade),0) 72%,rgba(var(--shade),.9) 100%)}
+  .motion.scrub .v-copy{top:80px;left:var(--gl);right:var(--gr);width:auto;gap:12px}
+  .motion.scrub .v-copy .lede{font-size:15px}
+  .motion.scrub .pin.go .v-copy .lede{opacity:0}
+  .motion.scrub .v-cta{left:var(--gl);right:var(--gr);width:auto;bottom:66px;gap:12px}
+  .motion.scrub .pin.end .v-cap{opacity:0}
+  .v-grab{left:0;right:0;top:30%;bottom:26%}
+  .v-b{width:22px;height:22px;margin:-11px 0 0 -11px;font-size:10px;line-height:20px}
+  .v-rail .ops{font-size:10px;letter-spacing:.1em}
+}
+@media (max-width:699px) and (max-height:719px){.motion.scrub .v-hint{display:none}.motion.scrub .v-cta .btn{padding-block:12px}} /* a short phone: every line counts */
+
+/* Starlight colours every .pill on the page; this section is at night in every theme */
+.motion .v-tags .pill{color:var(--steel);border-color:var(--edge);background:none}
+.motion .v-tags .pill i{background:var(--steel)}
+
+/* the enquiry form's Product animation box, as the section's button ticks it */
+.enq .chips span.flash{animation:v-flash 1.4s var(--ease)}
+@keyframes v-flash{0%,40%{box-shadow:0 0 0 6px rgba(var(--gold-rgb),.35)}100%{box-shadow:0 0 0 0 rgba(var(--gold-rgb),0)}}
+@media (prefers-reduced-motion:reduce){.enq .chips span.flash{animation:none}}

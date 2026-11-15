@@ -13,7 +13,7 @@
 //   TURNSTILE_VERIFY_URL  text     local testing only: a stand-in for Turnstile's siteverify (never set in Cloudflare)
 
 const MAX_BODY = 20_000;
-const INTERESTS = ["Website", "Marketing", "Automation", "Not sure yet"];
+const INTERESTS = ["Website", "Marketing", "Automation", "Product animation", "Not sure yet"]; // keep in step with the chips in public/index.html (#enq)
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
 const str = (v, max) => (typeof v === "string" ? v.replace(/\u0000/g, "").trim().slice(0, max) : "");

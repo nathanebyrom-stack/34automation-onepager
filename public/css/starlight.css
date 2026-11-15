@@ -81,7 +81,7 @@
 .starlight .row2 .h3{color:var(--gold)}
 .starlight .row2 .lbl{color:var(--gold)}
 
-/* ---- 05 reviews, 06 report, 07 contact ---- */
+/* ---- 06 reviews, 07 report, 08 contact (05 In motion is at night in every theme: css/motion.css) ---- */
 .starlight .empty{border-left:4px solid;border-image:linear-gradient(180deg,#FFC857,#FF7EB6) 1;background:linear-gradient(120deg,rgba(255,200,87,.14),rgba(255,126,182,.08)),var(--plate)}
 .starlight .ask{border-top:3px solid;border-image:var(--sl-spec) 1;background:linear-gradient(180deg,rgba(var(--gold-rgb),.12),rgba(var(--gold-rgb),.03)),var(--plate)}
 .starlight .report .txt .h3{color:var(--gold)}
