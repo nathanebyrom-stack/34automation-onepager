@@ -1,7 +1,8 @@
 (function(){
   var d=document.documentElement; d.classList.add('js');
   var SRC=(document.currentScript||{}).src||''; // its ?v= is reused for the Starlight files
-  // day / night / starlight: follows the viewer's system until they pick one, then remembers it.
+  // day / night / starlight. The landing page always opens in Night (Nathan, 15 Nov 2026): index.html carries data-theme="dark" on <html>, and neither the viewer's
+  // system setting nor an earlier choice is applied on load. The switch still works for the visit, and the choice is still stored, because the inner pages (js/theme.js) follow it.
   // Starlight is Night plus a class: stored as 'starlight', applied as data-theme="dark" + .starlight, only on pages marked data-sl. The system setting can never pick it.
   (function(){
     var K='34-theme',SL='starlight',can=d.hasAttribute('data-sl'),bs=[].slice.call(document.querySelectorAll('.mode button')),got;
@@ -16,7 +17,6 @@
     function nx(b){var i=bs.indexOf(b);return bs[(i+1)%bs.length];}
     function lab(){var ph=PH.matches;bs.forEach(function(b){var n=b.title||b.textContent.trim();b.setAttribute('aria-label',ph&&b.getAttribute('aria-pressed')==='true'?n+', tap for '+(nx(b).title||nx(b).textContent.trim()):n);});}
     function paint(){var c=cur();bs.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===c));});lab();layers();}
-    try{var s=localStorage.getItem(K);if(s==='light'||s==='dark'||s===SL)set(s);}catch(e){}
     bs.forEach(function(b){b.addEventListener('click',function(){
       // once Starlight's script is in, it holds the reader's place across the switch (its blocks change the page's height)
       (window.__slHold||function(f){f();})(function(){var m=(PH.matches&&b.getAttribute('aria-pressed')==='true'?nx(b):b).dataset.mode;set(m);try{localStorage.setItem(K,m);}catch(e){}paint();});
