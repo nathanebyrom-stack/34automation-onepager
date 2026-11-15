@@ -349,6 +349,28 @@
         });
     });
   })();
+
+  // 01 What we offer: each card's Play video button opens its film over the page (Nathan, 15 Nov 2026). Which film goes with which card is set here.
+  // A film is fetched only when its button is pressed, and dropped again when the overlay closes.
+  (function(){
+    var dlg=document.getElementById('vid'),v=document.getElementById('vidV'),bs=[].slice.call(document.querySelectorAll('.pv')),from=null;
+    if(!dlg||!v||!bs.length)return;
+    if(typeof dlg.showModal!=='function'){bs.forEach(function(b){b.hidden=true;});return;} // no <dialog> in this browser: no button, the card reads as it did
+    var FILMS={web:{tag:'WEB',t:'No Pitch Deck · 0:41',f:'no-pitch-deck',s:'We build the work before we talk about it.'},
+               mkt:{tag:'MKT',t:'Night Shift · 0:42',f:'night-shift',s:'The enquiries get answered while you’re not there.'},
+               auto:{tag:'AUTO',t:'Drawing to Order · 0:36',f:'drawing-to-order',s:'A quote that becomes the order without being typed twice.'}};
+    function txt(id,s){document.getElementById(id).textContent=s;}
+    function open(k,b){var F=FILMS[k],p;if(!F||dlg.open)return;from=b||null;
+      txt('vidN',F.tag);txt('vidT',F.t);txt('vidS',F.s);
+      v.setAttribute('aria-label',F.t.split(' · ')[0]+', film');v.poster='/video/films/'+F.f+'.webp';v.src='/video/films/'+F.f+'.mp4';
+      dlg.showModal();if(window.__pace)window.__pace.stop(); // the page behind holds still while the film is up
+      p=v.play();if(p&&p.catch)p.catch(function(){});} // if the browser will not start it, the poster and the controls are there
+    dlg.addEventListener('close',function(){v.pause();v.removeAttribute('src');v.removeAttribute('poster');v.load(); // dropping the source stops the download
+      if(window.__pace)window.__pace.start();if(from)from.focus();from=null;});
+    dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close();}); // a click on the dark around the film closes it
+    document.getElementById('vidX').addEventListener('click',function(){dlg.close();});
+    bs.forEach(function(b){b.addEventListener('click',function(){open(b.getAttribute('data-film'),b);});});
+  })();
 })();
 
 // S·02: the five example landing pages take turns on the front glass pane.

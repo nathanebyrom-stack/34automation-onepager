@@ -198,6 +198,44 @@ p{margin:0}
 .col p{color:var(--steel);font-size:15px}
 .col .h3{margin-top:4px}
 @media (max-width:820px){.cols{grid-template-columns:1fr}}
+/* 01: each card ends in a Play video button that opens its film over the page (Nathan, 15 Nov 2026): a ring and triangle in the card's gold, the words under it, centred at the foot.
+   Its hit area is stretched over the whole card (::after), so a click anywhere on the card plays; the card's words let the click through.
+   Shown only when scripts run (.js), because the film needs them. Named .pv, not .play: Starlight has a .play of its own */
+.offer .col{position:relative}
+.js .offer .col>.lbl,.js .offer .col>.h3,.js .offer .col>p{position:relative;z-index:1;pointer-events:none}
+.pv{display:none;-webkit-appearance:none;appearance:none;align-self:center;margin:auto 0 0;padding:12px 0 0;border:0;border-radius:0;background:none;color:var(--gold);font:inherit;cursor:pointer;justify-items:center;gap:10px;-webkit-tap-highlight-color:transparent}
+.js .pv{display:grid}
+.js .pv[hidden]{display:none}
+.pv::after{content:"";position:absolute;inset:0}
+.pv-m{display:block;width:53px;height:53px;overflow:visible}
+.pv-m circle{fill:none;stroke:currentColor;stroke-width:1.5px;vector-effect:non-scaling-stroke;transition:fill .25s,stroke .25s}
+.pv-m path{fill:currentColor;stroke:currentColor;stroke-width:3;stroke-linejoin:round;transition:fill .25s,stroke .25s}
+.pv-l{font-family:var(--f-mono);font-size:11px;line-height:1.35;letter-spacing:.16em;margin-right:-.16em;text-transform:uppercase;white-space:nowrap}
+@media (hover:hover){.pv:hover .pv-m circle{fill:var(--gold-fill);stroke:var(--gold-fill)}.pv:hover .pv-m path{fill:var(--gold-ink);stroke:var(--gold-ink)}}
+.pv:focus-visible{outline:none}
+.pv:focus-visible::after{outline:2px solid var(--gold);outline-offset:-6px}
+.pv:focus-visible .pv-m circle,.pv:active .pv-m circle{fill:var(--gold-fill);stroke:var(--gold-fill)}
+.pv:focus-visible .pv-m path,.pv:active .pv-m path{fill:var(--gold-ink);stroke:var(--gold-ink)}
+/* the film opens over the page and is always at night, like the hero (.night on the dialog): the films are shot dark. Named .vid, not .film: the hero uses .film */
+dialog.vid{position:fixed;inset:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;border:0;overflow:auto;overscroll-behavior:contain;background:transparent;color:var(--silver);
+  padding:max(16px,env(safe-area-inset-top,0px)) max(16px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(16px,env(safe-area-inset-left,0px))}
+dialog.vid[open]{display:grid;place-items:center}
+dialog.vid::backdrop{background:rgba(8,9,10,.93);-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+html:has(dialog.vid[open]){overflow:hidden} /* the page behind holds still (Lenis is stopped in script; this covers readers without it) */
+.vid-in{display:grid;gap:14px;width:min(1120px,100%,calc((100vh - 170px)*16/9));width:min(1120px,100%,calc((100dvh - 170px)*16/9));min-width:min(100%,260px)}
+.vid-top{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.vid-h{min-width:0;font-family:var(--f-mono);font-size:11px;line-height:1.5;letter-spacing:.16em;text-transform:uppercase;color:var(--silver)}
+.vid-h b{color:var(--gold);font-weight:500;margin-right:12px}
+.vid-x{-webkit-appearance:none;appearance:none;flex:none;font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;background:transparent;border:1px solid var(--edge);border-radius:0;color:var(--silver);padding:13px 16px;cursor:pointer}
+.vid-x:hover{background:var(--gold-fill);border-color:var(--gold-fill);color:var(--gold-ink)}
+.vid-box{position:relative;aspect-ratio:16/9;max-width:100%;background:#000;box-shadow:0 0 0 1px rgba(var(--gold-rgb),.6),0 0 90px rgba(var(--gold-rgb),.16)}
+.vid-box video{position:absolute;inset:0;width:100%;height:100%;display:block;object-fit:contain;background:#000}
+.vid-s{color:var(--steel);font-size:15px;max-width:58ch}
+dialog.vid[open] .vid-in{animation:vid-in .32s cubic-bezier(.2,.7,.2,1)}
+dialog.vid[open]::backdrop{animation:vid-fade .32s ease-out}
+@keyframes vid-in{from{opacity:0;transform:scale(.975)}}
+@keyframes vid-fade{from{opacity:0}}
+@media (prefers-reduced-motion:reduce){dialog.vid[open] .vid-in,dialog.vid[open]::backdrop{animation:none}}
 
 /* services */
 .svc .grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:18px}

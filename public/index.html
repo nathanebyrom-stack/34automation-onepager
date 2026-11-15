@@ -105,9 +105,9 @@
       <div class="rule"></div>
     </div>
     <div class="cols">
-      <article class="col rv"><span class="lbl">Web design <b>WEB</b></span><h3 class="h3">New sites, redesigns and full overhauls</h3><p>If your website is a decade old and looks it, this is where we start. Built to load fast, read clearly and show the work you actually do.</p></article>
-      <article class="col rv" style="--i:1"><span class="lbl">Marketing <b>MKT</b></span><h3 class="h3">Plans from eight weeks to six months</h3><p>Built from who your company is and the pillars it stands on. A steady move from awareness to a stronger call to action, not a burst of noise.</p></article>
-      <article class="col rv" style="--i:2"><span class="lbl">Workflow automation <b>AUTO</b></span><h3 class="h3">AI and automated workflows, built into how you run</h3><p>Data in, steps run, output sent, while you get on with the job. It buys your time back and keeps the message consistent.</p></article>
+      <article class="col rv"><span class="lbl">Web design <b>WEB</b></span><h3 class="h3">New sites, redesigns and full overhauls</h3><p>If your website is a decade old and looks it, this is where we start. Built to load fast, read clearly and show the work you actually do.</p><button type="button" class="pv" data-film="web" aria-label="Play video: No Pitch Deck, 41 seconds"><svg class="pv-m" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle cx="60" cy="60" r="52"/><path d="M50 40 84 60 50 80Z"/></svg><span class="pv-l">Play video</span></button></article>
+      <article class="col rv" style="--i:1"><span class="lbl">Marketing <b>MKT</b></span><h3 class="h3">Plans from eight weeks to six months</h3><p>Built from who your company is and the pillars it stands on. A steady move from awareness to a stronger call to action, not a burst of noise.</p><button type="button" class="pv" data-film="mkt" aria-label="Play video: Night Shift, 42 seconds"><svg class="pv-m" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle cx="60" cy="60" r="52"/><path d="M50 40 84 60 50 80Z"/></svg><span class="pv-l">Play video</span></button></article>
+      <article class="col rv" style="--i:2"><span class="lbl">Workflow automation <b>AUTO</b></span><h3 class="h3">AI and automated workflows</h3><p>Data in, steps run, output sent, while you get on with the job. It buys your time back and keeps the message consistent.</p><button type="button" class="pv" data-film="auto" aria-label="Play video: Drawing to Order, 36 seconds"><svg class="pv-m" viewBox="0 0 120 120" aria-hidden="true" focusable="false"><circle cx="60" cy="60" r="52"/><path d="M50 40 84 60 50 80Z"/></svg><span class="pv-l">Play video</span></button></article>
     </div>
   </div>
 </section>
@@ -347,6 +347,16 @@
     <div class="legal"><span>© {{YEAR}} 34 Automation</span><span>Sheet 1 of 1 · Rev B · Drawn by 34</span></div>
   </div>
 </footer>
+<dialog class="vid night" id="vid" aria-labelledby="vidH" data-lenis-prevent>
+  <div class="vid-in">
+    <div class="vid-top">
+      <p class="vid-h" id="vidH"><b id="vidN">WEB</b><span id="vidT">No Pitch Deck · 0:41</span></p>
+      <button type="button" class="vid-x" id="vidX">Close</button>
+    </div>
+    <div class="vid-box"><video id="vidV" controls playsinline preload="none"></video></div>
+    <p class="vid-s" id="vidS">We build the work before we talk about it.</p>
+  </div>
+</dialog>
 <script src="/js/lenis.min.js?v={{BUILD}}" defer></script>
 <script src="/js/site.js?v={{BUILD}}" defer></script>
 </body>
