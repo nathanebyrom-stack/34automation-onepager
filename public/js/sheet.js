@@ -2,6 +2,8 @@
 // Fetched by js/site.js once #sheet is near the screen, and only after css/sheet.css has loaded (unstyled SVG shapes are solid black).
 // Three things happen here, in this order down the file:
 //   1. The sheet is drawn as fine vector lines: a four-way valve body in section, a flange view, dimensions, notes, border and title block.
+//      The border, zone marks, revision table and title block are drawn to the size of the page's own sheet, so they wrap everything in 01, cards included,
+//      and the part is drawn inside them at a scale that keeps it clear of the cards (Nathan, 15 Nov 2026: "those cards need to be within the drawing").
 //   2. A pencil goes over every line once, on the clock (30 s), starting once the sheet is well on screen. It does not follow the scroll, loop or rewind.
 //      Only lettering is never pencilled: figures, notes, title block and border text.
 //   3. The flange view is a solid 3D flange that turns slowly from the start and can be dragged or turned with the arrow keys.
@@ -23,7 +25,9 @@ function dstr(p){var s='M',i;for(i=0;i<p.length;i++)s+=(i?'L':'')+f(p[i][0])+' '
 function lerp(a,b,t){return [a[0]+(b[0]-a[0])*t,a[1]+(b[1]-a[1])*t];}
 function arcPts(cx,cy,r,a0,a1,n){var o=[],i,t;for(i=0;i<=n;i++){t=(a0+(a1-a0)*i/n)*Math.PI/180;o.push([cx+r*Math.cos(t),cy+r*Math.sin(t)]);}return o;}
 
-var gFr=el('g',{'class':'fr'},svg),gHt=el('g',{'class':'ht'},svg),gCl=el('g',{'class':'cl'},svg),gOb=el('g',{'class':'ob'},svg),gPen=el('g',{'class':'pen'},svg),gDm=el('g',{'class':'dm'},svg);
+// the sheet's frame (printed, then its pencil) lies under the part; the part and all that belongs to it are one group, so it can be set in the middle of any width of sheet
+var gFr=el('g',{'class':'fr'},svg),gFp=el('g',{'class':'pen'},svg),gPart=el('g',{},svg),gHt=el('g',{'class':'ht'},gPart),gCl=el('g',{'class':'cl'},gPart),gOb=el('g',{'class':'ob'},gPart),gPen=el('g',{'class':'pen'},gPart),gDm=el('g',{'class':'dm'},gPart),
+    PG=gPen; // where the pencil's strokes go: the part's group, or the frame's while the frame is drawn
 function ln(g,x1,y1,x2,y2,c){var a={x1:f(x1),y1:f(y1),x2:f(x2),y2:f(y2)};if(c)a['class']=c;return el('line',a,g);}
 function tx(g,x,y,s,o){o=o||{};var a={x:f(x),y:f(y),'text-anchor':o.a||'start'};if(o.c)a['class']=o.c;if(o.r)a.transform='rotate('+o.r+' '+f(x)+' '+f(y)+')';var t=el('text',a,g);t.textContent=s;return t;}
 var dl=[]; // every dimension, extension and leader line and arrowhead, in the order drawn, for the pencil to go over last
@@ -34,7 +38,7 @@ function rough(pts,amp){var out=[],i,k,a,b,dx,dy,L,n,nx,ny,t,j;
   for(i=0;i<pts.length-1;i++){a=pts[i];b=pts[i+1];dx=b[0]-a[0];dy=b[1]-a[1];L=Math.hypot(dx,dy)||1;n=Math.max(1,Math.round(L/34));nx=-dy/L;ny=dx/L;
     for(k=(i?1:0);k<=n;k++){t=k/n;j=(rnd()-.5)*2*amp;out.push([a[0]+dx*t+nx*j,a[1]+dy*t+ny*j]);}}
   return out;}
-function mk(pts,cls,o){var L=plen(pts),e=el('path',{d:dstr(pts),'class':'p '+cls+(o.es?' es':'')+(o.g?' '+o.g:'')+(o.c?' '+o.c:''),'stroke-dasharray':f(L)+' '+f(L+12)},gPen);
+function mk(pts,cls,o){var L=plen(pts),e=el('path',{d:dstr(pts),'class':'p '+cls+(o.es?' es':'')+(o.g?' '+o.g:'')+(o.c?' '+o.c:''),'stroke-dasharray':f(L)+' '+f(L+12)},PG);
   e.style.setProperty('--L',f(L+2));e.style.setProperty('--t0',o.t0.toFixed(4));e.style.setProperty('--d',Math.max(o.d,.0015).toFixed(4));}
 function pen(pts,o){ // a ruled line: one firm pass that crosses its corners, then a second pass a little short of both ends
   var p=pts.map(function(q){return [q[0],q[1]];}),ov=o.over,p2=p;
@@ -152,11 +156,12 @@ el('path',{d:'M'+X(-167)+' '+Y(-500)+'L'+X(-160)+' '+Y(-488)+'L'+X(-146)+' '+Y(-
 // datum A on the left face
 (function(){var d='M'+X(-488)+' '+Y(-157)+'L'+X(-488)+' '+Y(-143)+'L'+X(-501)+' '+Y(-150)+'Z';el('path',{d:d,'class':'ar'},gDm);dl.push({fill:d});})();dln(X(-501),Y(-150),X(-514),Y(-150));drect(X(-538),Y(-162),24,24);tx(gDm,X(-526),Y(-145.5),'A',{a:'middle'});
 // flange face view notes
-tx(gDm,VX,372,'FLANGE FACE',{a:'middle'});var lab3=tx(gDm,VX,387,'TYP 4 POSNS',{a:'middle',c:'sm'}); // the view's dimensions are not printed here: they are drawn in gold on the turning part itself (further down)
+tx(gDm,VX,372,'FLANGE FACE',{a:'middle',c:'flt'});var lab3=tx(gDm,VX,387,'TYP 4 POSNS',{a:'middle',c:'sm flt'}); // the view's dimensions are not printed here: they are drawn in gold on the turning part itself (further down)
 // section title
 tx(gDm,X(330),Y(400),'SECTION A–A');dln(X(330),Y(406),X(424),Y(406));tx(gDm,X(330),Y(420),'SCALE 1:1',{c:'sm'});
 // general notes
-['NOTES','1. DIMENSIONS IN MM','2. TOL. ISO 2768-mK','3. BREAK EDGES 0.2–0.5','4. TEST 24 BAR, 10 MIN'].forEach(function(s,n){tx(gDm,1368,600+n*18+(n?2:0),s,n?{}:{c:'sm'});});
+var gNotes=el('g',{},gDm); // in a group of their own: they are left out when the sheet has no room for them (layout, further down)
+['NOTES','1. DIMENSIONS IN MM','2. TOL. ISO 2768-mK','3. BREAK EDGES 0.2–0.5','4. TEST 24 BAR, 10 MIN'].forEach(function(s,n){tx(gNotes,1368,600+n*18+(n?2:0),s,n?{}:{c:'sm'});});
 // the pencil's last job: dimension, extension and leader lines, then each arrowhead filled in as its line is reached
 (function(){var tot=0,acc=0;dl.forEach(function(it){it.len=it.pts?plen(it.pts):14;tot+=it.len;});
   dl.forEach(function(it){var t0=1+.18*acc/tot,d=Math.max(.18*it.len/tot,.0015),e;
@@ -164,37 +169,58 @@ tx(gDm,X(330),Y(400),'SECTION A–A');dln(X(330),Y(406),X(424),Y(406));tx(gDm,X(
     else{e=el('path',{d:it.fill,'class':'af g4'+(it.c?' '+it.c:'')},gPen);e.style.setProperty('--t0',t0.toFixed(4));e.style.setProperty('--d',d.toFixed(4));}
     acc+=it.len;});})();
 
-/* ---------- sheet frame, zones, revision table, title block ---------- */
-var fl=[];function fln(x1,y1,x2,y2){ln(gFr,x1,y1,x2,y2);fl.push([[x1,y1],[x2,y2]]);} // ruled sheet lines the pencil goes over later
-el('rect',{x:30,y:30,width:1540,height:1348},gFr);el('rect',{x:56,y:56,width:1488,height:1296,'class':'in'},gFr);
-for(i=1;i<8;i++){fln(56+i*186,30,56+i*186,56);fln(56+i*186,1352,56+i*186,1378);}
-for(i=0;i<8;i++){tx(gFr,56+i*186+93,47,String(8-i),{a:'middle',c:'sm'});tx(gFr,56+i*186+93,1369,String(8-i),{a:'middle',c:'sm'});}
-for(i=1;i<4;i++){fln(30,56+i*324,56,56+i*324);fln(1544,56+i*324,1570,56+i*324);}
-for(i=0;i<4;i++){tx(gFr,43,56+i*324+165,'DCBA'.charAt(i),{a:'middle',c:'sm'});tx(gFr,1557,56+i*324+165,'DCBA'.charAt(i),{a:'middle',c:'sm'});}
-// revisions
-fln(1304,56,1304,104);fln(1304,104,1544,104);fln(1304,80,1544,80);fln(1340,56,1340,104);fln(1474,56,1474,104);
-tx(gFr,1322,72,'REV',{a:'middle',c:'sm'});tx(gFr,1348,72,'DESCRIPTION',{c:'sm'});tx(gFr,1482,72,'DATE',{c:'sm'});
-tx(gFr,1322,96,'C',{a:'middle'});tx(gFr,1348,96,'BORE WAS H8');tx(gFr,1482,96,'11.26');
-// title block
-var TY=1232;
-fln(1104,TY,1544,TY);fln(1104,TY,1104,TY+120);fln(1104,TY+40,1544,TY+40);fln(1104,TY+80,1544,TY+80);
-fln(1474,TY,1474,TY+120);fln(1334,TY,1334,TY+40);fln(1264,TY+40,1264,TY+120);fln(1404,TY+40,1404,TY+120);
-function cell(x,r,lab,val){tx(gFr,x+7,TY+r*40+12,lab,{c:'sm'});if(val)tx(gFr,x+7,TY+r*40+31,val);}
-cell(1104,0,'TITLE','4-WAY VALVE BODY · DN50');cell(1334,0,'DRG NO','34A-0107');cell(1474,0,'REV','C');
-cell(1104,1,'MATERIAL','316L · 1.4404');cell(1264,1,'FINISH','Ra 3.2 U.O.S.');cell(1404,1,'SCALE','1:1');cell(1474,1,'SHEET','1 / 1');
-cell(1104,2,'DRAWN','34 AUTOMATION');cell(1264,2,'TOLERANCE','ISO 2768-mK');cell(1474,2,'SIZE','A2');
-el('path',{d:'M1416 '+(TY+93)+'L1434 '+(TY+89)+'V'+(TY+111)+'L1416 '+(TY+107)+'Z','class':'fp'},gFr).setAttribute('style','fill:none');
-[4,9].forEach(function(r){el('circle',{cx:1454,cy:TY+100,r:r,'class':'fp'},gFr);});
-// pencil for the sheet itself: frame, outer border, then zone ticks, revision table and title block
-[[[56,56],[1544,56]],[[1544,56],[1544,1352]],[[1544,1352],[56,1352]],[[56,1352],[56,56]]].forEach(function(s,n){pen(s,{t0:.83+n*.0125,d:.0125,over:[4,4],es:1,g:'g3'});});
-[[[30,30],[1570,30]],[[1570,30],[1570,1378]],[[1570,1378],[30,1378]],[[30,1378],[30,30]]].forEach(function(s,n){mk(rough(s,.25),'pf',{t0:.88+n*.0125,d:.0125,es:1,g:'g3'});});
-fl.forEach(function(s,n){mk(rough(s,.25),'pf',{t0:.93+(n/fl.length)*.066,d:.105/fl.length,g:'g3'});});
+/* ---------- the sheet itself: border, zones, revision table, title block. Drawn to the size of the page's sheet (Wu x Hu drawing units), and drawn again when that changes.
+   I and O are the inner and outer borders' insets, k is screen pixels per drawing unit. The tables are sized in screen pixels, like the lettering, so they read the same at any scale.
+   The pencil's strokes for it go in their own group; its --O (seconds the pencil has already run) keeps a frame that is re-drawn mid-sketch in step with the rest ---------- */
+var Wu=1600,Hu=1408,DX=0,went=0,fl=[]; // the sheet's size in drawing units; how far across the part is set; when the pencil started
+function fln(x1,y1,x2,y2){ln(gFr,x1,y1,x2,y2);fl.push([[x1,y1],[x2,y2]]);} // ruled sheet lines the pencil goes over later
+function border(I,O,k){ // (not "frame": that name is the flange's animation frame, further down)
+  while(gFr.firstChild)gFr.removeChild(gFr.firstChild);while(gFp.firstChild)gFp.removeChild(gFp.firstChild);fl=[];
+  var u=1/k,band=I-O,x0=I,y0=I,x1=Wu-I,y1=Hu-I,narrow=Wu*k<960,i; // narrow: a phone or an upright tablet, where the part is wider than the sheet (see layout)
+  el('rect',{x:f(O),y:f(O),width:f(Wu-2*O),height:f(Hu-2*O)},gFr);el('rect',{x:f(I),y:f(I),width:f(Wu-2*I),height:f(Hu-2*I),'class':'in'},gFr);
+  // zones: eight across, and as many down as the sheet's height asks for (four on the A2 sheet this was first drawn on). Lettered only where the margin has room
+  var cw=(x1-x0)/8,rows=Math.max(4,Math.round((y1-y0)/324)),rh=(y1-y0)/rows,L;
+  for(i=1;i<8;i++){fln(x0+i*cw,O,x0+i*cw,I);fln(x0+i*cw,y1,x0+i*cw,Hu-O);}
+  for(i=1;i<rows;i++){fln(O,y0+i*rh,I,y0+i*rh);fln(x1,y0+i*rh,Wu-O,y0+i*rh);}
+  if(band*k>=13){
+    for(i=0;i<8;i++){tx(gFr,x0+(i+.5)*cw,O+band/2+3*u,String(8-i),{a:'middle',c:'sm'});tx(gFr,x0+(i+.5)*cw,y1+band/2+3*u,String(8-i),{a:'middle',c:'sm'});}
+    for(i=0;i<rows;i++){L=String.fromCharCode(64+rows-i);tx(gFr,O+band/2,y0+(i+.5)*rh+3*u,L,{a:'middle',c:'sm'});tx(gFr,Wu-O-band/2,y0+(i+.5)*rh+3*u,L,{a:'middle',c:'sm'});}
+  }
+  // revisions, top right. Left out where the part's own dimensions are: on a narrow sheet, and wherever the table would come within 14px of the extension line
+  // at the part's right-hand face (1288 units across), as it does between about 1300 and 1390px wide
+  var rr=21*u,rx=x1-227*u,ry=y0;
+  if(!narrow&&rx>=DX+1288+14*u){
+    fln(rx,ry,rx,ry+2*rr);fln(rx,ry+2*rr,x1,ry+2*rr);fln(rx,ry+rr,x1,ry+rr);fln(rx+34*u,ry,rx+34*u,ry+2*rr);fln(rx+161*u,ry,rx+161*u,ry+2*rr);
+    tx(gFr,rx+17*u,ry+14*u,'REV',{a:'middle',c:'sm'});tx(gFr,rx+41.5*u,ry+14*u,'DESCRIPTION',{c:'sm'});tx(gFr,rx+168*u,ry+14*u,'DATE',{c:'sm'});
+    tx(gFr,rx+17*u,ry+35.5*u,'C',{a:'middle'});tx(gFr,rx+41.5*u,ry+35.5*u,'BORE WAS H8');tx(gFr,rx+168*u,ry+35.5*u,'11.26');}
+  // title block, bottom right, under the cards: three rows, or two on a narrow sheet
+  var R=38*u,tx0=x1-(narrow?300:416)*u,ty0=y1-(narrow?2:3)*R;
+  function cell(x,r,lab,val){tx(gFr,tx0+(x+6.5)*u,ty0+r*R+11.5*u,lab,{c:'sm'});if(val)tx(gFr,tx0+(x+6.5)*u,ty0+r*R+29.5*u,val);}
+  function up(x,r0,r1){fln(tx0+x*u,ty0+r0*R,tx0+x*u,ty0+r1*R);}
+  fln(tx0,ty0,x1,ty0);fln(tx0,ty0,tx0,y1);fln(tx0,ty0+R,x1,ty0+R);
+  if(narrow){up(232,0,1);up(116,1,2);up(232,1,2);
+    cell(0,0,'TITLE','4-WAY VALVE BODY · DN50');cell(232,0,'REV','C');cell(0,1,'DRG NO','34A-0107');cell(116,1,'MATERIAL','316L');cell(232,1,'SIZE','A2');}
+  else{fln(tx0,ty0+2*R,x1,ty0+2*R);up(350,0,3);up(217,0,1);up(151,1,3);up(284,1,3);
+    cell(0,0,'TITLE','4-WAY VALVE BODY · DN50');cell(217,0,'DRG NO','34A-0107');cell(350,0,'REV','C');
+    cell(0,1,'MATERIAL','316L · 1.4404');cell(151,1,'FINISH','Ra 3.2 U.O.S.');cell(284,1,'SCALE','1:1');cell(350,1,'SHEET','1 / 1');
+    cell(0,2,'DRAWN','34 AUTOMATION');cell(151,2,'TOLERANCE','ISO 2768-mK');cell(350,2,'SIZE','A2');
+    var sx=tx0+295*u,sy=ty0+2*R+19*u; // first-angle projection symbol
+    el('path',{d:'M'+f(sx)+' '+f(sy-6.6*u)+'L'+f(sx+17*u)+' '+f(sy-10.4*u)+'V'+f(sy+10.4*u)+'L'+f(sx)+' '+f(sy+6.6*u)+'Z','class':'fp'},gFr).setAttribute('style','fill:none');
+    [3.8,8.5].forEach(function(r){el('circle',{cx:f(sx+36*u),cy:f(sy),r:f(r*u),'class':'fp'},gFr);});}
+  // pencil for the sheet itself: frame, outer border, then zone ticks, revision table and title block
+  PG=gFp;
+  [[[x0,y0],[x1,y0]],[[x1,y0],[x1,y1]],[[x1,y1],[x0,y1]],[[x0,y1],[x0,y0]]].forEach(function(s,n){pen(s,{t0:.83+n*.0125,d:.0125,over:[4,4],es:1,g:'g3'});});
+  [[[O,O],[Wu-O,O]],[[Wu-O,O],[Wu-O,Hu-O]],[[Wu-O,Hu-O],[O,Hu-O]],[[O,Hu-O],[O,O]]].forEach(function(s,n){mk(rough(s,.25),'pf',{t0:.88+n*.0125,d:.0125,es:1,g:'g3'});});
+  fl.forEach(function(s,n){mk(rough(s,.25),'pf',{t0:.93+(n/fl.length)*.066,d:.105/fl.length,g:'g3'});});
+  PG=gPen;
+  gFp.style.setProperty('--O',went?((performance.now()-went)/1000).toFixed(2):'0');
+}
 
 /* ---------- the flange view in 3D: the same circles, turned in space. A circle seen at an angle is an ellipse, so the whole part is ellipses;
    each face is filled with the paper colour and drawn back to front, so nearer parts hide the lines behind (a hidden-line drawing, not a wireframe).
    4/10 of the main view's scale: flange, raised face, bore, a stub of the neck behind, four bolt holes on the pitch circle ---------- */
 var RO=96,RF=67.2,RB=40,RN=64,RP=80,RH=7.2,ZF=3.2,Z0=0,ZB=-22.4,ZN=-80.4,ZP=-30;
-var g3=el('g',{'class':'g3d'},svg),defs=el('defs',{},svg);
+var g3=el('g',{'class':'g3d'},gPart),defs=el('defs',{},gPart);
 function cyl(r,za,zb){var g=el('g',{},g3);return {g:g,r:r,za:za,zb:zb,far:el('ellipse',{'class':'sf'},g),qd:el('path',{'class':'qd'},g),s1:el('line',{'class':'sl'},g),s2:el('line',{'class':'sl'},g),near:el('ellipse',{'class':'sf'},g)};}
 var cN=cyl(RN,ZN,ZB),cF=cyl(RO,ZB,Z0),cR=cyl(RF,Z0,ZF),pcd=el('ellipse',{'class':'pc3'},cF.g);
 function thru(parent,id){var ce=el('ellipse',{},el('clipPath',{id:id},defs)),near=el('ellipse',{'class':'sf'},parent); // a hole: its near rim, and its far rim seen through it
@@ -204,7 +230,7 @@ var gB=el('g',{},g3),bore=thru(gB,'hcb'),lastSide=0;
 /* the flange's dimensions, in 34 gold (Nathan, 15 Nov). Each belongs to a side of the part and shows only while that side faces the reader: the face (bore, bolt holes),
    the edge (outside diameter, thickness) and the back (the neck). The lines are laid out in the part's own planes, so they turn with it; the figures stay upright.
    A circle turned in space keeps one true-length axis, the long axis of its ellipse, so the diameters are measured across that. 1.6 drawing units to the millimetre here */
-var gDim=el('g',{},svg),HX=VX-68,HY=VY-106; // HX,HY: where the bolt-hole note sits, above and left of the part
+var gDim=el('g',{},gPart),HX=VX-68,HY=VY-106; // HX,HY: where the bolt-hole note sits, above and left of the part
 function dgrp(){return el('g',{'class':'dg'},gDim);}
 function dline(g){return el('line',{},g);}
 function dhead(g){return el('path',{'class':'da'},g);}
@@ -252,7 +278,7 @@ function frame(t){raf=0;if(!drag&&t-lt<30){raf=requestAnimationFrame(frame);retu
   var dt=Math.min(Math.max((t-lt)/1000,0),.05);lt=t;
   if(!drag){vps+=((auto&&!reduce?W0:0)-vps)*(1-Math.exp(-dt/.9));psi+=vps*dt;if(!touched)phi+=(PH0-phi)*(1-Math.exp(-dt/1.1));}
   render(psi,phi);spin();}
-function spin(){if(raf||!d3||!vis)return;
+function spin(){if(raf||!d3||!vis||!flOn)return; // flOn: the sheet has room for the flange view (layout)
   if(!drag&&!(auto&&!reduce)&&Math.abs(vps)<.002&&(touched||Math.abs(PH0-phi)<.002))return;
   raf=requestAnimationFrame(frame);}
 function begin3D(){if(d3)return;d3=true;psi=.6;phi=PH0;vps=W0;touched=false; // already tilted and at full turning speed: from a face-on standstill it read as the flat drawing for its first two seconds on screen (Nathan, 15 Nov)
@@ -272,13 +298,38 @@ grab.addEventListener('keydown',function(e){var k=e.key;if(k.indexOf('Arrow')!==
   aria();render(psi,phi);spin();});
 if('IntersectionObserver' in window){vis=false;new IntersectionObserver(function(e){vis=e[e.length-1].isIntersecting;spin();}).observe(grab);} // the handle sits on the flange: off screen means nothing to redraw (on a phone it lies outside the sheet's box, which clips it, so it never counts as on screen)
 
-/* ---------- constant hairlines: drawing units per screen pixel. The grab handle sits over the flange, above the page's bands ---------- */
-function fit(){var b=svg.getBoundingClientRect();if(!(b.width>0&&b.height>0))return;
-  var k=Math.min(b.width/1600,b.height/1408),r=sheet.getBoundingClientRect(),R=112*k,gx=b.left+(b.width-1600*k)/2+k*VX-r.left,gy=b.top+k*VY-r.top; // xMidYMin meet: centred across, anchored to the top
-  svg.style.setProperty('--u',(1/k).toFixed(4));grab.style.left=(gx-R).toFixed(1)+'px';grab.style.top=(gy-R).toFixed(1)+'px';grab.style.width=grab.style.height=(2*R).toFixed(1)+'px';
-  grab.style.visibility=gx<0||gx>r.width?'hidden':'';} // the flange's centre is cropped off the side (a phone, a narrow window): no handle to tab to or touch.
-  // Not the hidden attribute: the handle's box is what tells the script the flange is on screen, and in a narrow window part of the flange still shows and must turn
-fit();if('ResizeObserver' in window)new ResizeObserver(fit).observe(svg);else addEventListener('resize',fit);
+/* ---------- fitting it to the page. The svg is exactly the page's sheet, so its frame wraps "Imagine you never missed a call" and all of 01, cards included.
+   The part is drawn as large as the width allows: from 960px up the whole drawing fits across; narrower than that (a phone, an upright tablet) it is drawn as for
+   an 1100px sheet, so its middle shows at a readable size and its sides crop (smaller than that and its lettering, which keeps its size, runs together).
+   But never larger than leaves its lowest line (the centre line's end, 1222 units down) above the cards: nothing of the part runs behind them.
+   The flange view and the notes are shown only where they sit wholly inside the frame, never cut by it. The frame's inset follows the page's side gutter
+   (the narrower one), so the cards sit inside it at every width. Hairlines stay constant (--u: drawing units per screen pixel),
+   and the grab handle sits over the flange, above the page's bands ---------- */
+var cards=sheet.querySelector('.offer .cols'),K1=0,lay=0,flOn=true;
+function layout(){lay=0;
+  var r=sheet.getBoundingClientRect();if(!(r.width>0&&r.height>0))return;
+  var kMax=(r.width>=960?r.width:1100)/1600,k=kMax,gut=56*kMax,c;
+  if(cards){c=cards.getBoundingClientRect();k=Math.min(kMax,Math.max((c.top-r.top-22)/1222,.3));gut=Math.min(c.left-r.left,r.right-c.right);}
+  var wu=r.width/k,hu=r.height/k,inP=Math.min(56*k,Math.max(8,gut-14)),outP=inP-Math.min(26*k,Math.max(inP-3,0));
+  if(k===K1&&Math.abs(wu-Wu)<.5&&Math.abs(hu-Hu)<.5)return; // nothing has changed
+  K1=k;Wu=wu;Hu=hu;DX=(Wu-1600)/2;
+  var dx=DX,R=112*k,gx=k*(VX+dx),gy=k*VY;
+  svg.setAttribute('viewBox','0 0 '+f(Wu)+' '+f(Hu));svg.style.setProperty('--u',(1/k).toFixed(4));
+  gPart.setAttribute('transform','translate('+f(dx)+' 0)');
+  border(inP/k,outP/k,k);
+  // the flange view (with its labels and gold dimensions) and the notes: only where they are wholly inside the frame
+  // Their widths are worked out, not measured: the lettering is a fixed-pitch face at a fixed size on screen, and a measurement taken before the page's font
+  // has settled comes out short. The flange is 96 units in radius with its dimensions just outside it (112), or as wide as its label (146px); the notes' longest
+  // line is 22 characters of 10.5px (150px), starting 1368 units across
+  var I=inP/k,pad=3/k,fw=Math.max(112,75/k),nw=152/k;
+  flOn=DX+VX-fw>=I+pad&&DX+VX+fw<=Wu-I-pad;svg.classList.toggle('nofl',!flOn);
+  gNotes.style.display=DX+1368>=I+pad&&DX+1368+nw<=Wu-I-pad?'':'none';
+  grab.style.left=(gx-R).toFixed(1)+'px';grab.style.top=(gy-R).toFixed(1)+'px';grab.style.width=grab.style.height=(2*R).toFixed(1)+'px';
+  grab.style.visibility=flOn?'':'hidden'; // no flange on this sheet: no handle to tab to or touch. Not the hidden attribute: the handle's box is what tells the script the sheet is on screen
+  spin();}
+function relay(){if(!lay)lay=requestAnimationFrame(layout);}
+// the observer's turn comes after the page is laid out and before it is painted, so the drawing is never shown at the old size. Nothing layout() changes is watched, so it cannot loop
+layout();if('ResizeObserver' in window)new ResizeObserver(function(){layout();}).observe(sheet);else addEventListener('resize',relay);
 
 /* ---------- the timeline: starts once the sheet reaches the middle half of the screen (about when "Imagine you never missed a call" has come up from below,
    and also true for a reader who lands lower down, on #offer, where those words are never on screen). Then it runs on the clock for T seconds.
@@ -286,7 +337,7 @@ fit();if('ResizeObserver' in window)new ResizeObserver(fit).observe(svg);else ad
 var T=30,K=.8475,INK=.45;
 svg.style.setProperty('--T',T);svg.style.setProperty('--K',K);
 function ink(){svg.classList.add('ink3','inking');setTimeout(function(){svg.classList.remove('inking');},1600);} // ink3: the pencil has reached the flange view; inking: its lines fade to the pencil line just this once
-function go(){svg.classList.add('go');if(reduce)svg.classList.add('ink3');else setTimeout(ink,INK*K*T*1000);}
+function go(){went=performance.now();svg.classList.add('go');if(reduce)svg.classList.add('ink3');else setTimeout(ink,INK*K*T*1000);}
 if(reduce||!('IntersectionObserver' in window))go();
 else{var io=new IntersectionObserver(function(e){if(e[0].isIntersecting){io.disconnect();setTimeout(go,500);}},{rootMargin:'-25% 0px'});io.observe(sheet);}
 begin3D(); // the flange is in 3D and turning from the moment the drawing arrives, before the pencil starts

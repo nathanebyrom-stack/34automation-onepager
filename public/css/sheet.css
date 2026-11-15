@@ -6,9 +6,9 @@
 .sheet{--pencil-rgb:228,231,235;--a-fine:.2;--a-hatch:.1;--a-note:.26;--a-text:.42;--a-cl:.42}
 @media (prefers-color-scheme:light){:root:not([data-theme="dark"]) .sheet{--pencil-rgb:30,32,36;--a-fine:.26;--a-hatch:.13;--a-note:.3;--a-text:.44;--a-cl:.5}}
 :root[data-theme="light"] .sheet{--pencil-rgb:30,32,36;--a-fine:.26;--a-hatch:.13;--a-note:.3;--a-text:.44;--a-cl:.5}
-/* fitted whole and top-anchored; never narrower than 1100px, so on a phone the middle of the sheet shows at a readable size and the sides crop */
+/* the svg is exactly the page's sheet: its frame wraps all of 01, cards included, and js/sheet.js sets the part's scale inside it (Nathan, 15 Nov 2026) */
 .sheet>.dwg{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
-.sheet>.dwg svg{position:absolute;top:0;left:50%;width:max(100%,1100px);height:100%;transform:translateX(-50%)}
+.sheet>.dwg svg{position:absolute;inset:0;width:100%;height:100%}
 /* the drawing: constant hairlines whatever the size (--u is drawing units per screen pixel, set in script) */
 #dwg{--u:1.09;--pk:.5;--T:30;--K:.8475;--O:0}
 #dwg .fr line,#dwg .fr rect{fill:none;stroke:rgba(var(--line),calc(var(--a-fine)*.75));stroke-width:calc(var(--u)*.6px)}
@@ -53,6 +53,8 @@
 #dwg .dg .da{fill:var(--gold);stroke:none}
 #dwg .dg text{fill:var(--gold)}
 @media (prefers-reduced-motion:reduce){#dwg .dg{transition:none}}
+/* a sheet with no room for the flange view (a phone, an upright tablet: js/sheet.js, layout): the view, its centre lines, its labels and its dimensions are all left out, never cut by the frame */
+#dwg.nofl .v2,#dwg.nofl .fk,#dwg.nofl .g3d,#dwg.nofl .dg,#dwg.nofl .flt{display:none}
 #dwg.ink3 .g3d .sf,#dwg.ink3 .g3d .sl{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.95));stroke-width:calc(var(--u)*1.1px)}
 #dwg.ink3 .g3d .hf{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.55));stroke-width:calc(var(--u)*.8px)}
 #dwg.ink3 .g3d .pc3{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.7));stroke-width:calc(var(--u)*.8px)}
