@@ -229,8 +229,8 @@ function frame(t){raf=0;if(!drag&&t-lt<30){raf=requestAnimationFrame(frame);retu
 function spin(){if(raf||!d3||!vis)return;
   if(!drag&&!(auto&&!reduce)&&Math.abs(vps)<.002&&(touched||Math.abs(PH0-phi)<.002))return;
   raf=requestAnimationFrame(frame);}
-function begin3D(){if(d3)return;d3=true;psi=phi=vps=0;touched=false;
-  if(reduce){psi=-.6;phi=PH0;touched=true;}
+function begin3D(){if(d3)return;d3=true;psi=.6;phi=PH0;vps=W0;touched=false; // already tilted and at full turning speed: from a face-on standstill it read as the flat drawing for its first two seconds on screen (Nathan, 15 Nov)
+  if(reduce){psi=-.6;vps=0;touched=true;}
   render(psi,phi);svg.classList.add('d3');lab3.textContent='TYP 4 POSNS · DRAG TO TURN';spin();}
 grab.addEventListener('pointerdown',function(e){if(e.button||drag)return;if(!d3)begin3D();drag={id:e.pointerId,x:e.clientX,y:e.clientY,ps:psi,ph:phi,lx:e.clientX,lt:e.timeStamp};touched=true;vps=0;grab.classList.add('on');
   try{grab.setPointerCapture(e.pointerId);}catch(_){}e.preventDefault();spin();});
@@ -244,13 +244,14 @@ grab.addEventListener('pointerup',drop);grab.addEventListener('pointercancel',dr
 grab.addEventListener('keydown',function(e){var k=e.key;if(k.indexOf('Arrow')!==0)return;e.preventDefault();if(!d3)begin3D();touched=true;
   if(k==='ArrowLeft')psi-=.26;else if(k==='ArrowRight')psi+=.26;else if(k==='ArrowUp')phi=Math.min(1.1,phi+.17);else phi=Math.max(-1.1,phi-.17);
   aria();render(psi,phi);spin();});
-if('IntersectionObserver' in window){vis=false;new IntersectionObserver(function(e){vis=e[e.length-1].isIntersecting;spin();}).observe(grab);} // the handle sits on the flange: off screen, or hidden on a phone, means nothing to redraw
+if('IntersectionObserver' in window){vis=false;new IntersectionObserver(function(e){vis=e[e.length-1].isIntersecting;spin();}).observe(grab);} // the handle sits on the flange: off screen means nothing to redraw (on a phone it lies outside the sheet's box, which clips it, so it never counts as on screen)
 
 /* ---------- constant hairlines: drawing units per screen pixel. The grab handle sits over the flange, above the page's bands ---------- */
 function fit(){var b=svg.getBoundingClientRect();if(!(b.width>0&&b.height>0))return;
   var k=Math.min(b.width/1600,b.height/1408),r=sheet.getBoundingClientRect(),R=112*k,gx=b.left+(b.width-1600*k)/2+k*VX-r.left,gy=b.top+k*VY-r.top; // xMidYMin meet: centred across, anchored to the top
   svg.style.setProperty('--u',(1/k).toFixed(4));grab.style.left=(gx-R).toFixed(1)+'px';grab.style.top=(gy-R).toFixed(1)+'px';grab.style.width=grab.style.height=(2*R).toFixed(1)+'px';
-  grab.hidden=gx<0||gx>r.width;} // on a phone the flange view is cropped off the side: then there is no handle to tab to or touch
+  grab.style.visibility=gx<0||gx>r.width?'hidden':'';} // the flange's centre is cropped off the side (a phone, a narrow window): no handle to tab to or touch.
+  // Not the hidden attribute: the handle's box is what tells the script the flange is on screen, and in a narrow window part of the flange still shows and must turn
 fit();if('ResizeObserver' in window)new ResizeObserver(fit).observe(svg);else addEventListener('resize',fit);
 
 /* ---------- the timeline: starts once the sheet reaches the middle half of the screen (about when "Imagine you never missed a call" has come up from below,
