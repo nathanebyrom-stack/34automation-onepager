@@ -163,6 +163,33 @@
     addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(paint);}},{passive:true});addEventListener('resize',paint);paint();
   })();
 
+  // sound (Nathan, 15 Nov): the three scroll sections (hero film, why-us film, 05 In motion) each have their own sound, off until the reader asks for it.
+  // This block is only the button: it shows while one of the three is running on screen, top right under the header. The first press makes the AudioContext
+  // (a browser only allows that inside a press) and fetches js/sound.js, which makes every sound in the browser: no audio files. Not for reduced motion, where the films do not run.
+  (function(){
+    var AC=window.AudioContext||window.webkitAudioContext,hdr=document.getElementById('hdr');if(still||!AC||!hdr)return;
+    var hero=document.getElementById('hero'),stage=document.getElementById('stage'),why=document.getElementById('why'),whyTrack=document.getElementById('whyTrack'),mo=document.getElementById('motion'),moTrack=document.getElementById('vTrack');
+    var b=document.createElement('button'),t=false,S=null;
+    b.type='button';b.className='snd night';b.setAttribute('aria-label','Sound');b.setAttribute('aria-pressed','false');
+    b.innerHTML='<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path class="sp" d="M1.5 6h2.6L7.5 3v10L4.1 10H1.5z"/><path class="w" d="M10 5.6a3.4 3.4 0 0 1 0 4.8M12 3.6a6.2 6.2 0 0 1 0 8.8"/><path class="x" d="M10.4 6.1l3.8 3.8M14.2 6.1l-3.8 3.8"/></svg><span class="t" aria-hidden="true">Sound off</span>';
+    hdr.parentNode.insertBefore(b,hdr.nextSibling);
+    function near(el,view){var s=el.offsetHeight-view,y=-el.getBoundingClientRect().top;return (y<0?-y:y>s?y-s:0)<innerHeight*.7;} // the same reach as the sound itself (js/sound.js)
+    function paint(){
+      t=false;
+      b.classList.toggle('show',!!((hero&&stage&&d.classList.contains('film')&&near(hero,stage.clientHeight))||(why&&whyTrack&&why.classList.contains('scrub')&&near(whyTrack,innerHeight))||(mo&&moTrack&&mo.classList.contains('scrub')&&near(moTrack,innerHeight))));
+      var on=!!(S&&S.on);b.setAttribute('aria-pressed',String(on));b.lastChild.textContent=on?'Sound on':'Sound off';
+    }
+    b.addEventListener('click',function(){
+      if(S){S.on=!S.on;if(S.set)S.set(S.on);paint();return;}
+      var ctx;try{ctx=new AC();var r=ctx.resume();if(r&&r.catch)r.catch(function(){});}catch(e){b.remove();return;}
+      S=window.__snd={ctx:ctx,on:true};
+      var v=SRC.split('?')[1],s=document.createElement('script');s.src='/js/sound.js'+(v?'?'+v:'');s.onerror=function(){S.on=false;paint();};document.head.appendChild(s);
+      paint();
+    });
+    function ask(){if(!t){t=true;requestAnimationFrame(paint);}}
+    addEventListener('scroll',ask,{passive:true});addEventListener('resize',ask);paint();
+  })();
+
   // hero scrub: 192 frames packed 16 to a sheet (4x4), scroll position picks the frame
   (function(){
     var hero=document.getElementById('hero'),stage=document.getElementById('stage'),cv=document.getElementById('scrub');
