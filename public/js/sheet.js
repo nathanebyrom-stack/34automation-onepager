@@ -50,8 +50,8 @@ function circ(cx,cy,r,o){ // compass: the second lap sits a hair off-centre
   mk(a,'pa',o);mk(b,'pb',{t0:o.t0+.004,d:o.d,es:o.es,c:o.c});}
 // chain (centre) lines: every dash and dot is its own short stroke, laid down one after the other
 var PAT=[24,5,3,5];
-function chain(a,b,t0,d){var L=Math.hypot(b[0]-a[0],b[1]-a[1]),ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L,pos=0,n=0,s,e;
-  while(pos<L){if(n%2===0){s=pos;e=Math.min(pos+PAT[n%4],L);mk(rough([[a[0]+ux*s,a[1]+uy*s],[a[0]+ux*e,a[1]+uy*e]],.15),'pc',{t0:t0+d*s/L,d:d*(e-s)/L,g:'g2'});}pos+=PAT[n%4];n++;}}
+function chain(a,b,t0,d,c){var L=Math.hypot(b[0]-a[0],b[1]-a[1]),ux=(b[0]-a[0])/L,uy=(b[1]-a[1])/L,pos=0,n=0,s,e;
+  while(pos<L){if(n%2===0){s=pos;e=Math.min(pos+PAT[n%4],L);mk(rough([[a[0]+ux*s,a[1]+uy*s],[a[0]+ux*e,a[1]+uy*e]],.15),'pc',{t0:t0+d*s/L,d:d*(e-s)/L,g:'g2',c:c});}pos+=PAT[n%4];n++;}}
 function chainArc(cx,cy,r,t0,d,c){var L=6.2832*r,pos=0,n=0,s,e,m,j,t,pts;
   while(pos<L){if(n%2===0){s=pos;e=Math.min(pos+PAT[n%4],L);m=Math.max(1,Math.round((e-s)/6));pts=[];for(j=0;j<=m;j++){t=(s+(e-s)*j/m)/r;pts.push([cx+r*Math.cos(t),cy+r*Math.sin(t)]);}mk(pts,'pc',{t0:t0+d*s/L,d:d*(e-s)/L,g:'g2',c:c});}pos+=PAT[n%4];n++;}}
 
@@ -100,8 +100,8 @@ circ(CX,CY,152,{t0:.40,d:.06,es:1});
 var VX=1424,VY=226;
 [96,67.2,40].forEach(function(r,n){el('circle',{cx:VX,cy:VY,r:r,'class':'v2'},gOb);circ(VX,VY,r,{t0:.45+n*.014,d:.016,es:1,c:'v2'});});
 [45,135,225,315].forEach(function(a,n){var t=a*Math.PI/180,hx=VX+80*Math.cos(t),hy=VY+80*Math.sin(t);el('circle',{cx:f(hx),cy:f(hy),r:7.2,'class':'v2'},gOb);circ(hx,hy,7.2,{t0:.49+n*.0025,d:.0025,c:'v2'});});
-ln(gCl,VX-110,VY,VX+110,VY);ln(gCl,VX,VY-110,VX,VY+110);el('circle',{cx:VX,cy:VY,r:80,'class':'v2'},gCl);
-chain([VX-110,VY],[VX+110,VY],.575,.008);chain([VX,VY-110],[VX,VY+110],.583,.007);chainArc(VX,VY,80,.59,.01,'v2');
+ln(gCl,VX-110,VY,VX+110,VY,'fk');ln(gCl,VX,VY-110,VX,VY+110,'fk');el('circle',{cx:VX,cy:VY,r:80,'class':'v2 fk'},gCl); // fk: the flange view's own centre lines are line colour, not gold. On the flange, gold is kept for its dimensions (Nathan, 15 Nov)
+chain([VX-110,VY],[VX+110,VY],.575,.008,'fk');chain([VX,VY-110],[VX,VY+110],.583,.007,'fk');chainArc(VX,VY,80,.59,.01,'v2 fk');
 
 // centre lines and the gold centre mark
 ln(gCl,X(-522),CY,X(522),CY);ln(gCl,CX,Y(-522),CX,Y(522));
@@ -152,11 +152,7 @@ el('path',{d:'M'+X(-167)+' '+Y(-500)+'L'+X(-160)+' '+Y(-488)+'L'+X(-146)+' '+Y(-
 // datum A on the left face
 (function(){var d='M'+X(-488)+' '+Y(-157)+'L'+X(-488)+' '+Y(-143)+'L'+X(-501)+' '+Y(-150)+'Z';el('path',{d:d,'class':'ar'},gDm);dl.push({fill:d});})();dln(X(-501),Y(-150),X(-514),Y(-150));drect(X(-538),Y(-162),24,24);tx(gDm,X(-526),Y(-145.5),'A',{a:'middle'});
 // flange face view notes
-tx(gDm,VX,356,'FLANGE FACE',{a:'middle'});var lab3=tx(gDm,VX,371,'TYP 4 POSNS',{a:'middle',c:'sm'});
-(function(){var t=135*Math.PI/180,hx=VX+80*Math.cos(t),hy=VY+80*Math.sin(t),ex=1346,ey=398,dx=ex-hx,dy=ey-hy,L=Math.hypot(dx,dy),sx=hx+dx/L*7.2,sy=hy+dy/L*7.2;
-  var la=dln(sx,sy,ex,ey),lb;dln(ex,ey,ex+14,ey);lb=ah(gDm,sx,sy,Math.atan2(-dy,-dx)*180/Math.PI);
-  la.c=lb.c='ld';la.e.setAttribute('class','ld');lb.e.setAttribute('class','ar ld'); // this leader points at one hole, so it steps aside once the flange turns
-tx(gDm,ex+20,ey+4,'4× Ø9 THRU');tx(gDm,ex+20,ey+20,'EQ SP ON PCD 100');})();
+tx(gDm,VX,372,'FLANGE FACE',{a:'middle'});var lab3=tx(gDm,VX,387,'TYP 4 POSNS',{a:'middle',c:'sm'}); // the view's dimensions are not printed here: they are drawn in gold on the turning part itself (further down)
 // section title
 tx(gDm,X(330),Y(400),'SECTION A–A');dln(X(330),Y(406),X(424),Y(406));tx(gDm,X(330),Y(420),'SCALE 1:1',{c:'sm'});
 // general notes
@@ -205,6 +201,25 @@ function thru(parent,id){var ce=el('ellipse',{},el('clipPath',{id:id},defs)),nea
   return {near:near,far:el('ellipse',{'class':'hf'},el('g',{'clip-path':'url(#'+id+')'},parent)),ce:ce};} // the clip is on a plain group: on the ellipse itself it would be turned twice, by the ellipse's own rotate()
 var holes=[45,135,225,315].map(function(a,n){var h=thru(cF.g,'hc'+n),t=a*Math.PI/180;h.x=RP*Math.cos(t);h.y=RP*Math.sin(t);return h;});
 var gB=el('g',{},g3),bore=thru(gB,'hcb'),lastSide=0;
+/* the flange's dimensions, in 34 gold (Nathan, 15 Nov). Each belongs to a side of the part and shows only while that side faces the reader: the face (bore, bolt holes),
+   the edge (outside diameter, thickness) and the back (the neck). The lines are laid out in the part's own planes, so they turn with it; the figures stay upright.
+   A circle turned in space keeps one true-length axis, the long axis of its ellipse, so the diameters are measured across that. 1.6 drawing units to the millimetre here */
+var gDim=el('g',{},svg),HX=VX-68,HY=VY-106; // HX,HY: where the bolt-hole note sits, above and left of the part
+function dgrp(){return el('g',{'class':'dg'},gDim);}
+function dline(g){return el('line',{},g);}
+function dhead(g){return el('path',{'class':'da'},g);}
+function dtext(g,s,a){var t=el('text',{'text-anchor':a||'middle'},g);t.textContent=s;return t;}
+function ddim(g,s){return {x1:dline(g),x2:dline(g),l:dline(g),a1:dhead(g),a2:dhead(g),t:dtext(g,s)};}
+function setL(e,a,b){e.setAttribute('x1',f(a[0]));e.setAttribute('y1',f(a[1]));e.setAttribute('x2',f(b[0]));e.setAttribute('y2',f(b[1]));}
+function setA(e,p,dx,dy){var bx=p[0]-dx*9,by=p[1]-dy*9;e.setAttribute('d','M'+f(p[0])+' '+f(p[1])+'L'+f(bx-dy*2.2)+' '+f(by+dx*2.2)+'L'+f(bx+dy*2.2)+' '+f(by-dx*2.2)+'Z');} // an arrowhead, tip at p, pointing along (dx,dy)
+function setT(e,x,y){e.setAttribute('x',f(x));e.setAttribute('y',f(y+3.8));}
+function show(g,on){if(g.on!==on){g.on=on;g.setAttribute('class',on?'dg on':'dg');}}
+function dia(D,a,b,ux,uy,d){ // a diameter across the silhouette: extension lines run out from both ends along (ux,uy), the dimension line joins them, the figure sits just beyond it
+  var p=[a[0]+ux*d,a[1]+uy*d],q=[b[0]+ux*d,b[1]+uy*d],L=Math.hypot(p[0]-q[0],p[1]-q[1])||1,ex=(p[0]-q[0])/L,ey=(p[1]-q[1])/L;
+  setL(D.x1,[a[0]+ux*5,a[1]+uy*5],[p[0]+ux*4,p[1]+uy*4]);setL(D.x2,[b[0]+ux*5,b[1]+uy*5],[q[0]+ux*4,q[1]+uy*4]);setL(D.l,p,q);
+  setA(D.a1,p,ex,ey);setA(D.a2,q,-ex,-ey);setT(D.t,(p[0]+q[0])/2+ux*12,(p[1]+q[1])/2+uy*12);}
+var gDF=dgrp(),gDE=dgrp(),gDB=dgrp(),dOD=ddim(gDE,'Ø120'),dBo={l:dline(gDF),a1:dhead(gDF),a2:dhead(gDF),t:dtext(gDF,'Ø50')},dHl={l:dline(gDF),a:dhead(gDF)},dTh=ddim(gDE,'14'),dNk=ddim(gDB,'Ø80');
+setL(dline(gDF),[HX,HY],[HX-8,HY]);setT(dtext(gDF,'4× Ø9','end'),HX-11,HY);setT(dtext(gDF,'PCD 100','end'),HX-11,HY+12);
 function setE(e,cx,cy,rx,ry,th){e.setAttribute('cx',f(cx));e.setAttribute('cy',f(cy));e.setAttribute('rx',f(Math.max(rx,.02)));e.setAttribute('ry',f(ry));e.setAttribute('transform','rotate('+f(th)+' '+f(cx)+' '+f(cy)+')');}
 function render(ps,ph){ // ps: turn about the upright axis, ph: tilt
   var sp=Math.sin(ps),cp=Math.cos(ps),sh=Math.sin(ph),ch=Math.cos(ph),ax=sp,ay=-cp*sh,az=cp*ch,len=Math.hypot(ax,ay),kk=Math.abs(az),th=Math.atan2(ay,ax)*180/Math.PI,nx=len>1e-4?-ay/len:0,ny=len>1e-4?ax/len:0,front=az>=0,side=front?1:-1;
@@ -217,7 +232,18 @@ function render(ps,ph){ // ps: turn about the upright axis, ph: tilt
   if(side!==lastSide){lastSide=side;(front?[cN,cF,cR]:[cR,cF,cN]).forEach(function(c){g3.appendChild(c.g);});g3.appendChild(gB);} // back to front
   var zn=front?Z0:ZB,zf=front?ZB:Z0,P=on(zn);setE(pcd,P[0],P[1],RP*kk,RP,th);
   holes.forEach(function(h){[[h.near,zn],[h.ce,zn],[h.far,zf]].forEach(function(q){var zz=q[1]-ZP,x1=h.x*cp+zz*sp,z1=-h.x*sp+zz*cp;setE(q[0],VX+x1,VY+h.y*ch-z1*sh,RH*kk,RH,th);});});
-  var bn=on(front?ZF:ZN),bf=on(front?ZN:ZF);setE(bore.near,bn[0],bn[1],RB*kk,RB,th);setE(bore.ce,bn[0],bn[1],RB*kk,RB,th);setE(bore.far,bf[0],bf[1],RB*kk,RB,th);}
+  var bn=on(front?ZF:ZN),bf=on(front?ZN:ZF);setE(bore.near,bn[0],bn[1],RB*kk,RB,th);setE(bore.ce,bn[0],bn[1],RB*kk,RB,th);setE(bore.far,bf[0],bf[1],RB*kk,RB,th);
+  // the dimensions: which side is showing, then each laid out afresh. (ux,uy) is the way the part's axis points on screen, towards its face; (nx,ny) is square to that, along the long axis of every ellipse
+  var ux=len>1e-4?ax/len:0,uy=len>1e-4?ay/len:1,c,a,b,s,hz,H,hl,hv,P1,P2;
+  show(gDF,az>.42);show(gDE,kk<.5);show(gDB,az<-.42);
+  c=on(Z0);dia(dOD,[c[0]+RO*nx,c[1]+RO*ny],[c[0]-RO*nx,c[1]-RO*ny],ux,uy,RO*kk+12); // Ø120: shown with the edge. Across the rim, set off beside it on the face's side, where it stays inside the sheet's border at every angle
+  c=on(ZF);a=[c[0]+RB*nx,c[1]+RB*ny];b=[c[0]-RB*nx,c[1]-RB*ny];setL(dBo.l,a,b);setA(dBo.a1,a,nx,ny);setA(dBo.a2,b,-nx,-ny);setT(dBo.t,c[0]-ux*11,c[1]-uy*11); // Ø50: across the mouth of the bore
+  hz=Z0-ZP;H=[VX+holes[2].x*cp+hz*sp,VY+holes[2].y*ch-(-holes[2].x*sp+hz*cp)*sh];hl=Math.hypot(HX-H[0],HY-H[1])||1;hv=[(HX-H[0])/hl,(HY-H[1])/hl];
+  a=[H[0]+hv[0]*RH,H[1]+hv[1]*RH];setL(dHl.l,a,[HX,HY]);setA(dHl.a,a,-hv[0],-hv[1]); // 4× Ø9 on PCD 100: a leader that follows the upper left bolt hole
+  s=ny<0?-1:1;a=on(ZB);b=on(Z0);P1=[a[0]+s*nx*(RO+18),a[1]+s*ny*(RO+18)];P2=[b[0]+s*nx*(RO+18),b[1]+s*ny*(RO+18)]; // 14: the rim's thickness, under the part; it is narrow, so the arrows come from outside
+  setL(dTh.x1,[a[0]+s*nx*(RO+4),a[1]+s*ny*(RO+4)],[a[0]+s*nx*(RO+24),a[1]+s*ny*(RO+24)]);setL(dTh.x2,[b[0]+s*nx*(RO+4),b[1]+s*ny*(RO+4)],[b[0]+s*nx*(RO+24),b[1]+s*ny*(RO+24)]);
+  setL(dTh.l,[P1[0]-ux*12,P1[1]-uy*12],[P2[0]+ux*12,P2[1]+uy*12]);setA(dTh.a1,P1,ux,uy);setA(dTh.a2,P2,-ux,-uy);setT(dTh.t,P2[0]+ux*24,P2[1]+uy*24);
+  c=on(ZN);dia(dNk,[c[0]+RN*nx,c[1]+RN*ny],[c[0]-RN*nx,c[1]-RN*ny],-ux,-uy,Math.max(RN*kk,RO*kk-(ZB-ZN)*len)+9);} // Ø80: across the end of the neck, set off beyond the rim on the reader's side
 render(0,0);
 // turning: a slow steady turn, or the reader's hand. Runs only while the sheet is on screen
 var d3=false,psi=0,phi=0,vps=0,auto=true,touched=false,drag=null,vis=true,raf=0,lt=0,W0=6.2832/24,PH0=-.24,

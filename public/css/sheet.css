@@ -42,10 +42,20 @@
 #dwg .g3d .qd{fill:var(--graphite);stroke:none}
 #dwg .g3d .sl{fill:none;stroke:rgba(var(--line),var(--a-fine));stroke-width:calc(var(--u)*.7px)}
 #dwg .g3d .hf{fill:none;stroke:rgba(var(--line),calc(var(--a-fine)*.7));stroke-width:calc(var(--u)*.55px)}
-#dwg .g3d .pc3{fill:none;stroke:rgba(var(--gold-rgb),var(--a-cl));stroke-width:calc(var(--u)*.55px);stroke-dasharray:12 3 2 3}
+#dwg .g3d .pc3{fill:none;stroke:rgba(var(--line),var(--a-fine));stroke-width:calc(var(--u)*.55px);stroke-dasharray:12 3 2 3}
+/* the flange view's own centre lines and pitch circle are line colour, not gold: on the flange, gold is kept for its dimensions (Nathan, 15 Nov) */
+#dwg .cl .fk{stroke:rgba(var(--line),var(--a-fine))}
+#dwg .pc.fk{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.7))}
+/* the flange's dimensions, in 34 gold: each group shows only while its side of the part faces the reader */
+#dwg .dg{opacity:0;transition:opacity .45s}
+#dwg .dg.on{opacity:1}
+#dwg .dg line{fill:none;stroke:var(--gold);stroke-width:calc(var(--u)*.8px)}
+#dwg .dg .da{fill:var(--gold);stroke:none}
+#dwg .dg text{fill:var(--gold)}
+@media (prefers-reduced-motion:reduce){#dwg .dg{transition:none}}
 #dwg.ink3 .g3d .sf,#dwg.ink3 .g3d .sl{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.95));stroke-width:calc(var(--u)*1.1px)}
 #dwg.ink3 .g3d .hf{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.55));stroke-width:calc(var(--u)*.8px)}
-#dwg.ink3 .g3d .pc3{stroke:rgba(var(--gold-rgb),calc(var(--pk)*1.4));stroke-width:calc(var(--u)*.8px)}
+#dwg.ink3 .g3d .pc3{stroke:rgba(var(--pencil-rgb),calc(var(--pk)*.7));stroke-width:calc(var(--u)*.8px)}
 .sheet>.dwg-hit{position:absolute;inset:0;z-index:2;overflow:hidden;overflow:clip;pointer-events:none}
 #grab{position:absolute;border-radius:50%;pointer-events:auto;cursor:grab;touch-action:pan-y;-webkit-user-select:none;user-select:none}
 #grab.on{cursor:grabbing}
