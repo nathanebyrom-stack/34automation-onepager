@@ -102,3 +102,22 @@ A fresh reviewer read the branch before it was committed. What changed as a resu
 - Short desktop windows (under 760 px): the sub fades at the end so the closing line has room. Windows 1100 to 1330 px wide: long part names wrap inside the parts list.
 - Phones: the valve's box follows the scroll (under the sub at first, then up to the heading, then clear of the closing line).
 - WebGL 2 is required (this Three.js has no WebGL 1), the shaders are compiled up front, only left and right arrow keys turn the valve, the parts list stays readable by screen readers under 1100 px, Starlight no longer recolours the demo tag, a reader who lands on `#reviews` does not fetch the 3D, and the ball's ports are closed and lipped.
+
+## Dimensions on the drawing, and a Dimensions button (17 Nov 2026)
+
+**What Nathan asked for (his words):** "put a lot more detail on the initial drawing ... dimensions and annotations", and, once the valve is apart and numbered, "introduce a button called dimensions ... it will bring up all the various dimensions ... scroll that in 360 and see all the different dimensions". After the design was put to him: "Happy to go with what you'd build. Just try to make the dimensions stand out so it's not missed".
+
+**Approaches considered:** (1) dimension lines as 3D geometry with text sprites: needs Three.js classes the vendored copy does not hold, and the figures turn edge-on with the valve; (2) a second still image with dimensions: cannot be turned; (3) lines and figures in the section's existing svg and balloon layers, placed each frame from points on the parts. Built: (3). No new Three.js class, so `scripts/vendor-three.mjs` was not run again.
+
+**What changed:**
+
+- `public/js/motion.js`
+  - `drawSheet()` now dimensions Section A–A on the paper, in gold: Ø50 H7, Ø120, 244 ±0.1, 14, Ø84, Ø80, SØ76, Ø102.5, R2.5, 4× Ø9 on PCD 100, Ra 1.6, datum A and a 0.02 squareness frame, plus note 5. The figures match `js/sheet.js` and the geometry in this file. They stay on the sheet when the part lifts.
+  - `DIMS`, `setDim()`, `dims()`: twelve dimensions, each read off the model (lever 178, gland nut A/F 36, packing Ø32, bonnet bolt M8 × 30, bonnet Ø120 × 52, stem Ø18 × 144, ball SØ76, seat ring Ø62 × 8, flange Ø120, bore Ø50 H7, face to face 244, flange bolt M8 × 20). Parts round the stem's axis show their diameter across the view; the body's, the lever's and the bolts' are fixed to the part and turn with it. One seen end-on (under 9 px) is left out; two figures never share a place.
+  - While dimensions are on the balloons are hidden. Scrolling back above the last stage (p < .86) turns them off.
+- `public/index.html`: `.v-tools` (the `#vDim` button and the drag hint) is the first row of `.v-cta`.
+- `public/css/motion.css`: the button (gold outline, filled when pressed, rings three times when it arrives), `.v-d` figures, `g.vd` lines.
+
+**Claude's calls, not confirmed by Nathan beyond the description:** the balloons swap out rather than show with the dimensions; the button sits above the closing line with the hint beside it; the plain band (no 3D) has no button; the extra callouts on the sheet beyond the main drawing's (Ø84, Ø102.5, R2.5) are read off this file's geometry.
+
+**Checks (headless Chromium, software WebGL, built site with the real headers):** 430×932, 375×667, 820×1180, 1366×650, 1512×900: sheet dimensions legible at p .03; button visible only at the last stage; pressed: 12 dimensions on, 0 balloons; released: 10 balloons back; dragged and arrow-key turns keep the figures on their parts; scrolled back to p .7 the button state resets; no console or CSP errors; nothing scrolls sideways. Section script is 160.8 kB gzip (Three.js 142.2 + motion.js 18.5), against the plan's 160 KB: under if that is KiB, 0.8 kB over if decimal. Not checked: Safari, a real phone, `scripts/qa/valve-probe.mjs` (it starts macOS Chrome).

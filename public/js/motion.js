@@ -230,7 +230,40 @@ function drawSheet(){const W=2048,Hh=1449,k=W/680,c=document.createElement('canv
   const sx=W/2-mm(118),sy=Hh/2-mm(34);g.font='500 '+Math.round(mm(4.4))+'px "IBM Plex Mono", monospace';g.fillStyle='rgba(228,231,235,.5)';
   g.fillText('SECTION A–A',sx+mm(84),sy+mm(104));g.beginPath();g.moveTo(sx+mm(84),sy+mm(107));g.lineTo(sx+mm(115),sy+mm(107));g.stroke();
   g.font='500 '+Math.round(mm(3.2))+'px "IBM Plex Mono", monospace';g.fillText('SCALE 1:1',sx+mm(84),sy+mm(111));
-  ['NOTES','1. DIMENSIONS IN MM','2. TOL. ISO 2768-mK','3. BREAK EDGES 0.2–0.5','4. TEST 24 BAR, 10 MIN'].forEach((s,i)=>{g.font='500 '+Math.round(mm(i?3.4:2.8))+'px "IBM Plex Mono", monospace';g.fillStyle='rgba(228,231,235,'+(i?.42:.32)+')';g.fillText(s,W-mm(150),mm(40)+i*mm(6));});
+  ['NOTES','1. DIMENSIONS IN MM','2. TOL. ISO 2768-mK','3. BREAK EDGES 0.2–0.5','4. TEST 24 BAR, 10 MIN','5. FINISH Ra 3.2 U.O.S.'].forEach((s,i)=>{g.font='500 '+Math.round(mm(i?3.4:2.8))+'px "IBM Plex Mono", monospace';g.fillStyle='rgba(228,231,235,'+(i?.42:.32)+')';g.fillText(s,W-mm(150),mm(40)+i*mm(6));});
+  // the section's dimensions, on the paper (Nathan, 17 Nov 2026: "a lot more detail on the initial drawing ... dimensions and annotations"). The figures are the page's own
+  // drawing sheet's (js/sheet.js). In gold, so they are not lost under the pencil. x right, y down, in mm from the part's axis; they stay on the sheet when the part lifts.
+  (()=>{const X=v=>sx+mm(v),Y=v=>sy+mm(v),GA='rgba(201,162,76,';g.lineWidth=Math.max(1.5,mm(.45));
+    const ln=(a,b,c,d,al=.66)=>{g.strokeStyle=GA+al+')';g.beginPath();g.moveTo(X(a),Y(b));g.lineTo(X(c),Y(d));g.stroke();};
+    const head=(x,y,ux,uy)=>{g.fillStyle=GA+'.92)';g.beginPath();g.moveTo(X(x),Y(y));g.lineTo(X(x-ux*3.8-uy*1.15),Y(y-uy*3.8+ux*1.15));g.lineTo(X(x-ux*3.8+uy*1.15),Y(y-uy*3.8-ux*1.15));g.closePath();g.fill();}; // tip at x,y, pointing along u
+    const txt=(s,x,y,al='center',fs=6.2)=>{g.font='500 '+Math.round(mm(fs))+'px "IBM Plex Mono", monospace';g.textAlign=al;g.textBaseline='alphabetic';g.fillStyle=GA+'.96)';g.fillText(s,X(x),Y(y));};
+    // a dimension between x0 and x1 at height y, its witness lines from y0; out: arrows outside, for a narrow one
+    const dimH=(x0,x1,y,y0,s,tx,out)=>{const dir=Math.sign(y-y0);ln(x0,y0+dir*1.5,x0,y+dir*2.5,.46);ln(x1,y0+dir*1.5,x1,y+dir*2.5,.46);
+      if(out){ln(x0-9,y,x1+9,y);head(x0,y,1,0);head(x1,y,-1,0);}else{ln(x0,y,x1,y);head(x0,y,-1,0);head(x1,y,1,0);}
+      txt(s,tx==null?(x0+x1)/2:tx,y-1.7);};
+    // a leader: arrow at px,py, elbow at ex,ey, a short shelf, then the note
+    const lead=(px,py,ex,ey,lines,side)=>{const L=Math.hypot(px-ex,py-ey);ln(ex,ey,px,py);head(px,py,(px-ex)/L,(py-ey)/L);ln(ex,ey,ex+side*4,ey);
+      lines.forEach((s,i)=>txt(s,ex+side*5.5,ey+2+i*7.4,side>0?'left':'right'));};
+    dimH(-25,25,-132,-122,'Ø50 H7',14);                 // bore
+    dimH(-60,60,-144,-120,'Ø120',30);                     // flange
+    dimH(-122,122,141,44,'244 ±0.1');                     // face to face
+    dimH(106,120,-71,-60,'14',113,true);                  // flange thickness
+    lead(40,-99,66,-80,['Ø80'],1);                        // neck
+    lead(26.87,26.87,64,72,['SØ76'],1);                   // ball seat
+    lead(-51.25,80,-68,72,['Ø102.5'],-1);                 // hub
+    lead(-41.3,104.7,-66,96,['R2.5'],-1);                 // fillet
+    lead(-113,-50,-99,-80,['4× Ø9','PCD 100'],1);         // bolt holes
+    // raised face, up the west side: an upright dimension, its figure turned to read from the right
+    ln(-123.5,-42,-147.5,-42,.46);ln(-123.5,42,-147.5,42,.46);ln(-145,-42,-145,42);head(-145,-42,0,-1);head(-145,42,0,1);
+    g.save();g.translate(X(-146.7),Y(14));g.rotate(-H);g.font='500 '+Math.round(mm(6.2))+'px "IBM Plex Mono", monospace';g.textAlign='center';g.textBaseline='alphabetic';g.fillStyle=GA+'.96)';g.fillText('Ø84',0,0);g.restore();
+    // surface finish on the bore
+    ln(73.4,20.4,76,25,.8);ln(76,25,81.2,16,.8);ln(81.2,16,96,16,.8);txt('Ra 1.6',82.4,14.4,'left',4.4);
+    // datum A on the west face; the east face square to it within 0.02
+    g.fillStyle=GA+'.92)';g.beginPath();g.moveTo(X(-122),Y(-22.2));g.lineTo(X(-122),Y(-17.8));g.lineTo(X(-125.8),Y(-20));g.closePath();g.fill();
+    ln(-125.8,-20,-129,-20);g.strokeStyle=GA+'.66)';g.strokeRect(X(-136.4),Y(-23.7),mm(7.4),mm(7.4));txt('A',-132.7,-18.3,'center',4.6);
+    ln(127.5,-37.5,122,-37.5);head(122,-37.5,-1,0);g.strokeStyle=GA+'.66)';g.strokeRect(X(127.5),Y(-41.2),mm(28),mm(7.4));ln(134.9,-41.2,134.9,-33.8);ln(148.1,-41.2,148.1,-33.8);
+    ln(131.2,-39.6,131.2,-35.4,.9);ln(128.9,-35.4,133.5,-35.4,.9);txt('0.02',141.5,-35.7,'center',4.2);txt('A',151.8,-35.7,'center',4.2);
+  })();
   const t=new THREE.CanvasTexture(c);t.colorSpace=THREE.SRGBColorSpace;t.anisotropy=renderer.capabilities.getMaxAnisotropy();sheetMat.map=t;sheetMat.needsUpdate=true;kick();}
 const shadowMat=(()=>{const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d'),r=g.createRadialGradient(128,128,0,128,128,128);r.addColorStop(0,'rgba(0,0,0,.75)');r.addColorStop(.45,'rgba(0,0,0,.35)');r.addColorStop(1,'rgba(0,0,0,0)');g.fillStyle=r;g.fillRect(0,0,256,256);
   return new THREE.MeshBasicMaterial({map:new THREE.CanvasTexture(c),transparent:true,depthWrite:false,opacity:0,toneMapped:false});})();
@@ -270,6 +303,65 @@ ITEMS.forEach(it=>{it.b=document.createElement('span');it.b.className='v-b';it.b
 // when each item counts as clear of the rest (fraction of the explode)
 const CLEAR={1:.02,2:W_.ball[0]+.1,3:seats[0].userData.w[0]+.12,4:W_.stem[0]+.1,5:W_.pk[0]+.1,6:W_.nut[0]+.1,7:W_.lever[0]+.08,8:fBolts[4].userData.w[0]+.12,9:W_.bonnet[0]+.1,10:W_.bb[0]+.1};
 
+/* ---------- dimensions (Nathan, 17 Nov 2026): once it is apart, the Dimensions button (#vDim) swaps the balloons for each part's sizes. Every figure is read off the model above.
+   The lines are drawn in the page's svg from points on the parts, so they follow each part as the valve is turned. A part round the stem's axis measures the same from every side,
+   so its diameter is shown across the view (r); the body's, the lever's and the bolts' are fixed to the part and turn with it (a, b).
+   o: which way the dimension line stands off: 'r' to the reader's right, 'w' a direction in the room, 'l' a direction on the part. od: how far, in mm. s: which side its figure prefers ---------- */
+const DIMS=[
+  {t:'178',obj:parts.lever.children[0],a:V3(-15,170,0),b:V3(163,170,0),o:'w',ov:V3(0,1,0),od:22,s:1},
+  {t:'A/F 36',obj:parts.nut,c:V3(0,146,0),r:18.2,od:0,s:1},
+  {t:'Ø32',obj:packs[1],c:V3(0,127.1,0),r:16,od:0,s:1},
+  {t:'M8 × 30',obj:bBolts[1].children[0],a:V3(0,-30,0),b:V3(0,0,0),o:'r',od:-13,s:-1},
+  {t:'Ø120 × 52',obj:parts.bonnet,c:V3(0,100,0),r:60,o:'w',ov:V3(0,-1,0),od:13,s:1},
+  {t:'Ø18 × 144',obj:parts.stem,a:V3(0,26,0),b:V3(0,170,0),o:'r',od:-24,s:-1},
+  {t:'SØ76',obj:parts.ball,c:V3(0,0,0),r:38,od:0,s:1},
+  {t:'Ø62 × 8',obj:seats[0].userData.inner,a:V3(-31,4,0),b:V3(31,4,0),od:0,s:1},
+  {t:'Ø120',obj:model,a:V3(0,60,120),b:V3(0,-60,120),o:'l',ov:V3(-1,0,0),od:78,s:-1},
+  {t:'Ø50 H7',obj:model,a:V3(122,25,0),b:V3(122,-25,0),od:0,s:1},
+  {t:'244',obj:model,a:V3(-122,-42,0),b:V3(122,-42,0),o:'l',ov:V3(0,-1,0),od:62,s:1},
+  {t:'M8 × 20',obj:fBolts[3].children[0],a:V3(0,-20,0),b:V3(0,0,0),o:'w',ov:V3(0,1,0),od:13,s:1}];
+const mkS=(n,cls,par)=>{const e=document.createElementNS(NS,n);if(cls)e.setAttribute('class',cls);par.appendChild(e);return e;};
+DIMS.forEach(d=>{d.el=document.createElement('span');d.el.className='v-d';d.el.textContent=d.t;bal.appendChild(d.el);
+  d.g=mkS('g','vd',lead);d.e1=mkS('line','e',d.g);d.e2=mkS('line','e',d.g);d.m=mkS('line','m',d.g);d.h1=mkS('polygon','',d.g);d.h2=mkS('polygon','',d.g);});
+const dimBtn=$('vDim');let dimOn=false,dimT=0;
+function setDim(on){if(on===dimOn)return;dimOn=on;pin.classList.toggle('dim',on);if(dimBtn)dimBtn.setAttribute('aria-pressed',String(on));
+  DIMS.forEach((d,i)=>{d.el.style.transitionDelay=d.g.style.transitionDelay=on?(i*45)+'ms':'0ms';}); // they arrive one after another, from the top of the stack down
+  clearTimeout(dimT);if(on)dimT=setTimeout(()=>DIMS.forEach(d=>{d.el.style.transitionDelay=d.g.style.transitionDelay='0ms';}),1200);kick();}
+if(dimBtn)dimBtn.addEventListener('click',()=>setDim(!dimOn));
+const dA=V3(0,0,0),dB=V3(0,0,0),dO=V3(0,0,0),dP=V3(0,0,0);
+function dims(){
+  const scr=v=>{dP.copy(v).project(camera);return [(dP.x+1)/2*W,(1-dP.y)/2*Hh];},f=v=>v.toFixed(1);
+  const set=(l,p,q)=>{l.setAttribute('x1',f(p[0]));l.setAttribute('y1',f(p[1]));l.setAttribute('x2',f(q[0]));l.setAttribute('y2',f(q[1]));};
+  const cw=mode==='m'?6.2:6.8,lh=mode==='m'?18:20,put=[];
+  DIMS.forEach(d=>{
+    const off=()=>{d.el.classList.remove('on');d.g.classList.remove('on');};
+    if(!dimOn)return off();
+    if(d.r){dO.copy(d.c);d.obj.localToWorld(dO);dA.copy(dO).addScaledVector(right,-d.r);dB.copy(dO).addScaledVector(right,d.r);}
+    else{dA.copy(d.a);d.obj.localToWorld(dA);dB.copy(d.b);d.obj.localToWorld(dB);}
+    let a0=scr(dA),b0=scr(dB);
+    if(d.od){if(d.o==='r')dO.copy(right);else if(d.o==='w')dO.copy(d.ov);else dO.copy(d.ov).transformDirection(d.obj.matrixWorld);dA.addScaledVector(dO,d.od);dB.addScaledVector(dO,d.od);}
+    let a=scr(dA),b=scr(dB);
+    if(d.s<0&&d.r){let t=a;a=b;b=t;t=a0;a0=b0;b0=t;} // the figure goes at b: for one across the view, b is the side it prefers
+    const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);
+    if(len<9)return off(); // seen end on
+    const tx=dx/len,ty=dy/len,w=d.t.length*cw+14,along=Math.abs(tx)*w+Math.abs(ty)*lh;
+    let lx,ly;const out=len<30;
+    const beside=!(d.r&&!d.od)&&(Math.abs(ty)>.6||len>=along+22);
+    if(beside){ // upright, or room on the line: the figure sits beside its middle, on the side away from the part
+      let nx=-ty,ny=tx;const px=d.od?a[0]-a0[0]:d.s,py=d.od?a[1]-a0[1]:-.2;if(nx*px+ny*py<0){nx=-nx;ny=-ny;}
+      const k=(Math.abs(nx)*w+Math.abs(ny)*lh)/2+5;lx=(a[0]+b[0])/2+nx*k;ly=(a[1]+b[1])/2+ny*k;}
+    else{const k=along/2+(out?15:7);lx=b[0]+tx*k;ly=b[1]+ty*k;} // a short one: the figure carries on from its end
+    lx=Math.min(Math.max(lx,w/2+4),W-w/2-4);
+    put.forEach(q=>{if(Math.abs(q[0]-lx)<(q[2]+w)/2+2&&Math.abs(q[1]-ly)<lh)ly=q[1]+lh;});put.push([lx,ly,w]); // two figures never share a place: the later one steps down
+    if(ly<70||ly>Hh-40)return off();
+    if(d.od){set(d.e1,a0,[a[0]+(a[0]-a0[0])*.12,a[1]+(a[1]-a0[1])*.12]);set(d.e2,b0,[b[0]+(b[0]-b0[0])*.12,b[1]+(b[1]-b0[1])*.12]);} // witness lines, a little past the dimension line
+    else{set(d.e1,a,a);set(d.e2,b,b);}
+    const e=out?10:0;set(d.m,[a[0]-tx*e,a[1]-ty*e],[b[0]+tx*e+(beside?0:tx*5),b[1]+ty*e+(beside?0:ty*5)]);
+    const tri=(p,ux,uy)=>f(p[0])+','+f(p[1])+' '+f(p[0]-ux*7-uy*2.4)+','+f(p[1]-uy*7+ux*2.4)+' '+f(p[0]-ux*7+uy*2.4)+','+f(p[1]-uy*7-ux*2.4);
+    const sg=out?1:-1;d.h1.setAttribute('points',tri(a,tx*sg,ty*sg));d.h2.setAttribute('points',tri(b,-tx*sg,-ty*sg));
+    d.el.style.transform='translate('+f(lx)+'px,'+f(ly)+'px) translate(-50%,-50%)';d.el.classList.add('on');d.g.classList.add('on');});
+}
+
 /* ---------- layout: where on screen the model sits, and how far away the camera must be to fit it there ---------- */
 let W=1,Hh=1,region=[0,0,1,1],mode='d',bomLeft=1e4;
 const mqD=matchMedia('(min-width:1100px)'),mqT=matchMedia('(min-width:700px)'); // the stylesheet's own breakpoints
@@ -296,6 +388,7 @@ let cur=0,target=0,yawU=0,elU=0,dragging=false,vis=true,gone=false;
 const tmp=V3(0,0,0),right=V3(0,0,0),bar=$('vBar'),ops=[].slice.call($('vOps').children);
 function pose(p){
   phoneBox(p);
+  if(dimOn&&p<.86)setDim(false); // dimensions belong to the last stage: scroll back and the balloons return
   // the drawing rides in the section plane: on the paper, then lifted, then gone as the solid takes its place
   const lift=ease(seg(p,.06,.16)),baseY=lerp(SHEET_Y+.3,0,lift);model.position.y=baseY;
   dwg.userData.ink.material.opacity=.9*(1-seg(p,.2,.36));dwg.userData.hatch.material.opacity=.34*(1-seg(p,.11,.17));dwg.userData.cl.material.opacity=.75*(1-seg(p,.3,.44));
@@ -336,7 +429,7 @@ function labels(p,ex){
   camera.updateMatrixWorld();model.updateMatrixWorld(true);right.setFromMatrixColumn(camera.matrixWorld,0);
   const L=[],R=[];let latest=null,lt=-1;
   ITEMS.forEach(it=>{const on=p>.6&&(ex>=CLEAR[it.n]||p>.86);it.row.classList.toggle('on',on);if(on&&CLEAR[it.n]>lt){lt=CLEAR[it.n];latest=it;}
-    let show=on;
+    let show=on&&!dimOn;
     if(show){tmp.copy(it.at);it.obj.localToWorld(tmp);tmp.addScaledVector(right,it.side*it.r);tmp.project(camera);it.x=(tmp.x+1)/2*W;it.y=(1-tmp.y)/2*Hh;show=it.y>72&&it.y<Hh-44&&it.x>8&&it.x<W-8;}
     if(!show){it.b.classList.remove('on');it.g.classList.remove('on');return;}
     (it.side<0?L:R).push(it);});
@@ -352,6 +445,7 @@ function labels(p,ex){
       a.l.setAttribute('x1',(bx+dx/dl*r0).toFixed(1));a.l.setAttribute('y1',(a.by+dy/dl*r0).toFixed(1));a.l.setAttribute('x2',a.x.toFixed(1));a.l.setAttribute('y2',a.y.toFixed(1));
       a.d.setAttribute('cx',a.x.toFixed(1));a.d.setAttribute('cy',a.y.toFixed(1));a.g.classList.add('on');});});
   const txt=latest?String(latest.n).padStart(2,'0')+' · '+latest.name+' · '+latest.mat+' · ×'+latest.q:'';if(cap.textContent!==txt)cap.textContent=txt;
+  dims();
 }
 let raf=0,last=0;
 function kick(){if(!raf&&vis&&!dead&&!gone&&sec.classList.contains('scrub'))raf=requestAnimationFrame(tick);}
