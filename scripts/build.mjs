@@ -25,6 +25,13 @@ let legal = c.companyNumber
   : `${name}, ${addr}.`;
 if (c.vatNumber) legal += ` VAT number ${c.vatNumber}.`;
 
+// 07 Free website report: the no-JS mailto and the form's fallback must go to the inbox /api/report sends to (REPORT_TO, else ENQUIRY_TO).
+// Cloudflare Pages passes its variables to the build, so use them when present; otherwise reportEmail in site.config.json, which must match ENQUIRY_TO.
+const envInbox = String(process.env.REPORT_TO || process.env.ENQUIRY_TO || "").split(",")[0].trim();
+const okMail = (s) => /^[^\s@<>"'()]+@[^\s@<>"'()]+\.[^\s@<>"'()]+$/.test(s);
+const reportInbox = okMail(envInbox) ? envInbox : c.reportEmail || c.publicEmail;
+console.log(`report fallback inbox: ${reportInbox} (from ${okMail(envInbox) ? (process.env.REPORT_TO ? "REPORT_TO" : "ENQUIRY_TO") : "site.config.json"})`);
+
 const vals = {
   SITE_URL: c.siteUrl.replace(/\/$/, ""),
   PUBLIC_EMAIL: c.publicEmail,
@@ -38,7 +45,7 @@ const vals = {
   YEAR: String(new Date().getFullYear()),
   BUILD: Date.now().toString(36), // cache-buster on css/js links: a new value every build, so a deploy never pairs new HTML with an hour-old stylesheet
   UPDATED: c.privacyUpdated,
-  REPORT_EMAIL: c.reportEmail || c.publicEmail,
+  REPORT_EMAIL: reportInbox,
   SIGNIN_API: c.signInApi,
 };
 

@@ -407,6 +407,79 @@
     });
   })();
 
+  // 07 Free website report (Nathan, 21 Nov 2026): the side tab and the report card's "Get your report" button open the #rr form over the page. It sends to /api/report on this domain,
+  // with the same spam check (Turnstile, action "report") and honeypot as the enquiry form. Without JS or <dialog>, the card button stays a plain mailto to the same inbox.
+  (function(){
+    var dlg=document.getElementById('rr'),f=document.getElementById('rrf'),btn=document.getElementById('rrBtn'),msg=document.getElementById('rrMsg'),wrap=document.getElementById('rrWrap'),tab=document.getElementById('rrTab');
+    if(!dlg||!f||typeof dlg.showModal!=='function')return;
+    var MAIL=dlg.getAttribute('data-mail')||MAILTO,from=null,RRTS=tsWidget('rrts','report','rrf','report');
+    function el(id){return document.getElementById(id);}
+    var F={name:el('rr-name'),email:el('rr-email'),site:el('rr-site'),comp:el('rr-comp'),hp:el('rr-hp')};
+    var ALL=[F.name,F.email,F.site,F.comp];
+    // every visitor-facing line in this form, in one place (for Maya and Edie)
+    var T={required:'Please fill this in.',email:'Please enter a valid email address.',url:'Please enter a full web address, e.g. https://www.yourcompany.example',
+      domain:'Please use a company email address at your website’s own domain.',same:'Please enter a competitor’s website, not your own.',
+      wait:'One moment, the spam check is still loading. Try again in a second.',
+      sending:'Sending…',ok:'Thanks, that’s come through. We’ll be in touch at the email address you gave us.',err:'Something went wrong and your request didn’t send. Please try again.',or:' Or email '};
+    var EMAIL=/^[^\s@<>()",;:]+@[^\s@<>()",;:]+\.[^\s@<>()",;:]+$/; // the same rule the server uses
+    function site(v){ // "yourfirm.co.uk" or a full address -> {href, host} or null (the same rule as the server)
+      v=(v||'').trim();if(!v||/\s/.test(v))return null;if(!/^https?:\/\//i.test(v))v='https://'+v;
+      try{var u=new URL(v);if(!/^[a-z0-9-]+(\.[a-z0-9-]+)+$/i.test(u.hostname)||u.username||u.password)return null;return {href:u.origin+(u.pathname==='/'?'':u.pathname),host:u.hostname.toLowerCase().replace(/^www\./,'')};}catch(e){return null;}
+    }
+    function sameDomain(email,host){var dm=email.split('@').pop().toLowerCase();return dm===host||host.slice(-dm.length-1)==='.'+dm||dm.slice(-host.length-1)==='.'+host;}
+    function say(t,k,field){msg.textContent=t;msg.className='enq-msg'+(k?' '+k:'');ALL.forEach(function(x){if(x===field){x.setAttribute('aria-invalid','true');x.setAttribute('aria-describedby','rrMsg');}else{x.removeAttribute('aria-invalid');x.removeAttribute('aria-describedby');}});}
+    function bad(t,field){say(t,'err',field);field.focus();}
+    function byEmail(data){ // if the form can't send: a ready-written email to the same inbox
+      var lines=['Name: '+data.name,'Email address: '+data.email,'Website URL: '+data.site].concat(data.competitor?['Competitor website URL: '+data.competitor]:[]);
+      var a=document.createElement('a');a.href='mailto:'+MAIL+'?subject='+encodeURIComponent('Free website report request')+'&body='+encodeURIComponent(lines.join('\n'));a.textContent=MAIL;
+      msg.textContent=T.err+T.or;msg.className='enq-msg err';msg.appendChild(a);msg.appendChild(document.createTextNode('.'));
+    }
+    // focus stays in the form: Tab from the last control goes to the first, Shift+Tab from the first to the last
+    function focusables(){return [].slice.call(dlg.querySelectorAll('a[href],button:not([disabled]),input:not([tabindex="-1"]):not([type=hidden]),textarea,select,iframe,[tabindex]:not([tabindex="-1"])')).filter(function(x){return x.offsetParent!==null||x===document.activeElement;});}
+    dlg.addEventListener('keydown',function(e){if(e.key!=='Tab')return;var fs=focusables();if(!fs.length)return;var a=fs[0],z=fs[fs.length-1];
+      if(e.shiftKey&&(document.activeElement===a||!dlg.contains(document.activeElement))){e.preventDefault();z.focus();}
+      else if(!e.shiftKey&&(document.activeElement===z||!dlg.contains(document.activeElement))){e.preventDefault();a.focus();}});
+    function open(b){if(dlg.open)return;from=b||null;dlg.showModal();if(window.__pace)window.__pace.stop();RRTS.load();
+      var first=wrap.querySelector('.enq-done')||F.name;if(first)first.focus({preventScroll:true});}
+    dlg.addEventListener('close',function(){if(window.__pace)window.__pace.start();if(from&&document.contains(from))from.focus();from=null;});
+    dlg.addEventListener('click',function(e){if(e.target===dlg)dlg.close();}); // a click on the dimmed page closes the form (what's typed stays)
+    el('rrX').addEventListener('click',function(){dlg.close();});
+    [].slice.call(document.querySelectorAll('[data-rr-open]')).forEach(function(b){b.addEventListener('click',function(e){e.preventDefault();open(b);});});
+    if(tab)tab.hidden=false;
+    if(/^#(free-report|request-a-report)$/.test(location.hash))open(null); // a direct link opens the form
+    f.addEventListener('input',function(){if(msg.classList.contains('err'))say('');});
+    f.addEventListener('submit',function(e){
+      e.preventDefault();
+      var name=F.name.value.trim(),email=F.email.value.trim(),s=site(F.site.value),cw=F.comp.value.trim(),cs=null;
+      if(!name)return bad(T.required,F.name);
+      if(!email)return bad(T.required,F.email);
+      if(!EMAIL.test(email))return bad(T.email,F.email);
+      if(!F.site.value.trim())return bad(T.required,F.site);
+      if(!s)return bad(T.url,F.site);
+      if(!sameDomain(email,s.host))return bad(T.domain,F.email);
+      if(cw){cs=site(cw);if(!cs)return bad(T.url,F.comp);if(cs.host===s.host)return bad(T.same,F.comp);} // one competitor, optional
+      var data={name:name,email:email,site:s.href,competitor:cs?cs.href:'',homepage:F.hp.value};
+      if(RRTS.need&&!RRTS.token()){
+        if(RRTS.stuck()){byEmail(data);return;}
+        say(T.wait,'err');RRTS.load();return;}
+      data.turnstile=RRTS.token();
+      btn.disabled=true;btn.setAttribute('aria-busy','true');say(T.sending);
+      fetch('/api/report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)})
+        .then(function(r){return r.json().catch(function(){return {};}).then(function(j){if(!r.ok||!j.ok){var e=new Error(r.status);e.code=j&&j.code;throw e;}return j;});})
+        .then(function(){
+          var d=document.createElement('div');d.className='enq-done';d.setAttribute('role','status');d.tabIndex=-1;
+          var p=document.createElement('p');p.textContent=T.ok;d.appendChild(p);
+          wrap.replaceChildren(d);d.focus({preventScroll:true}); // keep focus (and the screen reader) with the result
+        })
+        .catch(function(err){
+          btn.disabled=false;btn.removeAttribute('aria-busy');RRTS.reset();btn.focus();
+          if(err&&err.code==='invalid'){say(T.err,'err');return;}
+          if(err&&err.code)console.warn('report',err.code); // for us, not for the visitor
+          byEmail(data);
+        });
+    });
+  })();
+
   // 01 What we offer: each card's Play video button opens its film over the page (Nathan, 15 Nov 2026). Which film goes with which card is set here.
   // A film is fetched only when its button is pressed, and dropped again when the overlay closes.
   (function(){

@@ -26,18 +26,18 @@
       '</figure>';
   }
 
-  // ---- 2. the eight checks: the report's eight named checks on a dial, then five rings for the five competitors. Equal segments, full rings: no scores implied ----
+  // ---- 2. the eight checks: the report's eight named checks on a dial, then one ring for the competitor the visitor names (Nathan, 21 Nov 2026: one competitor). Equal segments, full rings: no scores implied ----
   function dial(){
     var names=['First impression','Clarity of offer','Technical detail','Mobile','Speed','Enquiry path','Trust signals','SEO basics']; // the page's own words, verbatim
     var cols=[C.cyan,C.blue,C.violet,C.pink,C.gold,C.green,C.blue,C.violet],s='',i;
-    for(i=0;i<5;i++)s+='<circle class="rb" cx="120" cy="120" r="'+(66-i*9)+'"/><circle class="ring" style="--n:'+i+'" cx="120" cy="120" r="'+(66-i*9)+'" pathLength="1" transform="rotate(-90 120 120)"/>';
+    for(i=0;i<1;i++)s+='<circle class="rb" cx="120" cy="120" r="'+(66-i*9)+'"/><circle class="ring" style="--n:'+i+'" cx="120" cy="120" r="'+(66-i*9)+'" pathLength="1" transform="rotate(-90 120 120)"/>';
     for(i=0;i<8;i++)s+='<circle class="seg" style="--n:'+i+';--c:'+cols[i]+'" cx="120" cy="120" r="98" pathLength="80" stroke-dasharray="9 71" transform="rotate('+(i*45-90+2.25)+' 120 120)"/>';
     s+='<g class="hand"><line x1="120" y1="120" x2="120" y2="22"/><path transform="translate(108 2) scale(2)" d="'+STAR+'"/></g><circle class="hub" cx="120" cy="120" r="7"/>';
     return '<figure class="sl-fig sl-dial" aria-labelledby="sl-dial-c">'+
-      '<figcaption class="lbl" id="sl-dial-c">Eight checks. Your site first, then five competitors.</figcaption>'+
+      '<figcaption class="lbl" id="sl-dial-c">Eight checks. Your site first, then a competitor if you name one.</figcaption>'+
       '<div class="dl"><svg viewBox="0 0 240 240" aria-hidden="true" focusable="false">'+s+'</svg><ol class="chk">'+
       names.map(function(n,k){return '<li style="--n:'+k+';--c:'+cols[k]+'">'+n+'</li>';}).join('')+'</ol></div>'+
-      '<p class="lg"><span><i></i>Your site</span><span><i></i>Five closest competitors</span></p>'+ // words from the page
+      '<p class="lg"><span><i></i>Your site</span><span><i></i>A competitor you name</span></p>'+ // words from the page
       '</figure>';
   }
 
