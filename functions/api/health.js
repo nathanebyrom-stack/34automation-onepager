@@ -8,6 +8,7 @@ export async function onRequestGet({ env: raw }) {
     turnstileSiteKeySet: !!env.TURNSTILE_SITE_KEY,
     enquiryTo: !!env.ENQUIRY_TO,
     enquiryFrom: !!env.ENQUIRY_FROM,
+    reportTo: !!(env.REPORT_TO || env.ENQUIRY_TO), // /api/report falls back to ENQUIRY_TO
   };
   return new Response(JSON.stringify(body), { headers: { "Content-Type": "application/json", "Cache-Control": "no-store" } });
 }
