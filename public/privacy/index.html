@@ -43,8 +43,8 @@
       <ul>
         <li><b>Enquiry form:</b> your name, email and message, plus your company, phone number and the services you tick if you choose to add them.</li>
         <li><b>Reviews:</b> your business name, your score out of 5, your comment if you add one, whether you've worked with us, and the date you sent it. If we publish your review, your business name, score and comment show on this website for anyone to read.</li>
-        <li><b>Website report requests:</b> when you email jenny@34automation.co.uk, we receive your email address, your name if your email includes it, your website address and anything else you write. We check your email address is at the same domain as the website. To write the report, we look at the public pages of your website and of five competitors' websites.</li>
-        <li><b>Spam check:</b> when you send the enquiry form or a review, Cloudflare Turnstile checks your browser to confirm you're a person. It uses technical signals such as your IP address and does not set tracking cookies.</li>
+        <li><b>Free website report:</b> your name, email address, website address and, if you give one, a competitor's website address, sent through the report form. If the form can't send, the same details reach us in the email you send instead. See <a href="#website-report">Free website report</a> below.</li>
+        <li><b>Spam check:</b> when you send the enquiry form, the report form or a review, Cloudflare Turnstile checks your browser to confirm you're a person. It uses technical signals such as your IP address and does not set tracking cookies.</li>
         <li><b>Brand Builder free preview:</b> if you send your answers from the free preview, we receive your name, email and the answers you chose to send.</li>
         <li><b>Client area sign-in:</b> if we set you up with a username and password, we store your username and a scrambled version of your password (a hash). The client area never stores the password itself, and we can't read it back. We also keep a record of when you sign in. To protect accounts from password guessing, we count failed sign-in attempts against the username and the IP address they came from, stored only in scrambled form.</li>
         <li><b>Client area, Brand Builder:</b> we store the answers and images you add, the date you open and send it, and a random identifier for the device you use it on.</li>
@@ -56,7 +56,7 @@
         <li>To reply to your enquiry and talk about work you've asked about. Our lawful basis is our legitimate interest in answering people who contact us, and taking steps at your request before any contract.</li>
         <li>To deliver Brand Builder work you've asked us to do. Our lawful basis is the contract, or the steps before it.</li>
         <li>To publish reviews and check they're genuine first. Our lawful basis is legitimate interests: showing honest feedback about us, good or bad.</li>
-        <li>To check a website is yours and send the report you asked for. Our lawful basis is legitimate interests in answering requests, and taking steps at your request before any contract.</li>
+        <li>To prepare and send the free website report you asked for. Our lawful basis is legitimate interests in answering requests, and taking steps at your request before any contract.</li>
         <li>To let you sign in to the client area and keep accounts secure. Our lawful basis is the contract, or the steps before it, and our legitimate interest in keeping accounts safe.</li>
         <li>To keep the site and its forms free of spam and abuse. Our lawful basis is legitimate interests.</li>
       </ul>
@@ -64,9 +64,9 @@
 
       <h2 class="h3">Who handles it for us</h2>
       <ul>
-        <li><b>Cloudflare</b>: hosts this website, runs the spam checks and the visit statistics, and supplies some of the code the Brand Builder runs on (cdnjs).</li>
-        <li><b>Resend</b>: delivers enquiries and new reviews to us, and the enquiry acknowledgement to you.</li>
-        <li><b>IONOS</b>: hosts our email inboxes, including the one that receives report requests.</li>
+        <li><b>Cloudflare</b>: hosts this website and its forms, runs the spam checks and the visit statistics, and supplies some of the code the Brand Builder runs on (cdnjs).</li>
+        <li><b>Resend</b>: delivers enquiries, report requests and new reviews to us, and the enquiry acknowledgement to you. It keeps a copy of each email for 30 days.</li>
+        <li><b>IONOS</b>: hosts our email inboxes, including the one that receives report requests and the one we send reports from.</li>
         <li><b>Supabase</b>: stores Brand Builder answers and client-area sign-in details on servers in London.</li>
         <li><b>GitHub</b>: hosts the Brand Builder pages and the files this website is built from, including published reviews.</li>
         <li><b>FormSubmit</b>: forwards answers from the free Brand Builder preview to our inbox.</li>
@@ -75,16 +75,29 @@
       <p>Some of these companies are based in the United States, so your data may be handled there. Where that happens, the transfer is covered by safeguards recognised under UK law, such as the UK–US data bridge or the UK International Data Transfer Addendum.</p>
 
       <h2 class="h3">How long we keep it</h2>
-      <p>Enquiries and report requests we don't take further are deleted after 24 months, along with any report we sent. If we work together, we keep project records for six years after the work ends, for tax and accounting reasons.</p>
+      <p>Enquiries we don't take further are deleted after 24 months. Free website report requests are deleted after 12 months (see <a href="#website-report">Free website report</a>). If we work together, we keep project records for six years after the work ends, for tax and accounting reasons.</p>
       <p>Brand Builder answers and your client-area sign-in details are deleted 12 months after the project closes, unless you ask us to delete them sooner. Failed sign-in counts are deleted once they're more than 24 hours old, the next time the sign-in is used. Published reviews stay up while this site is live, unless you ask us to take one down. Reviews we don't publish are deleted after six months.</p>
+
+      <h2 class="h3" id="website-report">Free website report</h2>
+      <p>This covers the form you use to ask for a free website report, and any competitor website you name in it.</p>
+      <ul>
+        <li><b>What we collect:</b> your name, your email address, your website address and, if you give one, a competitor's website address. Cloudflare Turnstile also checks your browser to confirm you're a person, as described above.</li>
+        <li><b>Why, and our lawful basis:</b> to prepare your report, send it to you and answer you if you reply. Our lawful basis is our legitimate interests in answering requests, and taking steps at your request before any contract.</li>
+        <li><b>The email address check:</b> the form only accepts an email address at your website's own domain. This checks how the address looks. It doesn't prove the address or the website is yours. We only send the report to that address.</li>
+        <li><b>How we prepare the report:</b> we look at the public pages of your website and of any competitor website you name, and Nathan emails the report to you.</li>
+        <li><b>The competitor website:</b> this is a company's public website, and we get the address from you, not from the competitor. We only look at pages anyone can see. We never log in, fill in their forms, send them enquiries or contact them, and we never use the address to find new customers or for marketing.</li>
+        <li><b>Who handles it:</b> Cloudflare runs the form and the spam check. Resend delivers your request to our inbox as one email. You don't get an automatic email back. IONOS hosts the inbox that receives it and the mailbox we send your report from.</li>
+        <li><b>How long we keep it:</b> we delete your request, the competitor's website address and the report 12 months after we send the report, or 12 months after your request if we don't send one. If we go on to work together, our project records are kept as set out above. Resend keeps its own copy of the email that brings us your request for 30 days, then deletes it.</li>
+        <li><b>Your rights:</b> you can ask us to delete your request sooner, or use any of the rights set out under Your rights below. If someone named your website as their competitor, the same rights apply to you.</li>
+      </ul>
 
       <h2 class="h3">Your rights</h2>
       <p>You can ask us for a copy of your data, ask us to correct it or delete it, object to how we use it, or ask us to restrict it or send it to you in a portable format. Email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a> and we'll reply within one month.</p>
       <p>To have your review taken down, email <a href="mailto:{{PUBLIC_EMAIL}}">{{PUBLIC_EMAIL}}</a> with the business name and roughly when you sent it. We may ask you to show it's yours first.</p>
-      <p>If you're unhappy with how we've handled your data, you can complain to the Information Commissioner's Office at <a href="https://ico.org.uk/make-a-complaint/" rel="noopener">ico.org.uk</a> or on 0303 123 1113. We'd appreciate the chance to put it right first.</p>
+      <p>If you're unhappy with how we've handled your data, you can complain to the Information Commission, the UK's data protection regulator, at <a href="https://ico.org.uk/make-a-complaint/" rel="noopener">ico.org.uk/make-a-complaint</a> or on 0303 123 1113. We'd appreciate the chance to put it right first.</p>
 
       <h2 class="h3">Cookies</h2>
-      <p>This site doesn't set tracking or advertising cookies. When you send the enquiry form or a review, Cloudflare's spam check may set a short-lived security cookie that's needed to confirm you're a person. It isn't used to track you. If you pick Day or Night, your browser remembers the choice for next time. The Brand Builder saves your progress in your own browser so you don't lose work. That storage is needed for the tool to do its job and stays on your device.</p>
+      <p>This site doesn't set tracking or advertising cookies. When you send the enquiry form, the report form or a review, Cloudflare's spam check may set a short-lived security cookie that's needed to confirm you're a person. It isn't used to track you. If you pick Day or Night, your browser remembers the choice for next time. The Brand Builder saves your progress in your own browser so you don't lose work. That storage is needed for the tool to do its job and stays on your device.</p>
       <p>If you sign in with a username and password, the Brand Builder keeps you signed in for that browser tab only, so a reload doesn't lose your place. It's cleared when you close the tab, and runs out after 12 hours. Like your saved progress, it's needed for the tool to work.</p>
     </div>
   </div>
@@ -93,7 +106,7 @@
   <div class="wrap">
     <a class="logo" href="/" aria-label="34 Automation, home"><img class="ln" src="/img/logo.svg" alt="34 Automation" width="180" height="26"><img class="ld" src="/img/logo-day.svg" alt="34 Automation" width="180" height="26"></a>
     <nav aria-label="Footer">
-      <a href="/#offer">What we offer</a><a href="/#services">Services</a><a href="/#work">Work</a><a href="/#reviews">Reviews</a><a href="/#report">Website report</a><a href="/#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
+      <a href="/#offer">What we offer</a><a href="/#services">Services</a><a href="/#work">Work</a><a href="/#reviews">Reviews</a><a href="/#report">Free website report</a><a href="/#contact">Contact</a><a href="/clients/">Client area</a><a href="/privacy/">Privacy</a>
     </nav>
     <ul class="soc">
       <li><a href="{{LINKEDIN_URL}}" target="_blank" rel="noopener noreferrer" aria-label="34 Automation on LinkedIn (opens in a new tab)"><svg class="li" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="2.5" y="2.5" width="19" height="19" fill="#fff"/><path fill="#0A66C2" d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 1 1 0-4.125 2.062 2.062 0 0 1 0 4.125zM7.119 20.452H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg><span>LinkedIn</span></a></li>

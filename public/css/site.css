@@ -554,3 +554,41 @@ dialog.vid[open]::backdrop{animation:vid-fade .32s ease-out}
 .fbr-prev pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.6 var(--f-body);color:var(--silver)}
 @media (max-width:900px){.fbr-lay{grid-template-columns:minmax(0,1fr)}}
 .page.fbr .wrap{max-width:1180px}
+
+/* 07 Free website report (Nathan, 21 Nov 2026): the report card's "Get your report" button and the side tab open one overlaid form (#rr), a drawer from the right on wide screens and a full sheet on phones.
+   The tab is fixed only from 1320px, where it sits in the margin beside the 1240px column and covers no text; below that the card's button is the way in. */
+.rr-tab{display:none}
+@media (min-width:1320px){
+  .rr-tab:not([hidden]){display:block;position:fixed;right:0;top:50%;z-index:30;transform:translateY(-50%) rotate(180deg);writing-mode:vertical-rl;
+    font-family:var(--f-disp);font-stretch:112%;font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;
+    padding:18px 11px;border:1px solid var(--gold-fill);border-right:0;background:var(--gold-fill);color:var(--gold-ink);cursor:pointer;
+    box-shadow:0 10px 28px -12px rgba(0,0,0,.6);transition:background .2s,padding .2s var(--ease)}
+  .rr-tab:hover,.rr-tab:focus-visible{background:var(--gold-hi);border-color:var(--gold-hi);padding-left:15px;outline:none}
+  .rr-tab:focus-visible{box-shadow:0 0 0 3px var(--graphite),0 0 0 5px var(--gold)}
+}
+@media print{.rr-tab{display:none!important}}
+.ask .in .btn{cursor:pointer}
+/* Nathan asked for a yellow button: the card's "Get your report" stays gold in Starlight too (that band otherwise re-declares the gold tokens as cyan). #0E0F11 on #C9A24C is 8.0:1, on hover #F2D58A 13.4:1 */
+.starlight .report .ask .btn.solid{--gold-rgb:201,162,76;--gold-fill:#C9A24C;--gold-hi:#F2D58A;color:#0E0F11}
+dialog.rr{position:fixed;inset:0 0 0 auto;width:min(560px,100%);height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0;border-left:1px solid var(--edge);
+  background:var(--graphite);color:var(--silver);overflow:auto;overscroll-behavior:contain}
+dialog.rr::backdrop{background:rgba(8,9,10,.72);-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+dialog.rr[open]{animation:rrIn .32s var(--ease)}
+@keyframes rrIn{from{transform:translateX(40px);opacity:0}to{transform:none;opacity:1}}
+@media (prefers-reduced-motion:reduce){dialog.rr[open]{animation:none}}
+html:has(dialog.rr[open]){overflow:hidden}
+.rr-in{display:flex;flex-direction:column;gap:18px;padding:max(20px,env(safe-area-inset-top,0px)) clamp(16px,4vw,32px) max(28px,env(safe-area-inset-bottom,0px));min-height:100%}
+.rr-top{display:flex;justify-content:space-between;align-items:center;gap:16px}
+.rr-h{font-size:clamp(24px,4.4vw,32px);line-height:1.1}
+.rr-intro{margin:10px 0 0;color:var(--steel);max-width:46ch}
+.rr-form{max-width:none;margin-top:18px}
+.rr-form label .opt{color:var(--steel)}
+.rr-form .note{font-size:13px;color:var(--steel);margin:0}
+.rr-form .note a{color:var(--silver)}
+.rr-form input[aria-invalid="true"]{border-bottom-color:var(--err)}
+@media (max-width:520px){dialog.rr{border-left:0}}
+.rr .enq-done{outline:none}
+.rr .enq-done p{margin:0;color:var(--silver)}
+.rr .enq-msg a{color:inherit}
+/* privacy notice: the form links to /privacy/#website-report; keep that heading clear of the sticky header */
+#website-report{scroll-margin-top:96px}
