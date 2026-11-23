@@ -112,7 +112,7 @@ if (left.length) { console.error("✖ Unfilled placeholders:\n" + left.join("\n"
       const p = join(dir, n);
       if (statSync(p).isDirectory()) { scan(p); continue; }
       if (extname(n) !== ".html") continue;
-      for (const m of readFileSync(p, "utf8").matchAll(/<script(?![^>]*\bsrc=)(?![^>]*application\/ld\+json)[^>]*>([\s\S]*?)<\/script>/g)) {
+      for (const m of readFileSync(p, "utf8").matchAll(/<script(?![^>]*\bsrc=)(?![^>]*application\/(?:ld\+)?json)[^>]*>([\s\S]*?)<\/script>/g)) {
         const h = "sha256-" + createHash("sha256").update(m[1], "utf8").digest("base64");
         if (!csp.includes(`'${h}'`)) bad.push(`${p}: '${h}'`);
       }
