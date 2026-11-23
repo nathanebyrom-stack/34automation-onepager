@@ -576,3 +576,27 @@ dialog.vid[open]::backdrop{animation:vid-fade .32s ease-out}
 .fbr-prev pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:15px/1.6 var(--f-body);color:var(--silver)}
 @media (max-width:900px){.fbr-lay{grid-template-columns:minmax(0,1fr)}}
 .page.fbr .wrap{max-width:1180px}
+
+
+/* Section 07 · free report / full report choice. Add to css/site.css. Uses the site's own tokens. */
+.report .txt p b{color:var(--silver);font-weight:500}
+.report .txt .rc-open{align-self:flex-start;margin-top:8px}
+.report .ask .img{border-bottom:0}
+.rc{margin-top:clamp(28px,4vw,48px);border:1px solid var(--edge);background:var(--plate)}
+.rc[hidden]{display:none}
+.rc-h{padding:22px clamp(18px,3vw,28px) 0;outline:none}
+.rc-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--edge);margin-top:18px;border-top:1px solid var(--edge)}
+.rc-opt{background:var(--plate);padding:24px clamp(18px,3vw,28px) 26px;display:flex;flex-direction:column;align-items:flex-start;gap:14px;min-width:0}
+.rc-opt .lbl{margin:0;color:var(--gold)}
+.rc-price{margin:0;display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 14px;font-family:var(--f-disp);font-stretch:125%;font-weight:800;font-size:clamp(30px,3.4vw,40px);line-height:1;color:var(--silver)}
+.rc-price span{font-family:var(--f-mono);font-stretch:100%;font-weight:400;font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel)}
+.rc-list{list-style:none;margin:0;padding:0;display:grid;gap:9px;flex:1 1 auto}
+.rc-list li{position:relative;padding-left:24px;color:var(--steel);max-width:52ch}
+.rc-list li::before{content:"";position:absolute;left:2px;top:.55em;width:11px;height:6px;border-left:2px solid var(--gold);border-bottom:2px solid var(--gold);transform:rotate(-45deg)}
+.rc-list li.no::before{width:11px;height:0;border-left:0;border-bottom:2px solid var(--steel);transform:none;top:.75em}
+.rc-soon{cursor:default;color:var(--steel);border-color:var(--edge)}
+.rc-soon:hover{background:transparent;border-color:var(--edge);color:var(--steel)}
+.rc-spec{border-top:1px solid var(--edge);padding:20px clamp(18px,3vw,28px) 24px}
+.rc-spec .lbl{margin:0 0 8px;color:var(--gold)}
+.rc-spec p:last-child{margin:0;color:var(--steel);max-width:80ch}
+@media (max-width:760px){.rc-grid{grid-template-columns:1fr}}
