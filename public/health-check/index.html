@@ -868,9 +868,9 @@ body[data-bg="c"] .runbox{background:rgba(255,255,255,.3)}
           <div class="pt-col">
             <p class="pt-colh">This free report</p>
             <ul class="pt-list">
-              <li>Everything we can measure from outside your site</li>
+              <li>15 checks across 8 areas, measured from outside your site</li>
               <li>Main photo scored on resolution only</li>
-              <li class="no">Areas that need a person’s judgement are left unscored</li>
+              <li class="no">Leaves out anything that needs a person’s judgement</li>
               <li class="no">No competitor comparison</li>
             </ul>
           </div>
@@ -878,39 +878,17 @@ body[data-bg="c"] .runbox{background:rgba(255,255,255,.3)}
             <p class="pt-colh">Full report · £4.99</p>
             <ul class="pt-list">
               <li>Everything in the free report</li>
-              <li>A marketing specialist checks your site by eye and scores what the free report leaves out</li>
+              <li>A marketing specialist goes through your site by eye and scores what the free report leaves out</li>
               <li>More detail on every check, and what to fix first</li>
               <li>Your site side by side with one competitor you name</li>
-              <li>By email within 3 working hours (Monday to Friday, 9 to 5)</li>
+              <li>Back to you by email within 1 working day</li>
             </ul>
           </div>
         </div>
-        <p class="pt-spec"><b>Scored only by a marketing specialist.</b> These take a person’s judgement, so <b>the free report doesn’t score them</b>: your photos (sharpness, lighting and whether they show your real work), your headline, how clear your offer is, your Google Business Profile and how you compare with a competitor.</p>
-        <button class="btn gold" type="button" id="ptOpen">Order the full report · £4.99</button>
-        <p class="pt-small">Paid securely through Stripe. This free report stays free.</p>
+        <p class="pt-spec"><b>Not in the free report.</b> These take a person’s judgement, so <b>the free report doesn’t score them at all</b>: how good your photos are (sharpness, lighting and whether they show your real work), your headline, how clear your offer is, your Google Business Profile and how you compare with a competitor.</p>
+        <a class="btn gold" id="ptMail" data-pt-mail href="mailto:jenny@34automation.co.uk?subject=Full%20report%20request&amp;body=Website%3A%20%0ACompetitor%20to%20compare%20with%20(optional)%3A%20">Email Jenny for your full report</a>
+        <p class="pt-small">Email <a href="mailto:jenny@34automation.co.uk">jenny@34automation.co.uk</a> with your website address, and a competitor if you’d like one compared. Your full report comes back within 1 working day.</p>
       </div>
-      <form class="pt-form" id="ptForm" novalidate hidden>
-        <h3>Order your full report</h3>
-        <div class="pt-fld"><label for="ptUrl">Your website</label><input id="ptUrl" name="url" type="text" inputmode="url" autocomplete="url" spellcheck="false" autocapitalize="off" maxlength="200" placeholder="www.yourcompany.co.uk"></div>
-        <div class="pt-row">
-          <div class="pt-fld"><label for="ptName">Your name</label><input id="ptName" name="name" type="text" autocomplete="name" maxlength="80"></div>
-          <div class="pt-fld"><label for="ptEmail">Email for your report</label><input id="ptEmail" name="email" type="email" autocomplete="email" maxlength="120"></div>
-        </div>
-        <fieldset class="pt-comp">
-          <legend>Competitor to compare with (optional)</legend>
-          <div class="pt-row">
-            <div class="pt-fld"><label for="ptCompName">Company name</label><input id="ptCompName" name="compName" type="text" maxlength="80" placeholder="Competitor’s company name"></div>
-            <div class="pt-fld"><label for="ptCompUrl">Their website</label><input id="ptCompUrl" name="compUrl" type="text" inputmode="url" spellcheck="false" autocapitalize="off" maxlength="200" placeholder="www.competitor.co.uk"></div>
-          </div>
-        </fieldset>
-        <label class="pt-consent"><input id="ptConsent" name="consent" type="checkbox"> <span>I’ve read the <a id="ptPrivacy" href="https://34automation.co.uk/privacy/#health-check" target="_blank" rel="noopener">privacy notice</a> and agree to my details being used to deliver this report.</span></label>
-        <p class="pt-err" id="ptErr" role="alert"></p>
-        <div class="pt-acts">
-          <button class="btn gold" type="submit" id="ptPay">Pay £4.99 with Stripe</button>
-          <button class="btn" type="button" id="ptCancel">Cancel</button>
-        </div>
-        <p class="pt-status" id="ptStatus" role="status" aria-live="polite"></p>
-      </form>
     </div>
   </div>
 </section>

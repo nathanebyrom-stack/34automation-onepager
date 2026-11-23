@@ -194,7 +194,7 @@ var CATS = [
 var CAT_HEX = ['#FF6B4A','#FF9F1C','#F5C200','#6CC04A','#14B3A6','#3B8BEB','#8B5CF6','#7CD4F5','#C2E812'];   /* backdrop B still cycles the first 8 */
 /* "finding" lines kept as data (unused on cards since steer 9); "flaw" text shows under the Found heading (v4.6). */
 var M = [
- {id:'hero-photo', cat:'first', name:'Hero photo', raw:5.3, flaw:'Washed-out stock hero photo', fix:'A half-day professional shoot of your real parts and shop floor', finding:'The first thing visitors see is a pale stock image that could belong to any business.', b:[700,252], t:[770,322]},
+ {id:'hero-photo', cat:'first', name:'Hero photo', raw:5.0, flaw:'Main image 1,280 × 549 px: soft on desktop screens', fix:'A half-day professional shoot of your real parts and shop floor', finding:'The largest version of your main home-page image is 1,280 px wide, so it looks soft on most desktop screens.', lockNote:'Scored on resolution only. Sharpness, lighting and whether it shows your real work are judged by a marketing specialist in the full report.', b:[700,252], t:[770,322]},
  {id:'headline', cat:'first', name:'Home page headline', raw:3.1, flaw:'“Welcome to our website!” headline', fix:'Rewrite the home page headline and intro', finding:'The headline says nothing about what Vellmoor makes, for whom, or in what batch sizes.', b:[20,256], t:[92,256]},
  {id:'offer-structure', cat:'clarity', name:'Offer structure', raw:4.8, flaw:'19 processes, no sectors or batch sizes', fix:'Restructure services into 3 core capabilities, plus sector pages (copy and page build)', finding:'Buyers have to work out from a list of 19 processes whether Vellmoor fits their part.', b:[668,150], t:[550,158]},
  {id:'spec-page', cat:'tech', name:'Spec page', raw:3.4, flaw:'No tolerances, materials or capacity', fix:'One capability and spec page an engineer can quote from (technical copy)', finding:'An engineer cannot find tolerances, materials or capacity, so cannot shortlist Vellmoor from the site.', b:[302,484], t:[206,512]},
@@ -230,6 +230,18 @@ var M = [
 /* v4.8 · each check holds a one-decimal SAMPLE score "raw" (0-10). It drives
    status, tally, Fails and verdict, and is shown to one decimal. Area and overall scores average it, so they needn't land on
    multiples of 5. */
+/* v5.4 · the free report leaves out what needs a person's judgement (Nathan, 23 Nov): headline, offer clarity and
+   Google Business Profile. Clarity of offer has no other check, so that area goes too: 15 checks across 8 areas. */
+var HC_OUT = ['headline', 'offer-structure', 'local-listing'];
+M = M.filter(function(m){ return HC_OUT.indexOf(m.id) < 0; });
+CATS = CATS.filter(function(c){ return M.some(function(m){ return m.cat === c.id; }); });
+(function(){
+  var W = ['no','one','two','three','four','five','six','seven','eight','nine','ten','eleven','twelve'];
+  var areas = W[CATS.length] || String(CATS.length);
+  COPY.footerHow = COPY.footerHow.replace('18 checks across nine areas', M.length + ' checks across ' + areas + ' areas');
+  for (var ci = 0; ci < M.length; ci++) if (M[ci].id === 'certs') COPY.cmpPartHelp = COPY.cmpPartHelp.replace('(check 13)', '(check ' + (ci + 1) + ')');
+  var h = document.getElementById('catsH'); if (h) h.textContent = areas.charAt(0).toUpperCase() + areas.slice(1) + ' areas at a glance';
+})();
 if (REPORT) M.forEach(function(m){
   var c = (REPORT.checks || {})[m.id] || {};
   m.raw = (typeof c.score === 'number' && isFinite(c.score)) ? c.score : null;
@@ -702,6 +714,7 @@ var MONO = 'IBM Plex Mono, ui-monospace, Menlo, Consolas, monospace';
     ['</body>'],
     ['</html>']
   ];
+  L = L.filter(function(l){ return !l[3] || byId[l[3]]; });
   var FS = 30, CW = FS*0.6, X = 160, h = '<g transform="rotate(-7 750 500)">';
   L.forEach(function(l,i){
     var y = 110 + i*62, raw = l[0], ind = raw.length - raw.replace(/^ +/,'').length;
@@ -1189,7 +1202,7 @@ if (location.hash && /^#m-/.test(location.hash)){ var id = location.hash.slice(3
   if (h) h.textContent = 'Compared with a competitor';
   if (i) i.textContent = REPORT ? 'The full report puts your site side by side with one competitor you name, across the same checks.' : 'The full report puts your site side by side with one competitor you name. Here it’s a fictional firm.';
   var open = document.querySelector('#rivals .rv.slot.open');
-  if (open) open.outerHTML = '<section class="rv pt-slot" aria-label="Competitor"><p class="rv-k">Competitor · Full report</p><p>Name one competitor when you order and we’ll measure them on the same checks, side by side with you.</p><div class="acts"><button type="button" class="btn small gold" data-pt-open>Order the full report · £4.99</button></div></section>';
+  if (open) open.outerHTML = '<section class="rv pt-slot" aria-label="Competitor"><p class="rv-k">Competitor · Full report</p><p>Name one competitor when you ask for your full report and we’ll measure them on the same checks, side by side with you.</p><div class="acts"><a class="btn small gold" data-pt-mail href="mailto:jenny@34automation.co.uk?subject=Full%20report%20request">Email Jenny · £4.99</a></div></section>';
 })();
 /* v5 · a live report has no hand-drawn page to balloon, so that section steps aside; the footer says how the report was made */
 /* v5.2 · full report: the designer's summary takes the offer's place, and there is nothing to re-run */
@@ -1290,6 +1303,7 @@ if (REPORT){
     if (inp) inp.addEventListener('input', function(){ ui.value = inp.value; if (ui.err){ ui.err = false; inp.removeAttribute('aria-invalid'); } });
     if (st) st.addEventListener('click', function(e){ if (!e.target.closest('[data-sample]')) return; setRef(null); ui.value = ''; ui.text = T.sample; ui.err = false; ui.link = false; mount(null); });
     wireOrder(report);
+    wireMail(report);
     paint();
   }
 
@@ -1300,6 +1314,13 @@ if (REPORT){
     consent: 'Please tick to agree to the privacy notice.', off: 'We’re not taking full report orders just yet, so nothing has been sent or charged.',
     making: 'Setting up your secure payment…', go: 'Taking you to Stripe to pay…', link: 'Continue to secure payment', failed: 'Your order couldn’t be started. Nothing has been charged. Try again in a few minutes.'
   };
+  /* the full report is asked for by email (Nathan, 23 Nov): fill in the website that was just checked */
+  function wireMail(report){
+    var site = (report && report.domain) || (okUrl(ui.value) ? bare(ui.value) : '');
+    var href = 'mailto:jenny@34automation.co.uk?subject=' + encodeURIComponent('Full report request' + (site ? ': ' + site : ''))
+      + '&body=' + encodeURIComponent('Website: ' + site + '\nCompetitor to compare with (optional): ');
+    document.querySelectorAll('[data-pt-mail]').forEach(function(a){ a.setAttribute('href', href); });
+  }
   function wireOrder(report){
     var card = document.querySelector('.pt-card'), f = $('ptForm'); if (!card || !f) return;
     var err = $('ptErr'), st = $('ptStatus'), pay = $('ptPay');
