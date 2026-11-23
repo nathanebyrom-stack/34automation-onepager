@@ -1,4 +1,5 @@
 
+var HC_SAMPLE = false;   /* true only in the Vellmoor marketing copy; the free and full report pages open blank */
 function hcBoot(REPORT){
 "use strict";
 var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -167,6 +168,7 @@ var COPY = {
   v5Auto:        "Automatic report · scoring rules awaiting review",
   v5AutoHow:     "This report was produced automatically, from outside your site. Checks marked Not measured are left out of the area scores and the overall score, and never count as a Fail."
 };
+if (!REPORT && !HC_SAMPLE) COPY.specTag = 'Free website health check';
 var FULL = REPORT && REPORT.full;   /* v5.2 · the paid full report: a designer's review laid over the automatic report */
 if (REPORT){
   var hcPages = (REPORT.sources || {}).pages || 1;
@@ -312,7 +314,7 @@ function longDate(iso){ var p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso||''); if(!p
 
 /* ---------- fill COPY slots ---------- */
 document.querySelectorAll('[data-copy]').forEach(function(el){ var k = el.getAttribute('data-copy'); if (COPY[k] != null) el.textContent = COPY[k]; });
-try { document.title = COPY.bannerTitle + ' · ' + CLIENT.name + (REPORT ? '' : ' (sample)'); } catch(e){}
+try { document.title = COPY.bannerTitle + (!REPORT && !HC_SAMPLE ? '' : ' · ' + CLIENT.name + (REPORT ? '' : ' (sample)')); } catch(e){}
 
 /* ---------- client details + count line ---------- */
 $('client').innerHTML = [[COPY.clientLabel, CLIENT.name],[COPY.siteLabel, CLIENT.site],[COPY.testedLabel, CLIENT.tested]]
@@ -1232,11 +1234,20 @@ if (REPORT){
   var hcN = $('hcNotes'), hcNotes = REPORT.notes || [];
   if (hcNotes.length){ hcN.innerHTML = hcNotes.map(function(t){ return '<li>'+esc(t)+'</li>'; }).join(''); hcN.hidden = false; }
 }
+/* v5.5 · the free and full report pages open blank (Nathan, 23 Nov): nothing from the sample client shows until a site
+   is checked. Only the marketing copy (HC_SAMPLE) opens on the fictional Vellmoor sample. */
+document.body.classList.toggle('hc-blank', !REPORT && !HC_SAMPLE);
+if (!REPORT && !HC_SAMPLE){
+  document.querySelectorAll('.backdrop text, .backdrop tspan').forEach(function(t){
+    if (t.children.length) return; var x = t.textContent; if (!/vellmoor/i.test(x)) return;
+    t.textContent = x.replace(/https?:\/\/(www\.)?vellmoor\.example/gi, 'https://www.yourcompany.co.uk').replace(/(www\.)?vellmoor\.example/gi, 'www.yourcompany.co.uk').replace(/Home \| Vellmoor/g, 'Home | Your company').replace(/Vellmoor( Precision)?/g, 'Your company');
+  });
+}
 }
 
 /* =====================================================================
    v5 · LIVE REPORTS (controller). The page above is drawn by hcBoot(report).
-   With no report it shows the Vellmoor sample. A website address typed into
+   With no report the page opens blank (the marketing copy, HC_SAMPLE, opens on the Vellmoor sample). A website address typed into
    the form is sent to the Health Check engine; when the report comes back the
    page is redrawn from it. Two ways to reach the engine:
      - on a normal web page: fetch() to the Supabase Edge Function (API)
@@ -1255,16 +1266,16 @@ if (REPORT){
   var PROJECT = 'faaraefaigsngvuuvsyv', SERVER = 'Supabase';
   var UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
   var T = {                                                    /* all [v5] */
-    sample:  "This is a sample report for a fictional client. Enter a website address to check a real one.",
+    sample:  HC_SAMPLE ? "This is a sample report for a fictional client. Enter a website address to check a real one." : "Enter your website address and your free report appears here in about a minute.",
     running: "Checking {d}… {n} s. Most sites take under a minute.",
     loading: "Loading that report…",
     ready:   "Report for {d}, measured {when}.",
-    sampleLink: "Show the sample",
+    sampleLink: HC_SAMPLE ? "Show the sample" : "Start again",
     badUrl:  "That website address doesn’t look right. Try something like www.yourcompany.co.uk",
     failed:  "The check couldn’t be run just now. Try again in a few minutes.",
     offline: "We couldn’t reach the checker. Check your connection and try again.",
     slow:    "That site is taking too long to check. Try again in a few minutes.",
-    noLive:  "Live checks aren’t available in this view, so this is the sample report.",
+    noLive:  HC_SAMPLE ? "Live checks aren’t available in this view, so this is the sample report." : "Live checks aren’t available in this view.",
     connect: "Connect Supabase under Settings, Connectors in Claude to run live checks from this page.",
     allow:   "Live checks need your permission to use Supabase from this page. Run it again and choose Allow.",
     notFound:"That report couldn’t be found. Run the check again.",
