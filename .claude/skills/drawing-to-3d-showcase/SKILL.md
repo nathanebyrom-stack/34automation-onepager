@@ -37,7 +37,7 @@ The quality bar is section 05 "In motion" on 34automation.co.uk (the 34A-0100 va
 
 2. **Write the numbers first, as one object in code.** Every dimension, quantity, material and derived figure (mass, area, ratio, weld length) lives in one place. The sheet, the title block, the parts list, the dimension overlay, the balloons and the geometry all read from it. Derived figures are computed, never typed. Check the arithmetic by hand before drawing anything: chains must sum to the overall, fits must be real (H7/g6), threads standard, holes the right clearance size, fasteners counted.
 3. **Build to a save point early.** Get all stages working end to end in plain form, run the harness, and save a copy the moment it runs clean. Then polish. Edit in place; do not rewrite the file to change one thing.
-4. **Run the harness, read its summary, then look.** The summary is cheap; screenshots are not. Open at most five per round, three rounds at most. Across the rounds make sure you have seen: first stage desktop, last stage desktop, dimensions on, turned to 150°, mid-transition, phone last stage, phone full page, the fallback.
+4. **Run the harness, read its summary, then look.** The summary is cheap; screenshots are not. Open at most five per round, three rounds at most. First round, in this order: `desktop-s0`, the last `desktop-sN`, `desktop-turn+150`, `phone-fullpage`, `fallback-page`. Later rounds: `desktop-dims`, `phone-dims`, `desktop-midtransition`, the other turn angles. All dims and turn shots are of the last stage. The harness writes `shots/` and `report.json` into the piece folder and never changes `index.html`.
 5. **Go through `reference/review-checklist.md` line by line** against the shots and the source. Fix, re-run.
 6. **Hand over** `index.html`, the latest `shots/`, and a `NOTES.md` of ten lines at most: part, drawing number, sector, reveal, stages, key dimensions and where they agree, anything unsure or cut.
 
@@ -55,7 +55,8 @@ The quality bar is section 05 "In motion" on 34automation.co.uk (the 34A-0100 va
 | Fault | Fix |
 |---|---|
 | Screws pass through solid metal; screws shown do not equal the parts-list quantity | Cut a clearance hole for every fastener; count them |
-| A balloon points at whatever is in front once the part is turned | Raycast camera to anchor; hide balloon, leader and dot when occluded |
+| A balloon points at whatever is in front once the part is turned | Raycast camera to anchor; hide balloon, leader and dot when occluded. This applies to every part, round ones included |
+| An element set `hidden` still shows (stray balloons in a corner, dead controls in the fallback) | Add `[hidden]{display:none!important}`; a `display` rule on the element otherwise wins |
 | Exploded parts leave the stage at some turn angle | Frame the exploded stage with margin; test at 150°, -150°, 90°, -90° |
 | Dimension labels float off their feature when exploded | Show dimensions on the assembled part; hide a dimension whose line projects under 30 px |
 | Dimensions and balloons pile up on a phone | Hide balloons while Dimensions is on in portrait; stagger label heights; clamp chips 8 px inside the stage |

@@ -1,5 +1,8 @@
 // Harness for a drawing-to-3D showcase piece. Renders <piece>/index.html headless, steps every stage through window.__showcase,
-// writes PNGs to <piece>/shots/ and a report.json, and prints a short summary. Exit code 1 if any hard check fails.
+// writes PNGs to <piece>/shots/ and <piece>/report.json (it never touches index.html), and prints a short summary. Exit code 1 if any hard check fails.
+//
+// Shots, per mode (desktop, phone, reduced): s0..sN one per stage; then, all on the LAST stage: dims (overlay on), dims-turn+150,
+// turn+150, turn-150, turn+90, turn-90; midtransition (stage 0 to 1, part way); phone also fullpage. Fallback mode: page.
 //
 //   node shoot.mjs <piece-folder> [desktop|phone|fallback|reduced]
 //
@@ -49,6 +52,7 @@ if (!/NOT FOR MANUFACTURE/i.test(src)) fails.push('the sheet note "NOT FOR MANUF
 if (!/34A-\d{4}/.test(src)) fails.push("no drawing number in the form 34A-NNNN");
 if (!/aria-pressed/.test(src)) warns.push("no aria-pressed toggle found (dimensions, section cut or similar)");
 if (/\.style\.display\s*=/.test(src)) warns.push("uses style.display; the contract asks for el.hidden");
+if (/\.hidden\s*=|\shidden[\s>=]/.test(src) && !/\[hidden\]\s*\{[^}]*display\s*:\s*none\s*!important/.test(src)) fails.push("uses hidden but has no [hidden]{display:none!important} rule, so a display rule can defeat it");
 
 // ---- run
 const doc = '<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">' + src;
@@ -61,6 +65,7 @@ const MODES = {
 const browser = await chromium.launch({ args: ["--enable-unsafe-swiftshader", "--ignore-gpu-blocklist", "--use-gl=angle", "--use-angle=swiftshader"] });
 const report = { piece, bytes, when: new Date().toISOString(), static: { fails: [...fails], warns: [...warns] }, modes: {} };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const frames = (page) => page.evaluate(() => new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(() => requestAnimationFrame(r))))); // software WebGL can lag: let three frames land before a shot
 
 for (const [name, m] of Object.entries(MODES)) {
   if (only && only !== name) continue;
@@ -79,7 +84,7 @@ for (const [name, m] of Object.entries(MODES)) {
     r.blocked.push(u.slice(0, 200)); return route.abort();
   });
   await page.goto("http://showcase.local/");
-  const shot = async (tag, opts = {}) => { const f = `${name}-${tag}.png`; await page.screenshot({ path: join(shots, f), ...opts }); r.shots.push(f); };
+  const shot = async (tag, opts = {}) => { await frames(page); const f = `${name}-${tag}.png`; await page.screenshot({ path: join(shots, f), ...opts }); r.shots.push(f); };
   try { await page.waitForFunction(() => window.__showcase && window.__showcase.ready === true, null, { timeout: 20000 }); }
   catch { r.errors.push("window.__showcase.ready never became true (20 s)"); await shot("not-ready"); await ctx.close(); continue; }
   const hook = await page.evaluate(() => { const s = window.__showcase; return { mode: s.mode, stages: s.stages, fns: ["go", "setDims", "setAngle"].filter((k) => typeof s[k] === "function") }; });
@@ -93,9 +98,9 @@ for (const [name, m] of Object.entries(MODES)) {
   else {
     for (let i = 0; i < n; i++) { await page.evaluate((i) => window.__showcase.go(i, true), i); await sleep(700); await shot("s" + i); }
     await page.evaluate(() => window.__showcase.setDims(true)); await sleep(700); await shot("dims");
-    await page.evaluate(() => window.__showcase.setAngle(150)); await sleep(500); await shot("dims-turned");
-    await page.evaluate(() => { window.__showcase.setDims(false); }); await sleep(400); await shot("turned");
-    for (const a of [-150, 90, -90]) { await page.evaluate((a) => window.__showcase.setAngle(a), a); await sleep(350); await shot("turned" + a); }
+    await page.evaluate(() => window.__showcase.setAngle(150)); await sleep(600); await shot("dims-turn+150");
+    await page.evaluate(() => { window.__showcase.setDims(false); }); await sleep(500); await shot("turn+150");
+    for (const a of [-150, 90, -90]) { await page.evaluate((a) => window.__showcase.setAngle(a), a); await sleep(500); await shot("turn" + (a > 0 ? "+" : "") + a); }
     if (name !== "reduced") { await page.evaluate(() => { window.__showcase.setAngle(0); window.__showcase.go(0, true); }); await sleep(300); await page.evaluate(() => window.__showcase.go(1, false)); await sleep(650); await shot("midtransition"); }
     await page.evaluate((i) => { window.__showcase.setAngle(0); window.__showcase.go(i, true); }, n - 1); await sleep(600);
     if (name === "phone") await shot("fullpage", { fullPage: true });
@@ -103,7 +108,8 @@ for (const [name, m] of Object.entries(MODES)) {
   // measured on the page as it stands (last stage, or the fallback)
   r.layout = await page.evaluate((isPhone) => {
     const vis = (e) => { const s = getComputedStyle(e), b = e.getBoundingClientRect(); return s.display !== "none" && s.visibility !== "hidden" && +s.opacity > 0.05 && b.width > 0 && b.height > 0 && !e.closest("[hidden]"); };
-    const out = { overflowX: document.documentElement.scrollWidth - innerWidth, smallText: [], shortControls: [], tagVisible: false, canvases: document.querySelectorAll("canvas").length };
+    const out = { overflowX: document.documentElement.scrollWidth - innerWidth, smallText: [], shortControls: [], tagVisible: false, canvases: document.querySelectorAll("canvas").length, hiddenShown: [] };
+    document.querySelectorAll("[hidden]").forEach((e) => { if (getComputedStyle(e).display !== "none" && !e.parentElement.closest("[hidden]")) out.hiddenShown.push(e.tagName.toLowerCase() + (e.id ? "#" + e.id : e.className ? "." + String(e.className).split(" ")[0] : "")); });
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
     const seen = new Set();
     while (walker.nextNode()) { const t = walker.currentNode, e = t.parentElement; if (!e || !t.nodeValue.trim() || e.closest("svg,script,style") || !vis(e)) continue;
@@ -113,6 +119,7 @@ for (const [name, m] of Object.entries(MODES)) {
     return out;
   }, name === "phone");
   if (r.layout.overflowX > 1) r.errors.push(`page scrolls sideways by ${r.layout.overflowX}px`);
+  if (r.layout.hiddenShown.length) r.errors.push("elements marked hidden still display: " + [...new Set(r.layout.hiddenShown)].join(", "));
   if (!r.layout.tagVisible) r.errors.push('the tag "Demo · 34 concept part" is not visible');
   if (name === "phone" && r.layout.smallText.length) r.errors.push("text under 11 px on phone: " + r.layout.smallText.map((s) => `${s.el} ${s.px}px`).join(", "));
   if (name === "phone" && r.layout.shortControls.length) r.errors.push("controls under 44 px tall on phone: " + r.layout.shortControls.map((s) => `${s.el} ${s.h}px`).join(", "));

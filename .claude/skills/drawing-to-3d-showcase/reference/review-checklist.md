@@ -2,7 +2,11 @@
 
 Distilled from the reviews of six pieces in Sprint-3D (gearbox, enclosure, spindle, extrusion, bracket, frame). Every piece came back "pass with fixes"; these are the fixes, grouped. Use it on your own piece before hand-over and on anyone else's when reviewing.
 
-A review ends in a verdict (PASS, PASS WITH FIXES, REBUILD), blocking fixes with the line and the exact change, optional fixes, and a "Checked" list that says which screenshots were opened and which were not.
+A review ends in a verdict, blocking fixes with the line and the exact change, optional fixes, and a "Checked" list that says which screenshots were opened and which were not.
+
+- **Blocking:** anything the harness fails; anything untrue to the part (a wrong number, a wrong standard size, a quantity that does not match the model, a fastener with no hole); a balloon or label on the wrong thing; anything cropped, clipped or overlapping; a broken fallback; a house rule broken.
+- **Optional:** polish that a client would not read as a mistake (lighting, dead space, finer geometry).
+- **PASS:** no blocking fixes. **PASS WITH FIXES:** blocking fixes that are each a small, exact change. **REBUILD:** the reveal does not read as the drawing made solid, or the numbers are wrong at the root and cannot be fixed line by line.
 
 ## 1. The numbers (an engineer will look)
 
@@ -20,8 +24,9 @@ A review ends in a verdict (PASS, PASS WITH FIXES, REBUILD), blocking fixes with
 
 - [ ] The projection symbol matches the view layout (third angle: circles left, frustum right, narrow end toward the circles).
 - [ ] Hidden features a balloon points at are drawn with hidden lines.
+- [ ] An assembly drawing carries balloons that match the parts list. A detail drawing of one item (a shaft, a profile) need not; the balloons then live in the 3D exploded stage.
 - [ ] Section cutting-plane letters sit one at each end, with arrows.
-- [ ] Sheet text can be read at the desktop first stage (aim for about 4.6 mm lettering). On a phone the sheet fits the width with border and title block in frame and nothing cut mid-word.
+- [ ] Sheet text can be read at the desktop first stage: dimension and leader lettering about 4.6 mm tall in the sheet's own units on an A3 or A4 sheet (roughly 9 px on a 1440 screen). Small title-block labels may be smaller. On a phone the sheet fits the width with border and title block in frame and nothing cut mid-word.
 
 ## 3. The model
 
@@ -68,6 +73,6 @@ A review ends in a verdict (PASS, PASS WITH FIXES, REBUILD), blocking fixes with
 
 ## What the harness does and does not check
 
-`scripts/shoot.mjs` checks: file size and fragment format, external scripts, banned words, the tag and note, the test hook, console errors, blocked requests, sideways overflow, text under 11 px and controls under 44 px on a phone.
+`scripts/shoot.mjs` checks: file size and fragment format, external scripts, banned words, the tag and note, the `[hidden]` rule and hidden elements that still display, the test hook, console errors, blocked requests, sideways overflow, text under 11 px and controls under 44 px on a phone.
 
 It cannot see: numbers that disagree, wrong or overlapping balloons, cropping, labels off their feature, missing holes, wrong colours, dull lighting, or a reveal that does not read. Those need the shots opened and sections 1 to 5 worked through.
