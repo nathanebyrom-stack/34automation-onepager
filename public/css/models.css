@@ -1,0 +1,41 @@
+/* Models and more (Nathan, 24 Nov 2026): /models/, four of 34's own 3D models to turn and measure. Plan of record: docs/models-plan.md. Linked by models/index.html after site.css.
+   Each viewer (.m-view) carries .night, so the steel sits on the same dark field in Day as in Night, like 05 In motion. The button and figures are 05's (css/motion.css .v-dim, .v-d), renamed so the two pages stay apart. */
+.page.models .wrap{max-width:1180px}
+.models .intro{display:grid;gap:14px;max-width:760px;margin-bottom:clamp(32px,4vw,56px)}
+.models .intro .lbl{margin-bottom:4px}
+.m-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(22px,3vw,40px) clamp(18px,2.4vw,32px)}
+.m-card{display:grid;gap:14px;min-width:0;align-content:start}
+.m-view{position:relative;aspect-ratio:4/3;overflow:hidden;isolation:isolate;border:1px solid var(--edge);color:var(--silver);background:radial-gradient(120% 90% at 62% 48%,#17191d 0,#0E0F11 62%)}
+.m-view canvas{display:block;position:absolute;inset:0;width:100%;height:100%}
+.m-tag{position:absolute;left:14px;top:12px;z-index:1;pointer-events:none}
+.m-lead,.m-bal{position:absolute;inset:0;pointer-events:none;overflow:visible}
+.m-lead{width:100%;height:100%}
+.m-lead g{opacity:0;transition:opacity .3s}
+.m-lead g.on{opacity:1}
+.m-lead line.e{stroke:rgba(var(--gold-rgb),.5);stroke-width:1}
+.m-lead line.m{stroke:var(--gold);stroke-width:1.25}
+.m-lead polygon{fill:var(--gold)}
+.m-d{position:absolute;left:0;top:0;padding:2px 6px;border:1px solid rgba(var(--gold-rgb),.5);background:rgba(var(--shade),.9);color:var(--gold);font:500 11px/14px var(--f-mono);letter-spacing:.02em;white-space:nowrap;font-variant-numeric:tabular-nums;opacity:0;transition:opacity .3s}
+.m-d.on{opacity:1}
+.m-grab{position:absolute;inset:0;cursor:grab;touch-action:none;outline:none}
+.m-grab.on{cursor:grabbing}
+.m-grab:focus-visible{box-shadow:inset 0 0 0 2px var(--gold)}
+/* without scripts, or without WebGL, the viewer says so instead of staying black */
+.m-off{display:none;position:absolute;inset:0;place-items:center;margin:0;padding:24px;text-align:center;color:var(--steel);font-size:14px}
+html:not(.js) .m-off,.m-card.off .m-off{display:grid}
+.m-card.off canvas,.m-card.off .m-grab,.m-card.off .m-tools{display:none}
+.m-meta{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px 16px;align-items:start}
+.m-meta p{margin:6px 0 0;color:var(--steel);font-size:14px;line-height:1.5;max-width:46ch}
+.m-tools{display:flex;flex-direction:column;align-items:flex-end;gap:8px;flex:none}
+.m-dim{display:inline-flex;align-items:center;gap:10px;min-height:42px;padding:0 16px;margin:0;border:1px solid var(--gold);border-radius:0;background:rgba(var(--gold-rgb),.12);color:var(--gold);
+  font:500 12px/1 var(--f-mono);letter-spacing:.16em;text-transform:uppercase;cursor:pointer;-webkit-appearance:none;appearance:none;transition:background .25s var(--ease),color .25s var(--ease)}
+.m-dim svg{width:22px;height:12px;flex:none}
+.m-dim:hover{background:rgba(var(--gold-rgb),.24)}
+.m-dim[aria-pressed="true"]{background:var(--gold);color:var(--gold-ink)}
+.m-dim:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.m-hint{font-family:var(--f-mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--steel)}
+.m-close{margin-top:clamp(44px,6vw,80px);padding-top:clamp(28px,4vw,44px);border-top:1px solid var(--edge);display:grid;gap:18px;justify-items:start}
+.m-close p{margin:0;font-family:var(--f-disp);font-stretch:112%;font-weight:700;text-transform:uppercase;font-size:clamp(18px,1.7vw,24px);line-height:1.15;letter-spacing:.01em;color:var(--silver)}
+.m-close p em{font-style:normal;color:var(--gold);display:block}
+@media (max-width:820px){.m-grid{grid-template-columns:1fr}}
+@media (max-width:480px){.m-meta{grid-template-columns:1fr}.m-tools{flex-direction:row;align-items:center;justify-content:space-between;width:100%}.m-dim{min-height:44px}}

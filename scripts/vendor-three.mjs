@@ -16,7 +16,7 @@ import { createRequire } from "node:module";
 
 const VERSION = "0.186.1", DIR = "three-r186";
 const here = dirname(fileURLToPath(import.meta.url)), root = resolve(here, "..");
-const out = join(root, "public", "js", "vendor", DIR), user = join(root, "public", "js", "motion.js");
+const out = join(root, "public", "js", "vendor", DIR), users = ["motion.js", "models.js"].map((f) => join(root, "public", "js", f)); // every script that imports the bundle
 
 let esbuild;
 for (const from of [join(root, "package.json"), resolve(root, "..", "dollar", "tools", "package.json")]) {
@@ -25,9 +25,9 @@ for (const from of [join(root, "package.json"), resolve(root, "..", "dollar", "t
 if (!esbuild) { console.error("✖ esbuild not found. Install it here (npm i --no-save esbuild) or in ../dollar/tools."); process.exit(1); }
 
 // comments are skipped, so a note that mentions "THREE.Something" is not mistaken for a use
-const source = readFileSync(user, "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "");
+const source = users.map((u) => readFileSync(u, "utf8").replace(/\/\*[\s\S]*?\*\//g, "").replace(/^\s*\/\/.*$/gm, "")).join("\n");
 const names = [...new Set([...source.matchAll(/\bTHREE\.([A-Za-z0-9_]+)/g)].map((m) => m[1]))].sort();
-if (!names.length) { console.error("✖ no THREE.X found in public/js/motion.js"); process.exit(1); }
+if (!names.length) { console.error("✖ no THREE.X found in public/js/motion.js or models.js"); process.exit(1); }
 
 const tmp = mkdtempSync(join(tmpdir(), "34-three-"));
 try {
@@ -49,11 +49,14 @@ try {
   copyFileSync(join(pkg, "LICENSE"), join(out, "LICENSE.txt"));
   // motion.js imports the bundle by a name that carries its hash, so a browser never pairs a new motion.js with an old cached bundle (/js/* is cached for an hour)
   const hash = createHash("sha256").update(code).digest("hex").slice(0, 10);
-  const src = readFileSync(user, "utf8"), IMPORT = /from '\.\/vendor\/three-r186\/three\.min\.js(\?h=[0-9a-f]+)?'/;
-  if (!IMPORT.test(src)) throw new Error("public/js/motion.js: the Three.js import line was not found");
-  writeFileSync(user, src.replace(IMPORT, `from './vendor/${DIR}/three.min.js?h=${hash}'`));
-  console.log(`  import in motion.js stamped ?h=${hash}`);
-  const gz = (b) => gzipSync(b, { level: 9 }).length, mine = readFileSync(user);
+  const IMPORT = /from '\.\/vendor\/three-r186\/three\.min\.js(\?h=[0-9a-f]+)?'/;
+  for (const user of users) {
+    const src = readFileSync(user, "utf8");
+    if (!IMPORT.test(src)) throw new Error(`${user}: the Three.js import line was not found`);
+    writeFileSync(user, src.replace(IMPORT, `from './vendor/${DIR}/three.min.js?h=${hash}'`));
+  }
+  console.log(`  imports in motion.js and models.js stamped ?h=${hash}`);
+  const gz = (b) => gzipSync(b, { level: 9 }).length, mine = readFileSync(users[0]);
   console.log(`three@${VERSION}: ${names.length} exports → public/js/vendor/${DIR}/three.min.js`);
   console.log(`  three.min.js ${code.length} B, ${gz(code)} B gzip`);
   console.log(`  motion.js    ${mine.length} B, ${gz(mine)} B gzip`);
