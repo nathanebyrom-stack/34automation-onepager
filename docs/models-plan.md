@@ -2,7 +2,9 @@
 
 **Goal (Nathan, 24 Nov 2026):** "another section within work that says '3D models and more'" with a write-up along the lines of "These are models designed by 34 Automation to inspire you on how we can present your products, have a play around with the dimensions tab and the drag feature to see different angles", "a little hyperlink saying models and more", and "inside we place the 4 of the 3D drawings for clients to play with".
 
-**What was built.** Not shipped: the build copies `public/` only.
+**Live** on 34automation.co.uk since 25 Nov 2026 (Nathan: "Go live!!!"; main b103049, after a rebase onto the menu-and-News change). Checked on the live address with the probe: all four models, Dimensions, drag, keys, Day, no console errors. Unchecked: Safari, a real iPhone, Starlight.
+
+**What was built.** This file is not shipped: the build copies `public/` only.
 
 - `public/index.html`: a fourth `.row2` in 04 The work, pill "Demo", heading "3D models and more", his sentence tidied, link "Models and more →" to `/models/`.
 - `public/models/index.html`: an inner page (same header, footer and theme switch as `/privacy/`), four cards in a 2×2 grid (one column under 820 px), a closing line and button to `/#contact`.
