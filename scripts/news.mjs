@@ -41,10 +41,16 @@ export function loadPosts() {
     if (!meta.summary || meta.summary.length > 200) why.push("summary: 1 to 200 characters (shows on the list and in Google)");
     if (!meta.author) why.push("author: who wrote it");
     if (!body.trim()) why.push("the post has no text under the header");
+    // optional cover picture: a file in public/news/img/, 1600 x 900 (16:9). Needs a description for people who can't see it.
+    if (meta.image) {
+      if (!/^[a-z0-9]+(?:-[a-z0-9]+)*\.(webp|jpg|jpeg|png)$/.test(meta.image)) why.push("image: just the file name in public/news/img/, e.g. cnc-quote.webp");
+      else if (!existsSync(join("public/news/img", meta.image))) why.push(`image: public/news/img/${meta.image} isn't there`);
+      if (!meta.imagealt) why.push("imageAlt: describe the picture for someone who can't see it");
+    }
     if (seen.has(slug)) why.push("two posts share this file name");
     seen.add(slug);
     if (why.length) { bad.push(`  ${f}: ${why.join("; ")}`); continue; }
-    posts.push({ slug, title: meta.title, date: meta.date, summary: meta.summary, author: meta.author, html: md(body) });
+    posts.push({ slug, title: meta.title, date: meta.date, summary: meta.summary, author: meta.author, image: meta.image || "", imageAlt: meta.imagealt || "", html: md(body) });
   }
   if (bad.length) { console.error("\n✖ content/news has posts that can't be published:\n" + bad.join("\n") + "\n"); process.exit(1); }
   return posts.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : a.slug < b.slug ? -1 : 1));
@@ -84,7 +90,8 @@ export function md(src) {
   return out.join("\n").replace(/<\/blockquote>\n<blockquote>/g, "\n");
 }
 
-const card = (p, h = "h3", rv = " rv") => `<article class="ncard${rv}"><span class="lbl">${esc(longDate(p.date))} <b>·</b> ${esc(p.author)}</span><${h} class="h3"><a href="/news/${p.slug}/">${esc(p.title)}</a></${h}><p>${esc(p.summary)}</p><span class="more" aria-hidden="true">Read it</span></article>`;
+const cover = (p, cls, lazy = true) => (p.image ? `<img class="${cls}" src="/news/img/${p.image}" alt="${esc(p.imageAlt)}" width="1600" height="900"${lazy ? ' loading="lazy"' : ""} decoding="async">` : "");
+const card = (p, h = "h3", rv = " rv") => `<article class="ncard${rv}${p.image ? " has-img" : ""}">${cover(p, "ncov")}<span class="lbl">${esc(longDate(p.date))} <b>·</b> ${esc(p.author)}</span><${h} class="h3"><a href="/news/${p.slug}/">${esc(p.title)}</a></${h}><p>${esc(p.summary)}</p><span class="more" aria-hidden="true">Read it</span></article>`;
 
 // Home page strip: the three newest. Nothing at all while there are no posts.
 export function homeStrip(posts) {
@@ -127,6 +134,7 @@ export function postPage(p, posts, site) {
       <span class="lbl"><time datetime="${p.date}">${esc(longDate(p.date))}</time> <b>·</b> ${esc(p.author)}</span>
       <h1 class="h2">${esc(p.title)}</h1>
       <p class="lede">${esc(p.summary)}</p>
+      ${cover(p, "pcov", false)}
       <div class="prose">
 ${p.html}
       </div>
@@ -135,18 +143,18 @@ ${p.html}
       <p>Want this working for your firm? <a href="/#contact">Start a conversation</a>.</p>
       <nav class="pn" aria-label="More news">${older ? `<a href="/news/${older.slug}/"><span class="lbl">Older</span>${esc(older.title)}</a>` : "<span></span>"}${newer ? `<a class="nx" href="/news/${newer.slug}/"><span class="lbl">Newer</span>${esc(newer.title)}</a>` : ""}</nav>
     </div>`;
-  const ld = { "@context": "https://schema.org", "@type": "BlogPosting", headline: p.title, description: p.summary, datePublished: p.date, url, mainEntityOfPage: url, author: { "@type": "Person", name: p.author }, publisher: { "@type": "Organization", name: "34 Automation", logo: { "@type": "ImageObject", url: `${site}/icon-512.png` } }, image: `${site}/og.jpg` };
-  return { title: `${p.title} | 34 Automation`, desc: p.summary, path: `/news/${p.slug}/`, head: og(p.title, p.summary, url, site, "article") + jsonld(ld), body };
+  const ld = { "@context": "https://schema.org", "@type": "BlogPosting", headline: p.title, description: p.summary, datePublished: p.date, url, mainEntityOfPage: url, author: { "@type": "Person", name: p.author }, publisher: { "@type": "Organization", name: "34 Automation", logo: { "@type": "ImageObject", url: `${site}/icon-512.png` } }, image: p.image ? `${site}/news/img/${p.image}` : `${site}/og.jpg` };
+  return { title: `${p.title} | 34 Automation`, desc: p.summary, path: `/news/${p.slug}/`, head: og(p.title, p.summary, url, site, "article", p.image ? `${site}/news/img/${p.image}` : "") + jsonld(ld), body };
 }
 
-function og(t, d, url, site, type) {
+function og(t, d, url, site, type, img = "") {
   return `<meta property="og:type" content="${type}">
 <meta property="og:locale" content="en_GB">
 <meta property="og:site_name" content="34 Automation">
 <meta property="og:url" content="${esc(url)}">
 <meta property="og:title" content="${esc(t)}">
 <meta property="og:description" content="${esc(d)}">
-<meta property="og:image" content="${esc(site)}/og.jpg">
+<meta property="og:image" content="${esc(img || site + "/og.jpg")}">
 <meta name="twitter:card" content="summary_large_image">
 `;
 }
