@@ -1,8 +1,9 @@
 // Build: copy public/ to dist/ and fill the {{PLACEHOLDERS}} from site.config.json.
 // Production (Cloudflare branch "main", or STRICT=1) refuses to build while the company details are missing.
-import { readFileSync, writeFileSync, rmSync, cpSync, readdirSync, statSync } from "node:fs";
+import { readFileSync, writeFileSync, rmSync, cpSync, readdirSync, statSync, mkdirSync, appendFileSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, extname } from "node:path";
+import { readPosts, longDate, ld, ORG } from "./news.mjs";
 
 const c = JSON.parse(readFileSync("site.config.json", "utf8"));
 const prod = process.env.CF_PAGES_BRANCH === "main" || process.env.STRICT === "1";
@@ -84,6 +85,28 @@ function reviewsHtml() {
   return out;
 }
 
+// News (ticket OP-NEWS-01, docs in content/news/README.md). On by itself once content/news/ holds an approved post; off while it holds none.
+// Any post that breaks a rule stops the build, preview or production, so a bad post never goes live and the current one stays up.
+const NEWS_MODE = c.newsMode || "archive";
+if (NEWS_MODE !== "archive" && NEWS_MODE !== "replace") { console.error(`\n✖ site.config.json: newsMode must be "archive" or "replace", not "${NEWS_MODE}".\n`); process.exit(1); }
+const news = readPosts("content/news");
+if (news.errors.length) { console.error("\n✖ content/news/ has posts that can't be published:\n" + news.errors.join("\n") + "\n"); process.exit(1); }
+const NEWS_ENABLED = news.posts.length > 0;
+const live = NEWS_MODE === "replace" ? news.posts.slice(0, 1) : news.posts; // posts that get a page, newest first
+const retired = NEWS_MODE === "replace" ? news.posts.slice(1) : [];
+const SITE = c.siteUrl.replace(/\/$/, "");
+const postUrl = (p) => `/news/${p.slug}/`;
+const arrow = `<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M2 8h11M9 4l4 4-4 4"/></svg>`;
+const card = (p, tag, cls, hid) => `<${tag} class="${cls}"><p class="lbl">News · <time datetime="${p.date}">${longDate(p.date)}</time> · ${p.minutes} min read</p>` +
+  `<h2 class="h3"${hid ? ` id="${hid}"` : ""}><a href="${postUrl(p)}">${esc(p.title)}</a></h2><p class="nc-stand">${esc(p.standfirst)}</p>` +
+  `<a class="nc-more" href="${postUrl(p)}" aria-label="Read: ${esc(p.title)}">Read ${arrow}</a></${tag}>`;
+const NEWS_HTML = {
+  NAV: NEWS_ENABLED ? `<a class="nav-link" href="/news/">News</a>` : "",
+  FOOT: NEWS_ENABLED ? `<a href="/news/">News</a>` : "",
+  TEASER: NEWS_ENABLED ? `<section class="band news-teaser" aria-labelledby="nt-h"><div class="wrap">${card(live[0], "div", "nc", "nt-h")}</div></section>` : "",
+  SITEMAP: NEWS_ENABLED ? [`  <url><loc>${SITE}/news/</loc><lastmod>${live[0].updated}</lastmod></url>`, ...live.map((p) => `  <url><loc>${SITE}${postUrl(p)}</loc><lastmod>${p.updated}</lastmod></url>`)].join("\n") : "",
+};
+
 rmSync("dist", { recursive: true, force: true });
 cpSync("public", "dist", { recursive: true });
 const TEXT = new Set([".html", ".xml", ".txt", ".webmanifest", ".json"]);
@@ -99,10 +122,52 @@ let left = [];
     const rest = s.match(/\{\{[A-Z_]+\}\}/g);
     if (rest) left.push(`${p}: ${[...new Set(rest)].join(" ")}`);
     if (s.includes("<!--REVIEWS-->")) s = s.replace("<!--REVIEWS-->", reviewsHtml()); // after the placeholders, so a review can't inject one
+    s = s.replace(/<!--NEWS_SITEMAP-->\n?/g, () => (NEWS_HTML.SITEMAP ? NEWS_HTML.SITEMAP + "\n" : "")).replace(/<!--NEWS_(NAV|FOOT|TEASER)-->/g, (m, k) => NEWS_HTML[k]); // also after the placeholders
     writeFileSync(p, s);
   }
 })("dist");
 if (left.length) { console.error("✖ Unfilled placeholders:\n" + left.join("\n")); process.exit(1); }
+
+// News pages, from templates/news/. The template's {{PLACEHOLDERS}} are filled first, then the post goes in, so a post can't inject one.
+if (NEWS_ENABLED) {
+  const fill = (file, parts) => {
+    let s = readFileSync(file, "utf8").replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => (k in vals ? esc(vals[k]) : m));
+    const rest = s.match(/\{\{[A-Z_]+\}\}/g);
+    if (rest) { console.error(`✖ Unfilled placeholders in ${file}: ${[...new Set(rest)].join(" ")}`); process.exit(1); }
+    s = s.replace(/<!--NEWS:([A-Z]+)-->/g, (m, k) => { if (!(k in parts)) { console.error(`✖ ${file}: no value for ${m}`); process.exit(1); } return parts[k]; });
+    return s;
+  };
+  const org = { "@type": "Organization", name: ORG, url: `${SITE}/`, logo: { "@type": "ImageObject", url: `${SITE}/icon-512.png` } };
+  const closer = String(c.newsCloser || "").trim();
+  for (const p of live) {
+    const url = `${SITE}${postUrl(p)}`, image = `${SITE}${p.hero || "/og.jpg"}`;
+    const author = p.author === ORG ? { "@type": "Organization", name: ORG, url: `${SITE}/` } : { "@type": "Person", name: p.author };
+    const schema = { "@context": "https://schema.org", "@type": "BlogPosting", headline: p.title, description: p.meta_description, datePublished: p.date, dateModified: p.updated,
+      author, publisher: org, image, url, mainEntityOfPage: { "@type": "WebPage", "@id": url }, inLanguage: "en-GB" };
+    const html = fill("templates/news/post.html", {
+      TITLE: esc(p.title), DESCRIPTION: esc(p.meta_description), STANDFIRST: esc(p.standfirst), URL: esc(url), IMAGE: esc(image),
+      DATE: p.date, UPDATED: p.updated, LONGDATE: longDate(p.date), LONGUPDATED: longDate(p.updated), MINUTES: String(p.minutes), AUTHOR: esc(p.author),
+      SCHEMA: ld(schema), BODY: p.html,
+      HERO: p.hero ? `    <figure class="np-hero"><img src="${esc(p.hero)}" alt="${esc(p.hero_alt)}" width="1600" height="900" loading="lazy" decoding="async"></figure>` : "",
+      CLOSER: closer ? `      <p class="np-closer"><a href="/#contact">${esc(closer)}</a></p>` : "",
+    });
+    mkdirSync(`dist/news/${p.slug}`, { recursive: true });
+    writeFileSync(`dist/news/${p.slug}/index.html`, html);
+  }
+  const intro = String(c.newsIndexIntro || "").trim(), desc = String(c.newsIndexDescription || "").trim() || live[0].standfirst;
+  const schema = { "@context": "https://schema.org", "@type": "CollectionPage", name: "News", url: `${SITE}/news/`, description: desc, inLanguage: "en-GB",
+    isPartOf: { "@type": "WebSite", name: ORG, url: `${SITE}/` }, publisher: org,
+    mainEntity: { "@type": "ItemList", itemListElement: live.map((p, i) => ({ "@type": "ListItem", position: i + 1, url: `${SITE}${postUrl(p)}`, name: p.title })) } };
+  const rest = live.slice(1);
+  writeFileSync("dist/news/index.html", fill("templates/news/index.html", {
+    DESCRIPTION: esc(desc), URL: `${SITE}/news/`, IMAGE: `${SITE}/og.jpg`, SCHEMA: ld(schema),
+    INTRO: intro ? `    <p class="lede news-intro">${esc(intro)}</p>` : "",
+    LEAD: "    " + card(live[0], "article", "nc nc-lead"),
+    LIST: rest.length ? `    <ol class="nl" aria-label="Earlier posts">${rest.map((p) => `<li><time datetime="${p.date}">${longDate(p.date)}</time><a href="${postUrl(p)}">${esc(p.title)}</a></li>`).join("")}</ol>` : "",
+  }));
+  // replace mode: each older post's address moves to /news/ (301), so links to it still land somewhere useful
+  if (retired.length) appendFileSync("dist/_redirects", "\n# News, replace mode: older posts move to /news/\n" + retired.map((p) => `/news/${p.slug}/ /news/ 301\n/news/${p.slug} /news/ 301`).join("\n") + "\n");
+}
 // CSP guard: every inline <script> must have its sha256 in _headers, or the browser blocks it on the live site
 // (no pre-paint theme, no film class). A change to an inline script without the matching hash stops the build.
 {
@@ -120,4 +185,5 @@ if (left.length) { console.error("✖ Unfilled placeholders:\n" + left.join("\n"
   })("dist");
   if (bad.length) { console.error("✖ Inline script not allowed by the CSP in public/_headers. Add its hash to script-src:\n" + [...new Set(bad)].join("\n")); process.exit(1); }
 }
-console.log(`✓ Built dist/ (${prod ? "production" : "preview"})${missing.length ? " — company details still missing" : ""} · ${reviews.length} published review${reviews.length === 1 ? "" : "s"}`);
+const newsLine = NEWS_ENABLED ? `News on, ${NEWS_MODE}: ${live.length} post${live.length === 1 ? "" : "s"} built${retired.length ? `, ${retired.length} redirected to /news/` : ""}` : "News off (no approved posts)";
+console.log(`✓ Built dist/ (${prod ? "production" : "preview"})${missing.length ? " — company details still missing" : ""} · ${reviews.length} published review${reviews.length === 1 ? "" : "s"} · ${newsLine}${news.drafts ? ` · ${news.drafts} draft${news.drafts === 1 ? "" : "s"} skipped` : ""}`);

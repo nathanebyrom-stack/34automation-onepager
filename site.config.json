@@ -15,5 +15,10 @@
   "reportEmail": "jenny@34automation.co.uk",
   "reviewsSummary": false,
   "_reviews": "reviewsSummary: false (Edie HOLD, 11 Nov). true would show the review count and average above published reviews when there is at least one. Published reviews live in public/reviews.json.",
-  "signInApi": "https://faaraefaigsngvuuvsyv.supabase.co/functions/v1/brand-builder"
+  "signInApi": "https://faaraefaigsngvuuvsyv.supabase.co/functions/v1/brand-builder",
+  "newsMode": "archive",
+  "newsIndexIntro": "",
+  "newsIndexDescription": "",
+  "newsCloser": "",
+  "_news": "News (content/news/README.md). There is no on/off switch: News turns on by itself when content/news/ holds at least one approved post, and stays off (no header or footer link, no /news/, no home teaser, nothing in the sitemap) while it holds none. newsMode: \"archive\" builds every approved post and lists them at /news/; \"replace\" builds only the newest, 301s each older slug to /news/ and leaves it out of the sitemap. newsIndexIntro: the line under the News heading at /news/ (left out while empty). newsIndexDescription: the meta description of /news/ (the newest post's standfirst while empty). newsCloser: the closing line at the end of each post, linked to /#contact (left out while empty). The three copy lines need approved copy from Maya or Scott."
 }
