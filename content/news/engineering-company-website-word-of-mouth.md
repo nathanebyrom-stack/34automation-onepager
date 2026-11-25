@@ -1,6 +1,6 @@
 ---
 title: Word of mouth still ends up on your website
-date: 2026-11-30
+date: 2026-11-25
 author: 34 Automation
 summary: Word of mouth gets you recommended. Your website decides whether that turns into an enquiry. Here's what technical buyers look for, and a half-hour check you can run this week.
 ---
