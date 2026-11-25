@@ -3,6 +3,8 @@
 import { readFileSync, writeFileSync, rmSync, cpSync, readdirSync, statSync } from "node:fs";
 import { createHash } from "node:crypto";
 import { join, extname } from "node:path";
+import { mkdirSync } from "node:fs";
+import { loadPosts, homeStrip, listPage, postPage, fill } from "./news.mjs";
 
 const c = JSON.parse(readFileSync("site.config.json", "utf8"));
 const prod = process.env.CF_PAGES_BRANCH === "main" || process.env.STRICT === "1";
@@ -84,6 +86,8 @@ function reviewsHtml() {
   return out;
 }
 
+const posts = loadPosts(); // content/news/*.md (scripts/news.mjs); a broken post stops the build
+
 rmSync("dist", { recursive: true, force: true });
 cpSync("public", "dist", { recursive: true });
 const TEXT = new Set([".html", ".xml", ".txt", ".webmanifest", ".json"]);
@@ -99,10 +103,24 @@ let left = [];
     const rest = s.match(/\{\{[A-Z_]+\}\}/g);
     if (rest) left.push(`${p}: ${[...new Set(rest)].join(" ")}`);
     if (s.includes("<!--REVIEWS-->")) s = s.replace("<!--REVIEWS-->", reviewsHtml()); // after the placeholders, so a review can't inject one
+    if (s.includes("<!--NEWS-->")) s = s.replace("<!--NEWS-->", () => homeStrip(posts)); // same reason: after the placeholders
     writeFileSync(p, s);
   }
 })("dist");
 if (left.length) { console.error("✖ Unfilled placeholders:\n" + left.join("\n")); process.exit(1); }
+// News pages: the shared template gets its placeholders first, then each page's own words go in (so a post can't fill a placeholder).
+{
+  const site = vals.SITE_URL;
+  const tpl = readFileSync("templates/news.html", "utf8").replace(/\{\{([A-Z_]+)\}\}/g, (m, k) => (k in vals ? esc(vals[k]) : m));
+  const rest = tpl.match(/\{\{[A-Z_]+\}\}/g);
+  if (rest) { console.error("✖ Unfilled placeholders in templates/news.html: " + [...new Set(rest)].join(" ")); process.exit(1); }
+  const write = (pg) => { mkdirSync(join("dist", pg.path), { recursive: true }); writeFileSync(join("dist", pg.path, "index.html"), fill(tpl, pg)); };
+  write(listPage(posts, site));
+  for (const p of posts) write(postPage(p, posts, site));
+  const urls = [`  <url><loc>${site}/news/</loc>${posts[0] ? `<lastmod>${posts[0].date}</lastmod>` : ""}</url>`, ...posts.map((p) => `  <url><loc>${site}/news/${p.slug}/</loc><lastmod>${p.date}</lastmod></url>`)];
+  const sm = readFileSync("dist/sitemap.xml", "utf8");
+  writeFileSync("dist/sitemap.xml", sm.replace("</urlset>", urls.join("\n") + "\n</urlset>"));
+}
 // CSP guard: every inline <script> must have its sha256 in _headers, or the browser blocks it on the live site
 // (no pre-paint theme, no film class). A change to an inline script without the matching hash stops the build.
 {
@@ -120,4 +138,4 @@ if (left.length) { console.error("✖ Unfilled placeholders:\n" + left.join("\n"
   })("dist");
   if (bad.length) { console.error("✖ Inline script not allowed by the CSP in public/_headers. Add its hash to script-src:\n" + [...new Set(bad)].join("\n")); process.exit(1); }
 }
-console.log(`✓ Built dist/ (${prod ? "production" : "preview"})${missing.length ? " — company details still missing" : ""} · ${reviews.length} published review${reviews.length === 1 ? "" : "s"}`);
+console.log(`✓ Built dist/ (${prod ? "production" : "preview"})${missing.length ? " — company details still missing" : ""} · ${reviews.length} published review${reviews.length === 1 ? "" : "s"} · ${posts.length} news post${posts.length === 1 ? "" : "s"}`);

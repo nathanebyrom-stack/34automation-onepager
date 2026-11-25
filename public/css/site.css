@@ -600,3 +600,66 @@ dialog.vid[open]::backdrop{animation:vid-fade .32s ease-out}
 .rc-spec .lbl{margin:0 0 8px;color:var(--gold)}
 .rc-spec p:last-child{margin:0;color:var(--steel);max-width:80ch}
 @media (max-width:760px){.rc-grid{grid-template-columns:1fr}}
+
+/* Drop-down menu (js/menu.js, 25 Nov 2026): every section and page, on screens where the header can't show them all (up to 1280px) */
+.mbtn{display:none;flex:none;align-items:center;justify-content:center;width:40px;height:40px;margin-right:-8px;padding:0;background:none;border:0;color:var(--silver);cursor:pointer}
+.mbtn svg{width:20px;height:14px;overflow:visible}
+.mbtn path{transition:transform .25s var(--ease),opacity .2s;transform-origin:10px 7px}
+.mbtn[aria-expanded="true"] .l1{transform:translateY(6px) rotate(45deg)}
+.mbtn[aria-expanded="true"] .l2{opacity:0}
+.mbtn[aria-expanded="true"] .l3{transform:translateY(-6px) rotate(-45deg)}
+.mnav{position:absolute;left:0;right:0;top:100%;background:rgba(var(--shade),.97);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--edge);border-top:1px solid var(--edge);max-height:calc(100svh - 72px);overflow-y:auto;overscroll-behavior:contain}
+.mnav[hidden]{display:none}
+.mnav ul{list-style:none;margin:0 auto;max-width:var(--max);padding:8px var(--gr) 18px var(--gl)}
+.mnav li+li{border-top:1px solid var(--edge)}
+.mnav a{display:flex;align-items:center;justify-content:space-between;min-height:52px;font-family:var(--f-mono);font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--silver);text-decoration:none}
+.mnav a::after{content:"\2192";color:var(--steel);transition:transform .2s var(--ease),color .2s}
+.mnav a:hover::after,.mnav a:focus-visible::after{color:var(--gold);transform:translateX(3px)}
+.mnav a[aria-current="page"]{color:var(--gold)}
+.mnav a.go{color:var(--gold)}
+.hdr.menu-open{background:rgba(var(--shade),.97);border-color:var(--edge)}
+@media (max-width:1280px){.mbtn{display:inline-flex}.nav a:not(.btn):not(.ca){display:none}}
+@media (min-width:1281px){.mnav{display:none!important}.nav{gap:22px}}
+@media (max-width:374px){.mbtn{width:34px;margin-right:-6px}}
+@media (prefers-reduced-motion:reduce){.mbtn path,.mnav a::after{transition:none}}
+
+/* News (scripts/news.mjs, 25 Nov 2026): /news/, /news/<post>/ and the home page's Latest strip */
+.ngrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:clamp(16px,2vw,28px)}
+.ngrid.list{grid-template-columns:repeat(2,minmax(0,1fr));margin-top:clamp(28px,4vw,48px)}
+.ncard{position:relative;display:flex;flex-direction:column;gap:12px;padding:22px 22px 24px;background:var(--plate);border:1px solid var(--edge);transition:border-color .25s var(--ease)}
+.ncard:hover,.ncard:focus-within{border-color:var(--gold)}
+.ncard .lbl b{color:var(--gold);font-weight:400}
+.ncard .h3 a{color:var(--silver);text-decoration:none}
+.ncard .h3 a::after{content:"";position:absolute;inset:0} /* the whole card is the link */
+.ncard p{color:var(--steel);margin:0}
+.ncard .more{margin-top:auto;padding-top:6px;font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold)}
+.ncard .more::after{content:" \2192"}
+.news-strip .head .row .btn{align-self:end}
+.news .lede{color:var(--steel);max-width:62ch;margin:0}
+.news .empty{margin-top:32px}
+.news .crumb{margin-bottom:18px}
+.news .crumb a{font-family:var(--f-mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--steel);text-decoration:none}
+.news .crumb a::before{content:"\2190  "}
+.news .crumb a:hover{color:var(--gold)}
+.post .lbl b{color:var(--gold);font-weight:400}
+.post>.lede{font-size:clamp(17px,1.6vw,19px);color:var(--silver);margin:0 0 28px}
+.post .prose{font-size:17px;line-height:1.65}
+.post .prose p{margin:0}
+.post .prose img{display:block;max-width:100%;height:auto;margin:10px 0;border:1px solid var(--edge)}
+.post .prose blockquote{margin:6px 0;padding:4px 0 4px 18px;border-left:2px solid var(--gold);color:var(--silver)}
+.post .prose ol{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.post .prose code{font-family:var(--f-mono);font-size:.9em;background:var(--plate);padding:1px 5px}
+.post-end{margin-top:clamp(40px,6vw,72px);padding-top:24px;border-top:1px solid var(--edge);display:flex;flex-direction:column;gap:22px}
+.post-end p{margin:0;color:var(--steel)}
+.post-end p a{color:var(--gold)}
+.pn{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.pn a{display:flex;flex-direction:column;gap:6px;color:var(--silver);text-decoration:none;padding:16px;border:1px solid var(--edge)}
+.pn a:hover{border-color:var(--gold)}
+.pn a.nx{text-align:right;grid-column:2}
+@media (max-width:1000px){.ngrid{grid-template-columns:repeat(2,minmax(0,1fr))}.ngrid>.ncard:nth-child(3){display:none}.ngrid.list>.ncard:nth-child(3){display:flex}}
+@media (max-width:640px){.ngrid,.ngrid.list{grid-template-columns:1fr}.ngrid>.ncard:nth-child(3){display:flex}.pn{grid-template-columns:1fr}.pn a.nx{grid-column:auto}}
+/* the longer headline (25 Nov 2026: "Websites and marketing for UK engineering firms."): a size down on desktop so it holds four lines, not six */
+@media (min-width:821px){.hero h1{font-size:clamp(34px,5vw,76px)}}
+@media (min-width:821px) and (max-height:860px){.hero h1{font-size:clamp(34px,min(5vw,7.4vh),76px)}}
+@media (max-width:360px){.hero h1{font-size:30px}}
+.nav a{white-space:nowrap}

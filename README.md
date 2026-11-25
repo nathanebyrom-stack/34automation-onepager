@@ -14,7 +14,9 @@ functions/api/
   enquiry.js         POST /api/enquiry: spam check, email to 34, acknowledgement to visitor
   config.js          GET /api/config: hands the page the Turnstile site key
 site.config.json     company details and URLs, filled into the pages at build time
-scripts/build.mjs    public/ → dist/, fills {{PLACEHOLDERS}}, blocks production if details are missing
+content/news/        News posts, one Markdown file each → /news/ and /news/<file-name>/ (how: docs/news-guide.md)
+templates/news.html  the page shell the News pages are built into
+scripts/build.mjs    public/ → dist/, fills {{PLACEHOLDERS}}, builds News (scripts/news.mjs), blocks production if details are missing
 ```
 
 ## Old GitHub Pages link
