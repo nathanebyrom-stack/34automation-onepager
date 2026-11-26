@@ -669,3 +669,23 @@ dialog.vid[open]::backdrop{animation:vid-fade .32s ease-out}
 .ncard .ncov{display:block;width:calc(100% + 44px);max-width:none;margin:0 -22px 6px;aspect-ratio:16/9;height:auto;object-fit:cover;border-bottom:1px solid var(--edge)}
 .post .pcov{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;margin:0 0 32px;border:1px solid var(--edge)}
 .post .h2{font-size:clamp(24px,6.4vw,48px);overflow-wrap:break-word;hyphens:auto}
+
+/* Header tabs (Nathan, 26 Nov 2026): gold and silver in turn, after the logo's gold 34 and silver AUTOMATION.
+   Mood is the last tab: a drop-down holding the Night / Day / Starlight switch. js/site.js closes it after a pick, a click outside or Escape.
+   Inside the drop-down the phone carousel (max-width 700px above) is off: all three moods are listed. */
+.nav a.g{color:var(--gold)}
+.nav a.s,.nav .s>summary{color:var(--silver)}
+.nav a.g:hover,.nav a.g:focus-visible{color:var(--gold-hi)}
+.nav a.s:hover,.nav a.s:focus-visible,.nav .s>summary:hover,.nav .s[open]>summary{color:var(--gold)}
+.mood{position:relative;flex:none}
+.mood>summary{list-style:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;padding:11px 0;font-family:var(--f-mono);font-size:12px;letter-spacing:.14em;text-transform:uppercase;white-space:nowrap;transition:color .2s}
+.mood>summary::-webkit-details-marker{display:none}
+.mood>summary::after{content:"";width:5px;height:5px;border-right:1.5px solid currentColor;border-bottom:1.5px solid currentColor;transform:translateY(-2px) rotate(45deg);transition:transform .2s var(--ease)}
+.mood[open]>summary::after{transform:translateY(1px) rotate(-135deg)}
+.nav .mood .mode{display:flex;flex-direction:column;position:absolute;right:0;top:calc(100% + 6px);min-width:170px;background:rgba(var(--shade),.97);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);box-shadow:0 12px 32px rgba(0,0,0,.35);z-index:32}
+.nav .mood .mode button{display:flex;width:100%;padding:11px 14px;gap:10px}
+.nav .mood .mode button+button{border-left:0;border-top:1px solid var(--edge)}
+.nav .mood .mode button::after{content:none}
+@media (min-width:821px) and (max-width:1180px){.mood>summary{font-size:11px;letter-spacing:.1em;padding:10px 0}}
+@media (max-width:600px){.mood>summary{font-size:clamp(10px,2.6vw,12px);letter-spacing:.06em;padding:9px 0;gap:6px}}
+@media (max-width:374px){.mood>summary{letter-spacing:.04em}}
