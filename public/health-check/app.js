@@ -480,6 +480,7 @@ function goTo(id){
   if (needSt){ state.status = 'all'; document.querySelectorAll('#schips .chip').forEach(function(b){ b.setAttribute('aria-pressed', String(b.getAttribute('data-status')==='all')); }); }
   if (needCat) setCat('all'); else if (needSt) render();
   var el = $('m-'+id); if (!el) return;
+  showCard(deck.ids.indexOf(id));
   el.scrollIntoView({behavior: reduce?'auto':'smooth', block:'start'});
   el.classList.add('flash'); setTimeout(function(){el.classList.remove('flash');}, 1600);
   var h = el.querySelector('h3'); h.setAttribute('tabindex','-1'); h.focus({preventScroll:true});
@@ -534,7 +535,7 @@ function card(m){
 function render(){
   var list = $('list'), out = '';
   var ms = M.filter(function(m){ return (state.cat==='all' || m.cat===state.cat) && (state.status==='all' || statusOf(m.score).k===state.status); });
-  if (!ms.length){ list.innerHTML = '<p class="empty-state">'+esc(COPY.noMatch)+'</p>'; return; }
+  if (!ms.length){ deck.ids = []; list.classList.remove('stack'); list.innerHTML = '<p class="empty-state">'+esc(COPY.noMatch)+'</p>'; return; }
   if (state.sort === 'first'){
     ms = ms.slice().sort(function(a,b){ return (a.score == null) - (b.score == null) || a.score-b.score || a.n-b.n; });   /* v5 · Not measured last */
     out = '<div class="flat"><div class="sec-h"><div><h2>Fix first</h2><p>Lowest scores at the top.</p></div></div>' + ms.map(card).join('') + '</div>';
@@ -545,7 +546,29 @@ function render(){
       out += '<section class="group" style="--cc:'+c.cc+'" aria-labelledby="g-'+c.id+'"><div class="ghead"><div><h2 id="g-'+c.id+'">'+esc(c.name)+'</h2><span class="gsc">'+(s == null ? esc(NM.label) : s+' / 100')+' · '+g.length+' check'+(g.length>1?'s':'')+'</span>'+(c.blurb ? '<p class="gblurb">'+esc(c.blurb)+'</p>' : '')+'</div>'+baSvg(c.id)+'</div><div class="gbody">'+g.map(card).join('')+'</div></section>';
     });
   }
-  list.innerHTML = out;
+  list.innerHTML = deckNav(false) + out + deckNav(true);
+  var ids = [].map.call(list.querySelectorAll('.metric'), function(el){ return el.id.slice(2); });
+  var same = ids.join() === deck.ids.join();   /* same cards (e.g. Add all Fails): keep the place; new filter or sort: back to the first */
+  deck.ids = ids; list.classList.toggle('stack', ids.length > 1);
+  showCard(same ? deck.i : 0);
+}
+
+/* ---------- deck: one check at a time, the rest stacked behind, arrows to page (Nathan, 26 Nov 2026) ---------- */
+var deck = {ids: [], i: 0};
+function deckNav(end){
+  return '<div class="deck-nav'+(end ? ' end' : '')+'" role="group" aria-label="Checks">'
+    + '<button type="button" class="deck-btn" data-deck="-1" aria-label="Previous check">'+IC.arrow+'</button>'
+    + '<p class="deck-pos"'+(end ? '' : ' aria-live="polite"')+'></p>'
+    + '<button type="button" class="deck-btn" data-deck="1" aria-label="Next check">'+IC.arrow+'</button></div>';
+}
+function showCard(i, dir){
+  var list = $('list'), n = deck.ids.length; if (!n) return;
+  deck.i = (i % n + n) % n;   /* wraps round: next on the last card goes back to the first */
+  var cur = $('m-' + deck.ids[deck.i]);
+  list.querySelectorAll('.metric').forEach(function(el){ el.hidden = el !== cur; });
+  list.querySelectorAll('.group').forEach(function(g){ g.hidden = !g.contains(cur); });
+  list.querySelectorAll('.deck-pos').forEach(function(p){ p.textContent = (deck.i + 1) + ' of ' + n; });
+  if (dir && !reduce){ cur.classList.remove('deck-in'); void cur.offsetWidth; cur.style.setProperty('--dx', (dir * 28) + 'px'); cur.classList.add('deck-in'); }
 }
 
 /* ---------- fix list: names only, no prices, no totals (12) ---------- */
@@ -599,6 +622,11 @@ function copyFix(){
 }
 
 /* ---------- events ---------- */
+$('list').addEventListener('click', function(e){
+  var b = e.target.closest('[data-deck]'); if (!b) return;
+  var d = +b.getAttribute('data-deck'); showCard(deck.i + d, d);
+  if ($('list').getBoundingClientRect().top < 0) $('list').scrollIntoView({behavior: reduce?'auto':'smooth', block:'start'});
+});
 $('list').addEventListener('change', function(e){
   var id = e.target.getAttribute('data-pick'); if (!id) return;
   if (e.target.checked) state.picks[id] = true; else delete state.picks[id];
