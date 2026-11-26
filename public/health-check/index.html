@@ -309,6 +309,31 @@ body[data-bg="a"] .dialcard{box-shadow:0 30px 70px -30px rgba(0,0,0,.9),0 0 0 1p
 .gbody .metric{border:2px solid #000;border-left:8px solid var(--cc);border-radius:12px;background:#fff}
 .gbody .metric + .metric{margin-top:12px}
 .metric.flash{background:#FFF7D6}
+/* deck: one check at a time, the next ones peeking out underneath, gold arrows to page (Nathan, 26 Nov 2026) */
+#list{scroll-margin-top:90px}
+#list [hidden]{display:none}
+#list .metric{margin:0}
+#list.stack .metric{margin-bottom:22px;box-shadow:0 12px 0 -5px #fff,0 12px 0 -3px #000,0 24px 0 -12px #fff,0 24px 0 -10px #000}
+#list:not(.stack) .deck-nav{display:none}
+.deck-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
+.deck-nav.end{margin:4px 0 0}
+.deck-pos{margin:0;font:600 15px/1 var(--f-mono);color:var(--graphite)}
+.deck-btn{appearance:none;width:48px;height:48px;border-radius:50%;border:2px solid var(--gold);background:var(--gold);display:grid;place-items:center;cursor:pointer;transition:transform .15s,background .15s}
+.deck-btn:hover{background:var(--gold-hover);border-color:var(--gold-hover);transform:translateY(-2px)}
+.deck-btn svg{width:22px;height:22px}
+.deck-btn[data-deck="-1"] svg{transform:scaleX(-1)}
+.deck-in{animation:deckIn .32s cubic-bezier(.2,.7,.2,1)}
+@keyframes deckIn{from{opacity:0;transform:translateX(var(--dx,0))}}
+/* fix list level with the area box, top and bottom (Nathan, 26 Nov 2026): both columns stretch to the taller one.
+   top margin = arrow row (48px + 14px gap); bottom margin = box margin 34px + 4px gap + 48px arrows */
+@media (min-width:1100px){
+  .board:has(#list.stack){align-items:stretch}
+  .board:has(#list.stack) .fixlist{margin:62px 0 86px;max-height:none}
+  #list.stack{display:flex;flex-direction:column}
+  #list.stack>.group:not([hidden]),#list.stack>.flat{flex:1 0 auto;display:flex;flex-direction:column}
+  #list.stack>.flat{margin-bottom:12px}
+  #list.stack .gbody,#list.stack .flat .metric:not([hidden]){flex:1 0 auto}
+}
 .mhead{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;margin-bottom:14px}
 .mnum{width:40px;height:40px;border-radius:50%;border:2.5px solid var(--graphite);display:grid;place-items:center;font:700 15px/1 var(--f-mono);background:#fff}
 .mcat{font:600 11px/1.2 var(--f-mono);text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted);margin:0 0 3px;display:flex;align-items:center;gap:6px}
@@ -601,6 +626,7 @@ footer :focus-visible{outline-color:#fff}
   .fixlist{background:#fff;color:#000;border:2px solid #000;break-inside:avoid}
   .fixlist h2,.fixlist p{color:#000!important}
   .metric{break-inside:avoid}
+  #list [hidden]{display:block!important} .deck-nav{display:none!important} #list .metric{box-shadow:none!important;margin-bottom:14px}
   footer{background:#fff;color:#000;padding-bottom:20px}
   footer h2{color:#000}
 }
@@ -828,8 +854,8 @@ body[data-bg="c"] .runbox{background:rgba(255,255,255,.3)}
         <p class="lede-legend" data-copy="introLegend"></p>
         <div class="btns">
           <a class="btn gold" id="drawBtn" href="#drawing">See the marked-up site ↓</a>
-          <button class="btn" type="button" id="fixFirstBtn">Show what to fix first</button>
-          <a class="btn" href="#compare" data-copy="heroCompareBtn"></a>
+          <button class="btn gold" type="button" id="fixFirstBtn">Show what to fix first</button>
+          <a class="btn gold" href="#compare" data-copy="heroCompareBtn"></a>
         </div>
       </div>
       <div class="dialcard" aria-labelledby="dialLabel">
