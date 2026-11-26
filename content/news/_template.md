@@ -3,6 +3,8 @@ title: The headline, as it should appear on the page and in Google
 date: 2026-12-01
 author: Scott
 summary: One or two sentences, under 200 characters. Shows on the News list, the home page and in Google results.
+image: your-picture.webp
+imageAlt: Describe the cover picture for someone who can't see it
 draft: true
 ---
 
