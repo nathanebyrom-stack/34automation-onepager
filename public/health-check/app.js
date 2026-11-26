@@ -538,20 +538,49 @@ function render(){
   if (!ms.length){ deck.ids = []; list.classList.remove('stack'); list.innerHTML = '<p class="empty-state">'+esc(COPY.noMatch)+'</p>'; return; }
   if (state.sort === 'first'){
     ms = ms.slice().sort(function(a,b){ return (a.score == null) - (b.score == null) || a.score-b.score || a.n-b.n; });   /* v5 · Not measured last */
-    out = '<div class="flat"><div class="sec-h"><div><h2>Fix first</h2><p>Lowest scores at the top.</p></div></div>' + ms.map(card).join('') + '</div>';
+    out = '<div class="flat">' + ms.map(card).join('') + '</div>';
   } else {
     CATS.forEach(function(c){
       var g = ms.filter(function(m){return m.cat===c.id;}); if (!g.length) return;
-      var s = catScore(c.id);
-      out += '<section class="group" style="--cc:'+c.cc+'" aria-labelledby="g-'+c.id+'"><div class="ghead"><div><h2 id="g-'+c.id+'">'+esc(c.name)+'</h2><span class="gsc">'+(s == null ? esc(NM.label) : s+' / 100')+' · '+g.length+' check'+(g.length>1?'s':'')+'</span>'+(c.blurb ? '<p class="gblurb">'+esc(c.blurb)+'</p>' : '')+'</div>'+baSvg(c.id)+'</div><div class="gbody">'+g.map(card).join('')+'</div></section>';
+      out += groupHtml(c, g.length, g.map(card).join(''));
     });
   }
   list.innerHTML = deckNav(false) + out + deckNav(true);
   var ids = [].map.call(list.querySelectorAll('.metric'), function(el){ return el.id.slice(2); });
   var same = ids.join() === deck.ids.join();   /* same cards (e.g. Add all Fails): keep the place; new filter or sort: back to the first */
   deck.ids = ids; list.classList.toggle('stack', ids.length > 1);
+  sizeDeck();
   showCard(same ? deck.i : 0);
 }
+function groupHtml(c, n, body){
+  var s = catScore(c.id);
+  return '<section class="group" style="--cc:'+c.cc+'" aria-labelledby="g-'+c.id+'"><div class="ghead"><div><h2 id="g-'+c.id+'">'+esc(c.name)+'</h2><span class="gsc">'+(s == null ? esc(NM.label) : s+' / 100')+' · '+n+' check'+(n>1?'s':'')+'</span>'+(c.blurb ? '<p class="gblurb">'+esc(c.blurb)+'</p>' : '')+'</div>'+baSvg(c.id)+'</div><div class="gbody">'+body+'</div></section>';
+}
+
+/* ---------- deck size: one card size for every check, every filter and both sorts (Nathan, 26 Nov 2026) ----------
+   Draws every check twice (as it stands, and as a Fail with its full fix and market rate, which is the longest it can be,
+   like "Chat and booking") at the narrower in-area width, takes the tallest, and gives every card that height.
+   Area headers get the tallest header's height. Re-measured when the list width changes or the fonts arrive. */
+function sizeDeck(){
+  var list = $('list'); if (!list || !list.offsetWidth) return;
+  var probe = document.createElement('div'); probe.className = 'deck-probe'; probe.setAttribute('aria-hidden', 'true');
+  probe.innerHTML = CATS.map(function(c){
+    var g = M.filter(function(m){ return m.cat === c.id; });
+    return groupHtml(c, 2, g.map(function(m){ return card(m) + card(Object.assign({}, m, {score: 0})); }).join(''));
+  }).join('');
+  list.appendChild(probe);
+  var ch = 0, gh = 0;
+  probe.querySelectorAll('.metric').forEach(function(el){ ch = Math.max(ch, Math.ceil(el.getBoundingClientRect().height)); });
+  probe.querySelectorAll('.ghead').forEach(function(el){ gh = Math.max(gh, Math.ceil(el.getBoundingClientRect().height)); });
+  list.removeChild(probe);   /* gone before anything else runs, so its repeated ids never meet the real cards */
+  if (ch){ list.style.setProperty('--card-h', ch + 'px'); list.style.setProperty('--ghead-h', gh + 'px'); }
+}
+if (window.ResizeObserver){
+  var deckW = 0;
+  new ResizeObserver(function(en){ var el = en[0].target, w = el.offsetWidth;
+    if (el.isConnected && w && w !== deckW){ deckW = w; requestAnimationFrame(sizeDeck); } }).observe($('list'));
+}
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(sizeDeck);
 
 /* ---------- deck: one check at a time, the rest stacked behind, arrows to page (Nathan, 26 Nov 2026) ---------- */
 var deck = {ids: [], i: 0};
