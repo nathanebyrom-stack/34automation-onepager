@@ -310,11 +310,19 @@ body[data-bg="a"] .dialcard{box-shadow:0 30px 70px -30px rgba(0,0,0,.9),0 0 0 1p
 .gbody .metric + .metric{margin-top:12px}
 .metric.flash{background:#FFF7D6}
 /* deck: one check at a time, the next ones peeking out underneath, gold arrows to page (Nathan, 26 Nov 2026) */
-#list{scroll-margin-top:90px}
-#list [hidden]{display:none}
-#list .metric{margin:0}
-#list.stack .metric{margin-bottom:22px;box-shadow:0 12px 0 -5px #fff,0 12px 0 -3px #000,0 24px 0 -12px #fff,0 24px 0 -10px #000}
-#list:not(.stack) .deck-nav{display:none}
+#list{scroll-margin-top:90px;position:relative}
+#list [hidden]{display:none!important}   /* beats #list .metric{display:flex}; the print rule further down still shows them all */
+/* one card size for every check (--card-h and --ghead-h set by sizeDeck() in app.js); the coloured boxes fill the card (Nathan, 26 Nov 2026) */
+#list .metric{margin:0 0 22px;height:var(--card-h,auto);overflow-y:auto;display:flex;flex-direction:column}
+#list .metric>.ffc{flex:1 0 auto}
+#list .metric>.addfix{align-self:flex-start}
+#list .ghead{min-height:var(--ghead-h,0)}
+@media (max-width:699px){#list .ffc{align-content:start}}
+.deck-probe{position:absolute;left:0;right:0;top:0;visibility:hidden;pointer-events:none}
+#list .deck-probe .metric{height:auto}
+#list .deck-probe .ghead{min-height:0}
+#list.stack .metric{box-shadow:0 12px 0 -5px #fff,0 12px 0 -3px #000,0 24px 0 -12px #fff,0 24px 0 -10px #000}
+#list:not(.stack) .deck-nav{visibility:hidden}   /* kept in the layout so the box never moves */
 .deck-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:0 0 14px}
 .deck-nav.end{margin:4px 0 0}
 .deck-pos{margin:0;font:600 15px/1 var(--f-mono);color:var(--graphite)}
@@ -324,15 +332,13 @@ body[data-bg="a"] .dialcard{box-shadow:0 30px 70px -30px rgba(0,0,0,.9),0 0 0 1p
 .deck-btn[data-deck="-1"] svg{transform:scaleX(-1)}
 .deck-in{animation:deckIn .32s cubic-bezier(.2,.7,.2,1)}
 @keyframes deckIn{from{opacity:0;transform:translateX(var(--dx,0))}}
-/* fix list level with the area box, top and bottom (Nathan, 26 Nov 2026): both columns stretch to the taller one.
-   top margin = arrow row (48px + 14px gap); bottom margin = box margin 34px + 4px gap + 48px arrows */
+/* fix list exactly the size of the card box, top and bottom (Nathan, 26 Nov 2026). The cards set the height; the panel never does
+   (contain:size), and scrolls inside if its list grows. top margin = arrow row (48px + 14px gap); bottom margin = 34px + 4px gap + 48px arrows */
 @media (min-width:1100px){
-  .board:has(#list.stack){align-items:stretch}
-  .board:has(#list.stack) .fixlist{margin:62px 0 86px;max-height:none}
-  #list.stack{display:flex;flex-direction:column}
-  #list.stack>.group:not([hidden]),#list.stack>.flat{flex:1 0 auto;display:flex;flex-direction:column}
-  #list.stack>.flat{margin-bottom:12px}
-  #list.stack .gbody,#list.stack .flat .metric:not([hidden]){flex:1 0 auto}
+  .board:has(#list .deck-nav){align-items:stretch}
+  .board:has(#list .deck-nav) .fixlist{margin:62px 0 86px;max-height:none;contain:size}
+  #list{display:flex;flex-direction:column}
+  #list>.flat{margin-bottom:12px}
 }
 .mhead{display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:start;margin-bottom:14px}
 .mnum{width:40px;height:40px;border-radius:50%;border:2.5px solid var(--graphite);display:grid;place-items:center;font:700 15px/1 var(--f-mono);background:#fff}
@@ -626,7 +632,7 @@ footer :focus-visible{outline-color:#fff}
   .fixlist{background:#fff;color:#000;border:2px solid #000;break-inside:avoid}
   .fixlist h2,.fixlist p{color:#000!important}
   .metric{break-inside:avoid}
-  #list [hidden]{display:block!important} .deck-nav{display:none!important} #list .metric{box-shadow:none!important;margin-bottom:14px}
+  #list [hidden]{display:block!important} .deck-nav{display:none!important} #list .metric{box-shadow:none!important;margin-bottom:14px;height:auto!important;overflow:visible!important}
   footer{background:#fff;color:#000;padding-bottom:20px}
   footer h2{color:#000}
 }
