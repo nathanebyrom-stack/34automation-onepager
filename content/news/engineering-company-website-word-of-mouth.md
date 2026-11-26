@@ -1,7 +1,7 @@
 ---
 title: Word of mouth still ends up on your website
 date: 2026-11-25
-author: 34 Automation
+author: 34 Scott (news editor)
 summary: Word of mouth gets you recommended. Your website decides whether that turns into an enquiry. Here's what technical buyers look for, and a half-hour check you can run this week.
 ---
 If you run an engineering firm, there's a good chance your best work comes through word of mouth. Someone you did a decent job for mentions you to someone else, and the phone rings.
