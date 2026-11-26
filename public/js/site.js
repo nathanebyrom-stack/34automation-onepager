@@ -15,15 +15,22 @@
     }
     var PH=matchMedia('(max-width:700px)'); // phones: the switch is a carousel, one button that moves on to the next mode (css: max-width 700px)
     function nx(b){var i=bs.indexOf(b);return bs[(i+1)%bs.length];}
-    function lab(){var ph=PH.matches;bs.forEach(function(b){var n=b.title||b.textContent.trim();b.setAttribute('aria-label',ph&&b.getAttribute('aria-pressed')==='true'?n+', tap for '+(nx(b).title||nx(b).textContent.trim()):n);});}
+    function lab(){var ph=PH.matches;bs.forEach(function(b){var n=b.title||b.textContent.trim();b.setAttribute('aria-label',ph&&!b.closest('.mood')&&b.getAttribute('aria-pressed')==='true'?n+', tap for '+(nx(b).title||nx(b).textContent.trim()):n);});}
     function paint(){var c=cur();bs.forEach(function(b){b.setAttribute('aria-pressed',String(b.dataset.mode===c));});lab();layers();}
     bs.forEach(function(b){b.addEventListener('click',function(){
       // once Starlight's script is in, it holds the reader's place across the switch (its blocks change the page's height)
-      (window.__slHold||function(f){f();})(function(){var m=(PH.matches&&b.getAttribute('aria-pressed')==='true'?nx(b):b).dataset.mode;set(m);try{localStorage.setItem(K,m);}catch(e){}paint();});
+      (window.__slHold||function(f){f();})(function(){var m=(PH.matches&&!b.closest('.mood')&&b.getAttribute('aria-pressed')==='true'?nx(b):b).dataset.mode;set(m);try{localStorage.setItem(K,m);}catch(e){}paint();});
     });});
     try{matchMedia('(prefers-color-scheme: light)').addEventListener('change',paint);PH.addEventListener('change',lab);}catch(e){}
     new MutationObserver(paint).observe(d,{attributes:true,attributeFilter:['data-theme']});
     paint();
+    // Mood drop-down (Nathan, 26 Nov 2026): closes after a pick, on a click outside, or on Escape (focus back to Mood)
+    var md=document.querySelector('.mood');
+    if(md){
+      md.addEventListener('click',function(e){if(e.target.closest('button'))md.open=false;});
+      document.addEventListener('click',function(e){if(md.open&&!md.contains(e.target))md.open=false;});
+      document.addEventListener('keydown',function(e){if(e.key==='Escape'&&md.open){md.open=false;md.querySelector('summary').focus();}});
+    }
   })();
   var still=matchMedia('(prefers-reduced-motion: reduce)').matches;
 

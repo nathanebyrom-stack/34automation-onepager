@@ -7,9 +7,9 @@
   var home=location.pathname==='/'||location.pathname==='/index.html',h=home?'':'/';
   var here=location.pathname.replace(/index\.html$/,'');
   var links=[
-    ['What we offer',h+'#offer'],['Services',h+'#services'],['Why us',h+'#why'],['Work',h+'#work'],
-    ['News','/news/'],['Reviews',h+'#reviews'],['Website report',h+'#report'],['Client area','/clients/'],
-    ['Start a conversation',h+'#contact',1]
+    ['Services',h+'#offer'],['Automations',h+'#services'],['Why us',h+'#why'],
+    ['News','/news/'],['Reviews',h+'#reviews'],['Client area','/clients/'],['Website report',h+'#report'],
+    ['Contact us',h+'#contact',1]   // names and order follow the header (Nathan, 26 Nov 2026); Work left out
   ];
   var btn=document.createElement('button');
   btn.type='button';btn.className='mbtn';btn.setAttribute('aria-expanded','false');btn.setAttribute('aria-controls','mnav');
